@@ -1,4 +1,7 @@
-# AI Doctor - Practice Management System
+# visa-processing-travel-agency
+A web-based platform that streamlines visa application processing with features like document management, appointment scheduling, real-time status tracking, and an admin dashboard for travel agencies and consultants.
+>>>>>>> 79cbd15bacfdc34b7a499fe940b9833e8a8f6eda
+# Visa Processing Travel Agency
 
 A comprehensive, AI-powered visa processing travel agency software built with Next.js, TypeScript, and Tailwind CSS. This system provides travel agency professionals with tools to manage clients, visa applications, travel documents, and access AI-powered travel assistance.
 
@@ -8,27 +11,27 @@ A comprehensive, AI-powered visa processing travel agency software built with Ne
 - **Secure Login System**: Professional authentication with email/password
 - **Protected Routes**: All sensitive pages require authentication
 - **Session Management**: Persistent login state with secure cookies
-- **HIPAA Compliant**: Built with healthcare security standards in mind
 - **Role-based Access**: User role management system
 
 ### 🎨 Modern User Interface
-- **Vertical Sidebar Navigation**: Professional left sidebar layout optimized for healthcare workflows
+- **Vertical Sidebar Navigation**: Professional left sidebar layout optimized for travel agency workflows
 - **Responsive Design**: Mobile-first design with collapsible sidebar for mobile devices
 - **Clean Dashboard**: Modern card-based layout with statistics and quick actions
 - **Consistent Navigation**: Unified sidebar across all protected pages
-- **Professional Styling**: Healthcare-appropriate color scheme and typography
+- **Professional Styling**: Travel agency-appropriate color scheme and typography
 
 ### Core Management
 - **Client Management**: Complete client records with visa applications, contact information, and travel details
 - **Appointment Scheduling**: Advanced appointment booking system with time slot management
-- **Medical Reports**: Comprehensive reporting system for test results and medical documentation
+- **Document Management**: Comprehensive document upload, preview, and management system
+- **Visa Case Management**: Track visa application status from draft to decision
 - **Dashboard Analytics**: Real-time insights into agency performance and client statistics
 
-### AI-Powered Assistance
-- **Medical AI Assistant**: Intelligent chatbot for symptom analysis, treatment suggestions, and medical research
-- **Smart Recommendations**: AI-driven insights for client care and treatment planning
-- **Medical Literature Search**: Access to latest medical studies and clinical guidelines
-- **Drug Interaction Checking**: Automated medication safety verification
+### Specialized Features
+- **Form Library & Templates**: Pre-configured visa application forms
+- **Dynamic Forms**: Customizable forms per country requirements
+- **Auto-fill**: Populate forms from client database
+- **Export Capabilities**: Export forms to PDF/Word
 
 ### User Experience
 - **Intuitive Navigation**: Vertical sidebar with clear icons and labels
@@ -40,7 +43,7 @@ A comprehensive, AI-powered visa processing travel agency software built with Ne
 ## 🛠️ Technology Stack
 
 ### Core Framework
-- **Next.js**: 15.5.0 (with App Router)
+- **Next.js**: 15.5.9 (with App Router)
 - **React**: 19.2.1
 - **React DOM**: 19.2.1
 - **TypeScript**: ^5
@@ -64,11 +67,6 @@ A comprehensive, AI-powered visa processing travel agency software built with Ne
 - **jspdf**: ^3.0.2
 - **cookies-next**: ^6.1.0
 
-### Development Tools
-- **ESLint**: ^9
-- **eslint-config-next**: 15.5.0
-- **tsx**: ^4.20.4
-
 ### Security Status
 ✅ **0 Security Vulnerabilities** - All packages updated to latest secure versions:
 - NextAuth.js 4.24.13: Fixed email misdelivery vulnerability
@@ -91,16 +89,32 @@ visa-processing-travel-agency/
 │   │   ├── page.tsx            # Appointments List
 │   │   └── new/                # Schedule Appointment
 │   │       └── page.tsx
-│   ├── reports/                 # Medical Reports (Protected)
-│   │   └── page.tsx
-│   ├── ai-assistant/            # AI Medical Assistant (Protected)
-│   │   └── page.tsx
+│   ├── documents/               # Document Management (Protected)
+│   │   ├── page.tsx            # Documents List
+│   │   └── upload/             # Upload Documents
+│   │       └── page.tsx
+│   ├── visa-cases/              # Visa Case Management (Protected)
+│   │   ├── page.tsx            # Visa Cases List
+│   │   └── new/                # Create Visa Case
+│   │       └── page.tsx
+│   ├── forms/                   # Form Library & Templates (Protected)
+│   │   ├── page.tsx            # Forms Library
+│   │   └── new/                # Create Form Template
+│   │       └── page.tsx
 │   ├── components/              # Reusable Components
 │   │   └── sidebar-layout.tsx  # Main Sidebar Layout
 │   ├── layout.tsx               # Root Layout with AuthProvider
 │   ├── auth-context.tsx         # Authentication Context
 │   ├── protected-route.tsx      # Route Protection Component
 │   └── globals.css              # Global Styles
+├── models/                       # Mongoose Models
+│   ├── Client.ts               # Client Schema
+│   ├── Appointment.ts          # Appointment Schema
+│   ├── Document.ts             # Document Schema
+│   ├── VisaCase.ts             # Visa Case Schema
+│   └── FormTemplate.ts         # Form Template Schema
+├── lib/                          # Utility Functions
+│   └── mongodb.ts              # Database Connection
 ├── middleware.ts                 # Authentication Middleware
 ├── public/                       # Static Assets
 ├── package.json                  # Dependencies
@@ -139,7 +153,7 @@ visa-processing-travel-agency/
 ### 🔐 Login Credentials
 
 **Demo Account:**
-- **Email**: `doctor@aidoc.com`
+- **Email**: `admin@visaagency.com`
 - **Password**: `password123`
 
 *Note: This is a demo system. In production, implement proper authentication with your backend.*
@@ -157,7 +171,6 @@ visa-processing-travel-agency/
 - Professional authentication interface
 - Email and password validation
 - Remember me functionality
-- Forgot password support
 - Demo credentials display
 
 ### Dashboard (`/`)
@@ -178,23 +191,28 @@ visa-processing-travel-agency/
 - Daily appointment schedule
 - Appointment status tracking
 - Time slot management
-- Doctor assignment
+- Consultant assignment
 - **Protected Route** - Requires authentication
 - **Vertical Sidebar** - Consistent navigation
 
-### Medical Reports (`/reports`)
-- Test result management
-- Report status tracking
-- Priority-based organization
-- Download capabilities
+### Documents (`/documents`)
+- Document library with search and filtering
+- Document upload functionality
+- Preview and download capabilities
 - **Protected Route** - Requires authentication
 - **Vertical Sidebar** - Consistent navigation
 
-### AI Assistant (`/ai-assistant`)
-- Medical query assistance
-- Symptom analysis support
-- Treatment research
-- Drug interaction checking
+### Visa Cases (`/visa-cases`)
+- Visa application tracking
+- Status management from draft to decision
+- Document checklists per visa type
+- **Protected Route** - Requires authentication
+- **Vertical Sidebar** - Consistent navigation
+
+### Forms Library (`/forms`)
+- Form template management
+- Dynamic form creation
+- Export capabilities
 - **Protected Route** - Requires authentication
 - **Vertical Sidebar** - Consistent navigation
 
@@ -217,7 +235,7 @@ The project uses Next.js 15 with the following optimizations:
 ### Layout System
 - **Reusable Sidebar**: Consistent navigation across all protected pages
 - **Responsive Design**: Mobile-optimized with collapsible sidebar
-- **Professional UI**: Healthcare-appropriate design patterns
+- **Professional UI**: Travel agency-appropriate design patterns
 - **Quick Actions**: Easy access to common tasks
 
 ### Tailwind CSS
@@ -242,7 +260,6 @@ The application is fully responsive and optimized for:
 - **Secure Routing**: Protected route implementation
 - **Input Sanitization**: XSS protection
 - **Session Management**: Secure cookie handling
-- **HIPAA Compliance**: Healthcare-grade security
 - **Middleware Protection**: Server-level route protection
 
 ## 🚀 Deployment
@@ -271,55 +288,23 @@ The application can be deployed to any platform that supports Node.js:
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
-## 🆘 Support
-
-For support and questions:
-- Create an issue in the GitHub repository
-- Contact the development team
-- Check the documentation
-
 ## 🔮 Future Enhancements
 
 - **Real Authentication**: Integration with Auth0, Firebase Auth, or custom backend
 - **Multi-factor Authentication**: SMS/Email verification
 - **User Management**: Admin panel for user creation and management
 - **Advanced Sidebar**: Collapsible sections and custom navigation
-- **Telemedicine Integration**: Video consultation capabilities
-- **Electronic Health Records**: Advanced EHR system
-- **Billing Integration**: Payment processing and insurance claims
+- **Advanced Document Processing**: OCR and automated form filling
+- **Billing Integration**: Payment processing and invoice management
 - **Mobile App**: Native mobile applications
 - **Advanced Analytics**: Machine learning insights
 - **Multi-language Support**: Internationalization
-- **Dark Mode**: Theme switching capability
 - **Customizable Dashboard**: User-configurable widgets and layouts
-
-## 📊 Performance Metrics
-
-- **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices, SEO)
-- **First Contentful Paint**: < 1.5s
-- **Largest Contentful Paint**: < 2.5s
-- **Cumulative Layout Shift**: < 0.1
-- **Sidebar Performance**: Smooth animations and transitions
-
-## 🔐 Security & Compliance
-
-- **HIPAA Ready**: Built with healthcare compliance in mind
-- **Data Encryption**: Secure data transmission and storage
-- **Access Control**: Role-based permissions
-- **Audit Logging**: Track all user actions
-- **Regular Updates**: Security patches and updates
-- **Cookie Security**: Secure, httpOnly cookies with proper flags
-
-## 🎨 UI/UX Features
-
-- **Professional Sidebar**: Healthcare-appropriate navigation design
-- **Consistent Layout**: Unified design language across all pages
-- **Quick Actions**: Easy access to common tasks
-- **Responsive Navigation**: Mobile-optimized sidebar behavior
-- **Visual Hierarchy**: Clear information architecture
-- **Accessibility**: WCAG compliant design patterns
 
 ---
 
-Built with ❤️ for healthcare professionals
-# Test comment for gp alias
+Built with ❤️ for travel agency professionals
+=======
+# visa-processing-travel-agency
+A web-based platform that streamlines visa application processing with features like document management, appointment scheduling, real-time status tracking, and an admin dashboard for travel agencies and consultants.
+>>>>>>> 79cbd15bacfdc34b7a499fe940b9833e8a8f6eda
