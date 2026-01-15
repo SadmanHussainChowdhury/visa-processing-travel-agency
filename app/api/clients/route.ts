@@ -87,6 +87,28 @@ export async function POST(request: NextRequest) {
     
     console.log('Cleaned client data:', JSON.stringify(cleanedData, null, 2));
     
+    // Generate a unique clientId if not provided
+    if (!cleanedData.clientId) {
+      const firstName = cleanedData.firstName?.substring(0, 2).toUpperCase() || 'XX';
+      const lastName = cleanedData.lastName?.substring(0, 2).toUpperCase() || 'XX';
+      const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
+      
+      // Make sure the generated ID is unique
+      let candidateId = `${firstName}${lastName}${timestamp}`;
+      let counter = 1;
+      let existingClient;
+      
+      do {
+        existingClient = await Client.findOne({ clientId: candidateId });
+        if (existingClient) {
+          candidateId = `${firstName}${lastName}${timestamp}${counter.toString().padStart(2, '0')}`;
+          counter++;
+        }
+      } while (existingClient && counter <= 100); // Prevent infinite loop
+      
+      cleanedData.clientId = candidateId;
+    }
+    
     const client = new Client(cleanedData);
     
     // Validate the client before saving

@@ -10,7 +10,7 @@ export interface IAppointment {
   doctorEmail?: string;
   appointmentDate: Date;
   appointmentTime: string;
-  appointmentType: 'consultation' | 'follow-up' | 'followUp' | 'checkup' | 'emergency' | 'surgery' | 'therapy';
+  appointmentType: 'consultation' | 'follow-up' | 'followUp' | 'checkup' | 'emergency' | 'surgery' | 'therapy' | 'visa-consultation' | 'document-review' | 'interview-preparation' | 'application-submission' | 'status-update';
   status: 'scheduled' | 'confirmed' | 'in-progress' | 'inProgress' | 'completed' | 'cancelled';
   reason?: string;
   notes?: string;
@@ -65,7 +65,7 @@ const appointmentSchema = new mongoose.Schema<IAppointment>(
     },
     appointmentType: {
       type: String,
-      enum: ['consultation', 'follow-up', 'followUp', 'checkup', 'emergency', 'surgery', 'therapy'],
+      enum: ['consultation', 'follow-up', 'followUp', 'checkup', 'emergency', 'surgery', 'therapy', 'visa-consultation', 'document-review', 'interview-preparation', 'application-submission', 'status-update'],
       default: 'consultation',
     },
     status: {

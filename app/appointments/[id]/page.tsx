@@ -141,7 +141,7 @@ export default function AppointmentViewPage() {
                   <div className="flex items-center space-x-3">
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Patient Name</p>
+                      <p className="text-sm font-medium text-gray-500">Client Name</p>
                       <p className="text-sm text-gray-900">{appointment.patientName}</p>
                     </div>
                   </div>
@@ -149,7 +149,7 @@ export default function AppointmentViewPage() {
                   <div className="flex items-center space-x-3">
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Patient ID</p>
+                      <p className="text-sm font-medium text-gray-500">Client ID</p>
                       <p className="text-sm text-gray-900 font-mono">{appointment.patientId || 'N/A'}</p>
                     </div>
                   </div>
@@ -157,7 +157,7 @@ export default function AppointmentViewPage() {
                   <div className="flex items-center space-x-3">
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Doctor</p>
+                      <p className="text-sm font-medium text-gray-500">Consultant</p>
                       <p className="text-sm text-gray-900">{appointment.doctorName}</p>
                     </div>
                   </div>
@@ -220,7 +220,7 @@ export default function AppointmentViewPage() {
           {/* Patient Information */}
           <div className="mt-6 bg-white rounded-lg shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900">Patient Information</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Client Information</h2>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

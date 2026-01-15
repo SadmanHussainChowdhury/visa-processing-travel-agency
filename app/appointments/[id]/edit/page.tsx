@@ -179,13 +179,13 @@ export default function AppointmentEditPage() {
 
           {/* Edit Form */}
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Patient Information */}
+            {/* Client Information */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Patient Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Client Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="patientName" className="block text-sm font-medium text-gray-700 mb-2">
-                    Patient Name *
+                    Client Name *
                   </label>
                   <input
                     type="text"
@@ -200,7 +200,7 @@ export default function AppointmentEditPage() {
                 
                 <div>
                   <label htmlFor="patientEmail" className="block text-sm font-medium text-gray-700 mb-2">
-                    Patient Email *
+                    Client Email *
                   </label>
                   <input
                     type="email"
@@ -215,7 +215,7 @@ export default function AppointmentEditPage() {
                 
                 <div>
                   <label htmlFor="patientPhone" className="block text-sm font-medium text-gray-700 mb-2">
-                    Patient Phone *
+                    Client Phone *
                   </label>
                   <input
                     type="tel"
@@ -230,13 +230,13 @@ export default function AppointmentEditPage() {
               </div>
             </div>
 
-            {/* Doctor Information */}
+            {/* Consultant Information */}
             <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Doctor Information</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Consultant Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="doctorName" className="block text-sm font-medium text-gray-700 mb-2">
-                    Doctor Name *
+                    Consultant Name *
                   </label>
                   <input
                     type="text"
@@ -251,7 +251,7 @@ export default function AppointmentEditPage() {
                 
                 <div>
                   <label htmlFor="doctorEmail" className="block text-sm font-medium text-gray-700 mb-2">
-                    Doctor Email
+                    Consultant Email
                   </label>
                   <input
                     type="email"

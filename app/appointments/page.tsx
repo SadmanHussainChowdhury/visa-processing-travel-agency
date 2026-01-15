@@ -267,7 +267,7 @@ export default function AppointmentsPage() {
               <thead className="bg-gray-50">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    {t('appointments.patientDoctor')}
+                    Client & Consultant
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     {t('appointments.dateTime')}
@@ -297,7 +297,7 @@ export default function AppointmentsPage() {
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">{appointment.patientName}</div>
                           <div className="text-sm text-gray-500">ID: {appointment.patientId || 'N/A'}</div>
-                          <div className="text-sm text-gray-700">{appointment.doctorName}</div>
+                          <div className="text-sm text-gray-700">Consultant: {appointment.doctorName}</div>
                         </div>
                       </div>
                     </td>

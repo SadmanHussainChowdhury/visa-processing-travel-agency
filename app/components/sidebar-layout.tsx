@@ -27,7 +27,11 @@ import {
   LineChart,
   Mic,
   User,
-  ChevronDown
+  ChevronDown,
+  FolderOpen,
+  Upload,
+  Search,
+  Filter
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -50,7 +54,9 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               const navigation = [
               { id: 'dashboard', label: t('navigation.dashboard'), icon: Home, href: '/' },
               { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients' },
-              { id: 'appointments', label: t('navigation.appointments'), icon: Calendar, href: '/appointments' }
+              { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
+              { id: 'documents', label: 'Document Management', icon: FolderOpen, href: '/documents' },
+              { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' }
             ];
 
   const handleLogout = () => {

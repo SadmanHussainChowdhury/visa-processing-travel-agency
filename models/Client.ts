@@ -147,35 +147,6 @@ const clientSchema = new mongoose.Schema<IClient>(
   }
 );
 
-// Pre-save middleware to generate client ID
-clientSchema.pre('save', async function(next) {
-  // Always generate clientId if it doesn't exist (for new documents)
-  if (!this.clientId) {
-    try {
-      // Find the highest existing client ID
-      const ClientModel = this.constructor as any;
-      const lastClient = await ClientModel.findOne({}, { clientId: 1 }, { sort: { clientId: -1 } });
-      
-      let nextId = 1;
-      if (lastClient && lastClient.clientId) {
-        // Extract number from existing client ID (e.g., "CLI-0001" -> 1)
-        const match = lastClient.clientId.match(/CLI-(\d+)/);
-        if (match) {
-          nextId = parseInt(match[1]) + 1;
-        }
-      }
-      
-      // Generate new client ID with zero-padding
-      this.clientId = `CLI-${nextId.toString().padStart(4, '0')}`;
-      console.log('Generated clientId:', this.clientId);
-    } catch (error) {
-      console.error('Error generating client ID:', error);
-      // Fallback to timestamp-based ID
-      this.clientId = `CLI-${Date.now().toString().slice(-6)}`;
-    }
-  }
-  next();
-});
 
 // Prevent multiple model initialization in development
 export default mongoose.models.Client || mongoose.model<IClient>('Client', clientSchema);
