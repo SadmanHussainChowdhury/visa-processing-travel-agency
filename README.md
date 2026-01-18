@@ -1,6 +1,3 @@
-# visa-processing-travel-agency
-A web-based platform that streamlines visa application processing with features like document management, appointment scheduling, real-time status tracking, and an admin dashboard for travel agencies and consultants.
->>>>>>> 79cbd15bacfdc34b7a499fe940b9833e8a8f6eda
 # Visa Processing Travel Agency
 
 A comprehensive, AI-powered visa processing travel agency software built with Next.js, TypeScript, and Tailwind CSS. This system provides travel agency professionals with tools to manage clients, visa applications, travel documents, and access AI-powered travel assistance.
@@ -22,6 +19,7 @@ A comprehensive, AI-powered visa processing travel agency software built with Ne
 
 ### Core Management
 - **Client Management**: Complete client records with visa applications, contact information, and travel details
+- **CRM & Lead Management**: Complete customer relationship management with lead capture, follow-ups, and conversion tracking
 - **Appointment Scheduling**: Advanced appointment booking system with time slot management
 - **Document Management**: Comprehensive document upload, preview, and management system
 - **Visa Case Management**: Track visa application status from draft to decision
@@ -32,6 +30,16 @@ A comprehensive, AI-powered visa processing travel agency software built with Ne
 - **Dynamic Forms**: Customizable forms per country requirements
 - **Auto-fill**: Populate forms from client database
 - **Export Capabilities**: Export forms to PDF/Word
+
+### CRM & Lead Management Features
+- **Lead Capture**: Capture leads from website and social media channels
+- **Lead Management**: Complete CRUD operations for lead management (Create, Read, Update, Delete)
+- **Follow-up Reminders**: Schedule and track follow-up activities
+- **Interaction History**: Record and track all communications with leads
+- **Lead-to-Client Conversion**: Convert qualified leads to client records
+- **Lead Scoring**: Assess lead quality and priority levels
+- **Source Tracking**: Identify lead sources for marketing optimization
+- **Status Management**: Track lead progression through sales pipeline
 
 ### User Experience
 - **Intuitive Navigation**: Vertical sidebar with clear icons and labels
@@ -85,6 +93,9 @@ visa-processing-travel-agency/
 │   │   ├── page.tsx            # Clients List
 │   │   └── new/                # Add New Client
 │   │       └── page.tsx
+│   ├── crm/                     # CRM & Lead Management (Protected)
+│   │   ├── page.tsx            # CRM Dashboard with Leads, Follow-ups, History
+│   │   └── layout.tsx          # CRM Layout Wrapper
 │   ├── appointments/            # Appointment Management (Protected)
 │   │   ├── page.tsx            # Appointments List
 │   │   └── new/                # Schedule Appointment
@@ -109,6 +120,7 @@ visa-processing-travel-agency/
 │   └── globals.css              # Global Styles
 ├── models/                       # Mongoose Models
 │   ├── Client.ts               # Client Schema
+│   ├── Lead.ts                 # Lead Schema for CRM
 │   ├── Appointment.ts          # Appointment Schema
 │   ├── Document.ts             # Document Schema
 │   ├── VisaCase.ts             # Visa Case Schema
@@ -177,6 +189,17 @@ visa-processing-travel-agency/
 - Overview of agency statistics
 - Recent appointments
 - Quick actions for common tasks
+- **Protected Route** - Requires authentication
+- **Vertical Sidebar** - Consistent navigation
+
+### CRM & Lead Management (`/crm`)
+- Complete lead management system with full CRUD operations
+- Lead capture from website and social media
+- Follow-up scheduling and tracking
+- Interaction history recording
+- Lead-to-client conversion flows
+- Lead scoring and prioritization
+- Source tracking and analytics
 - **Protected Route** - Requires authentication
 - **Vertical Sidebar** - Consistent navigation
 
@@ -304,7 +327,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ---
 
 Built with ❤️ for travel agency professionals
-=======
-# visa-processing-travel-agency
-A web-based platform that streamlines visa application processing with features like document management, appointment scheduling, real-time status tracking, and an admin dashboard for travel agencies and consultants.
->>>>>>> 79cbd15bacfdc34b7a499fe940b9833e8a8f6eda
