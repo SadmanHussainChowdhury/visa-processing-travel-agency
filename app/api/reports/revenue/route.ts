@@ -1,22 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
-import mongoose from 'mongoose';
-
-// Use existing payment schema
-const paymentSchema = new mongoose.Schema({
-  applicationId: String,
-  amount: Number,
-  commission: Number,
-  agent: String,
-  status: {
-    type: String,
-    enum: ['pending', 'paid', 'refunded'],
-    default: 'pending'
-  },
-  createdAt: Date
-}, { timestamps: true });
-
-const Payment = mongoose.models.Payment || mongoose.model('Payment', paymentSchema);
+import Payment from '@/models/Payment';
 
 export async function GET(request: NextRequest) {
   try {

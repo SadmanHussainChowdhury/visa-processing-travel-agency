@@ -1,22 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
-import mongoose from 'mongoose';
-
-// Use existing schemas
-const visaApplicationSchema = new mongoose.Schema({
-  applicantName: String,
-  visaType: String,
-  status: {
-    type: String,
-    enum: ['draft', 'submitted', 'processing', 'approved', 'rejected'],
-    default: 'draft'
-  },
-  agent: String,
-  createdAt: Date,
-  updatedAt: Date
-}, { timestamps: true });
-
-const VisaApplication = mongoose.models.VisaApplication || mongoose.model('VisaApplication', visaApplicationSchema);
+import VisaApplication from '@/models/VisaApplication';
 
 export async function GET(request: NextRequest) {
   try {

@@ -1,36 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
-import mongoose from 'mongoose';
-
-// Define schemas for reports
-const visaApplicationSchema = new mongoose.Schema({
-  applicantName: String,
-  visaType: String,
-  status: {
-    type: String,
-    enum: ['draft', 'submitted', 'processing', 'approved', 'rejected'],
-    default: 'draft'
-  },
-  agent: String,
-  createdAt: Date,
-  updatedAt: Date
-}, { timestamps: true });
-
-const paymentSchema = new mongoose.Schema({
-  applicationId: String,
-  amount: Number,
-  commission: Number,
-  agent: String,
-  status: {
-    type: String,
-    enum: ['pending', 'paid', 'refunded'],
-    default: 'pending'
-  },
-  createdAt: Date
-}, { timestamps: true });
-
-const VisaApplication = mongoose.models.VisaApplication || mongoose.model('VisaApplication', visaApplicationSchema);
-const Payment = mongoose.models.Payment || mongoose.model('Payment', paymentSchema);
+import VisaApplication from '@/models/VisaApplication';
+import Payment from '@/models/Payment';
 
 export async function GET(request: NextRequest) {
   try {
@@ -81,7 +52,7 @@ export async function GET(request: NextRequest) {
         revenue: dailyRevenue,
         commission: dailyCommission,
         applications: applications.map(app => ({
-          id: app._id,
+          id: app._id.toString(),
           applicantName: app.applicantName,
           visaType: app.visaType,
           status: app.status,
