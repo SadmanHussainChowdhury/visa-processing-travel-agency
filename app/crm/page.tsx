@@ -31,12 +31,26 @@ export default function CrmPage() {
   const [leads, setLeads] = useState<any[]>([]);
   const [followUps, setFollowUps] = useState<any[]>([]);
   const [interactionHistory, setInteractionHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    fetchLeads();
-    fetchFollowUps();
-    fetchInteractions();
+    loadData();
   }, []);
+  
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchLeads(),
+        fetchFollowUps(),
+        fetchInteractions()
+      ]);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const fetchLeads = async () => {
     try {
@@ -106,7 +120,6 @@ export default function CrmPage() {
       
       if (response.ok) {
         const result = await response.json();
-        setLeads([...leads, result.lead]);
         setShowNewLeadModal(false);
         setNewLead({
           name: '',
@@ -242,63 +255,69 @@ export default function CrmPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {leads.map((lead) => (
-                  <div key={lead.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
-                        <p className="text-gray-600">{lead.email}</p>
+              {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {leads.map((lead) => (
+                    <div key={lead._id || lead.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
+                          <p className="text-gray-600">{lead.email}</p>
+                        </div>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                          lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
+                          lead.status === 'qualified' ? 'bg-green-100 text-green-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {lead.status}
+                        </span>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded-full ${
-                        lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
-                        lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
-                        lead.status === 'qualified' ? 'bg-green-100 text-green-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {lead.status}
-                      </span>
+                      
+                      <div className="mt-4 space-y-2">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Phone className="h-4 w-4 mr-2" />
+                          {lead.phone}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <MapPin className="h-4 w-4 mr-2" />
+                          Interested in {lead.countryInterest} {lead.visaType}
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Star className="h-4 w-4 mr-2" />
+                          Lead Score: {lead.leadScore}/100
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Next follow-up: {lead.nextFollowUp || 'Not scheduled'}
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
+                        <button 
+                          onClick={() => handleConvertToClient(lead._id || lead.id)}
+                          className="flex-1 text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
+                        >
+                          Convert to Client
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                          <Eye className="h-4 w-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                          <Edit className="h-4 w-4" />
+                        </button>
+                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
                     </div>
-                    
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Phone className="h-4 w-4 mr-2" />
-                        {lead.phone}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        Interested in {lead.countryInterest} {lead.visaType}
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Star className="h-4 w-4 mr-2" />
-                        Lead Score: {lead.leadScore}/100
-                      </div>
-                      <div className="flex items-center text-sm text-gray-600">
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Next follow-up: {lead.nextFollowUp || 'Not scheduled'}
-                      </div>
-                    </div>
-                    
-                    <div className="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
-                      <button 
-                        onClick={() => handleConvertToClient(lead.id)}
-                        className="flex-1 text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
-                      >
-                        Convert to Client
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-gray-700">
-                        <Eye className="h-4 w-4" />
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-gray-700">
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button className="p-1 text-gray-500 hover:text-gray-700">
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -323,7 +342,7 @@ export default function CrmPage() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
                       {followUps.map((followUp) => (
-                        <tr key={followUp.id}>
+                        <tr key={followUp._id || followUp.id}>
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="text-sm font-medium text-gray-900">{followUp.leadName}</div>
                             <div className="text-sm text-gray-500">{followUp.leadId}</div>
@@ -366,7 +385,7 @@ export default function CrmPage() {
                 </div>
                 <div className="divide-y divide-gray-200">
                   {interactionHistory.map((interaction) => (
-                    <div key={interaction.id} className="p-6 hover:bg-gray-50">
+                    <div key={interaction._id || interaction.id} className="p-6 hover:bg-gray-50">
                       <div className="flex justify-between">
                         <div>
                           <div className="flex items-center">

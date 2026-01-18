@@ -1,49 +1,94 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dbConnect } from '@/lib/db';
+import mongoose from 'mongoose';
 
-// Mock data for leads
-let leads = [
-  {
-    id: 'lead-001',
-    name: 'John Smith',
-    email: 'john.smith@example.com',
-    phone: '+1 (555) 123-4567',
-    source: 'website',
-    status: 'new',
-    priority: 'high',
-    assignedTo: 'Agent 1',
-    lastContact: '2024-01-10',
-    nextFollowUp: '2024-01-15',
-    leadScore: 85,
-    countryInterest: 'Australia',
-    visaType: 'Tourist',
-    notes: 'Interested in family visit visa for Australia',
-    createdAt: '2024-01-05',
-    updatedAt: '2024-01-10'
+// Define the Lead schema
+const leadSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
   },
-  {
-    id: 'lead-002',
-    name: 'Sarah Johnson',
-    email: 'sarah.j@example.com',
-    phone: '+1 (555) 987-6543',
-    source: 'social_media',
-    status: 'contacted',
-    priority: 'medium',
-    assignedTo: 'Agent 2',
-    lastContact: '2024-01-08',
-    nextFollowUp: '2024-01-12',
-    leadScore: 70,
-    countryInterest: 'Canada',
-    visaType: 'Student',
-    notes: 'Looking for study visa options in Canada',
-    createdAt: '2024-01-03',
-    updatedAt: '2024-01-08'
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true
+  },
+  phone: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  source: {
+    type: String,
+    default: 'website',
+    enum: ['website', 'social_media', 'referral', 'advertisement', 'other']
+  },
+  status: {
+    type: String,
+    default: 'new',
+    enum: ['new', 'contacted', 'qualified', 'lost', 'converted']
+  },
+  priority: {
+    type: String,
+    default: 'medium',
+    enum: ['low', 'medium', 'high']
+  },
+  assignedTo: {
+    type: String,
+    default: 'unassigned'
+  },
+  lastContact: {
+    type: String,
+    default: null
+  },
+  nextFollowUp: {
+    type: String,
+    default: null
+  },
+  leadScore: {
+    type: Number,
+    default: 50,
+    min: 0,
+    max: 100
+  },
+  countryInterest: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  visaType: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  notes: {
+    type: String,
+    default: ''
   }
-];
+}, {
+  timestamps: true
+});
+
+// Index for efficient querying
+leadSchema.index({ email: 1 });
+leadSchema.index({ status: 1 });
+leadSchema.index({ assignedTo: 1 });
+leadSchema.index({ createdAt: 1 });
+
+const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
 
 export async function GET(request: NextRequest) {
   try {
+    await dbConnect();
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'json';
+
+    // Fetch all leads from the database
+    const leads = await Lead.find({}).sort({ createdAt: -1 });
 
     if (format === 'json') {
       return NextResponse.json(leads);
@@ -70,7 +115,7 @@ export async function GET(request: NextRequest) {
 
       const csvRows = leads.map(lead => {
         const values = [
-          `"${lead.id || ''}"`,
+          `"${lead._id || ''}"`,
           `"${(lead.name || '').replace(/"/g, '""')}"`,
           `"${lead.email || ''}"`,
           `"${lead.phone || ''}"`,
@@ -84,8 +129,8 @@ export async function GET(request: NextRequest) {
           `"${(lead.countryInterest || '').replace(/"/g, '""')}"`,
           `"${(lead.visaType || '').replace(/"/g, '""')}"`,
           `"${(lead.notes || '').replace(/"/g, '""')}"`,
-          `"${lead.createdAt || ''}"`,
-          `"${lead.updatedAt || ''}"`
+          `"${lead.createdAt ? new Date(lead.createdAt).toISOString() : ''}"`,
+          `"${lead.updatedAt ? new Date(lead.updatedAt).toISOString() : ''}"`
         ];
         return values.join(',');
       });
@@ -112,6 +157,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await dbConnect();
+
     const body = await request.json();
     
     // Validate required fields
@@ -123,7 +170,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if lead already exists
-    const existingLead = leads.find(lead => lead.email === body.email);
+    const existingLead = await Lead.findOne({ email: body.email });
     if (existingLead) {
       return NextResponse.json(
         { error: 'Lead with this email already exists' },
@@ -132,8 +179,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new lead
-    const newLead = {
-      id: `lead-${Date.now()}`,
+    const newLead = new Lead({
       name: body.name,
       email: body.email.toLowerCase(),
       phone: body.phone || '',
@@ -146,12 +192,10 @@ export async function POST(request: NextRequest) {
       leadScore: body.leadScore || 50,
       countryInterest: body.countryInterest || '',
       visaType: body.visaType || '',
-      notes: body.notes || '',
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0]
-    };
+      notes: body.notes || ''
+    });
 
-    leads.push(newLead);
+    await newLead.save();
 
     return NextResponse.json(
       { message: 'Lead created successfully', lead: newLead },
@@ -168,6 +212,8 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    await dbConnect();
+
     const { searchParams } = new URL(request.url);
     const leadId = searchParams.get('id');
 
@@ -181,9 +227,9 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     
     // Find the lead to update
-    const leadIndex = leads.findIndex(lead => lead.id === leadId);
+    const lead = await Lead.findById(leadId);
     
-    if (leadIndex === -1) {
+    if (!lead) {
       return NextResponse.json(
         { error: 'Lead not found' },
         { status: 404 }
@@ -191,16 +237,14 @@ export async function PUT(request: NextRequest) {
     }
 
     // Update the lead
-    leads[leadIndex] = {
-      ...leads[leadIndex],
-      ...body,
-      id: leadId, // Ensure the ID stays the same
-      updatedAt: new Date().toISOString().split('T')[0]
-    };
+    Object.assign(lead, body);
+    lead.updatedAt = new Date().toISOString().split('T')[0];
+    
+    await lead.save();
 
     return NextResponse.json({
       message: 'Lead updated successfully',
-      lead: leads[leadIndex]
+      lead: lead
     });
   } catch (error) {
     console.error('Error updating lead:', error);

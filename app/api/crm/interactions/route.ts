@@ -1,46 +1,70 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dbConnect } from '@/lib/db';
+import mongoose from 'mongoose';
 
-// Mock data for interaction history
-let interactions = [
-  {
-    id: 'ih-001',
-    leadId: 'lead-001',
-    leadName: 'John Smith',
-    date: '2024-01-10',
-    type: 'call',
-    outcome: 'contacted',
-    notes: 'Discussed Australia tourist visa requirements. Sent information.',
-    duration: '15 mins',
-    agent: 'Agent 1',
-    createdAt: '2024-01-10',
-    updatedAt: '2024-01-10'
+// Define the Interaction schema
+const interactionSchema = new mongoose.Schema({
+  leadId: {
+    type: String,
+    required: true
   },
-  {
-    id: 'ih-002',
-    leadId: 'lead-002',
-    leadName: 'Sarah Johnson',
-    date: '2024-01-08',
-    type: 'email',
-    outcome: 'replied',
-    notes: 'Responded to inquiry about Canadian student visa requirements.',
-    duration: '',
-    agent: 'Agent 2',
-    createdAt: '2024-01-08',
-    updatedAt: '2024-01-08'
+  leadName: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: String, // Using String to avoid timezone issues
+    required: true
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['call', 'email', 'meeting', 'message', 'visit']
+  },
+  outcome: {
+    type: String,
+    default: 'contacted',
+    enum: ['contacted', 'replied', 'met', 'no_response', 'interested', 'not_interested']
+  },
+  notes: {
+    type: String,
+    default: ''
+  },
+  duration: {
+    type: String, // Duration in format like "15 mins"
+    default: ''
+  },
+  agent: {
+    type: String,
+    default: 'Unknown'
   }
-];
+}, {
+  timestamps: true
+});
+
+// Index for efficient querying
+interactionSchema.index({ leadId: 1 });
+interactionSchema.index({ date: 1 });
+interactionSchema.index({ type: 1 });
+
+const Interaction = mongoose.models.Interaction || mongoose.model('Interaction', interactionSchema);
 
 export async function GET(request: NextRequest) {
   try {
+    await dbConnect();
+
     const { searchParams } = new URL(request.url);
     const leadId = searchParams.get('leadId') || '';
     
-    let filteredInteractions = interactions;
+    let query = {};
     if (leadId) {
-      filteredInteractions = interactions.filter(interaction => interaction.leadId === leadId);
+      query = { leadId };
     }
 
-    return NextResponse.json(filteredInteractions);
+    // Fetch interactions from the database
+    const interactions = await Interaction.find(query).sort({ date: -1 });
+
+    return NextResponse.json(interactions);
   } catch (error) {
     console.error('Error fetching interactions:', error);
     return NextResponse.json(
@@ -52,6 +76,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await dbConnect();
+
     const body = await request.json();
     
     // Validate required fields
@@ -63,8 +89,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new interaction
-    const newInteraction = {
-      id: `ih-${Date.now()}`,
+    const newInteraction = new Interaction({
       leadId: body.leadId,
       leadName: body.leadName || 'Unknown',
       date: body.date,
@@ -72,12 +97,10 @@ export async function POST(request: NextRequest) {
       outcome: body.outcome || 'contacted',
       notes: body.notes || '',
       duration: body.duration || '',
-      agent: body.agent || 'Unknown',
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0]
-    };
+      agent: body.agent || 'Unknown'
+    });
 
-    interactions.push(newInteraction);
+    await newInteraction.save();
 
     return NextResponse.json(
       { message: 'Interaction recorded successfully', interaction: newInteraction },

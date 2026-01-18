@@ -1,42 +1,62 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { dbConnect } from '@/lib/db';
+import mongoose from 'mongoose';
 
-// Mock data for follow-ups
-let followUps = [
-  {
-    id: 'fu-001',
-    leadId: 'lead-001',
-    leadName: 'John Smith',
-    scheduledDate: '2024-01-15',
-    type: 'call',
-    status: 'pending',
-    notes: 'Follow up on Australia tourist visa inquiry',
-    createdAt: '2024-01-10',
-    updatedAt: '2024-01-10'
+// Define the FollowUp schema
+const followUpSchema = new mongoose.Schema({
+  leadId: {
+    type: String,
+    required: true
   },
-  {
-    id: 'fu-002',
-    leadId: 'lead-002',
-    leadName: 'Sarah Johnson',
-    scheduledDate: '2024-01-12',
-    type: 'email',
-    status: 'completed',
-    notes: 'Sent university information for Canada study programs',
-    createdAt: '2024-01-08',
-    updatedAt: '2024-01-08'
+  leadName: {
+    type: String,
+    required: true
+  },
+  scheduledDate: {
+    type: String, // Using String to avoid timezone issues
+    required: true
+  },
+  type: {
+    type: String,
+    required: true,
+    enum: ['call', 'email', 'meeting', 'message']
+  },
+  status: {
+    type: String,
+    default: 'pending',
+    enum: ['pending', 'completed', 'cancelled']
+  },
+  notes: {
+    type: String,
+    default: ''
   }
-];
+}, {
+  timestamps: true
+});
+
+// Index for efficient querying
+followUpSchema.index({ leadId: 1 });
+followUpSchema.index({ status: 1 });
+followUpSchema.index({ scheduledDate: 1 });
+
+const FollowUp = mongoose.models.FollowUp || mongoose.model('FollowUp', followUpSchema);
 
 export async function GET(request: NextRequest) {
   try {
+    await dbConnect();
+
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || '';
     
-    let filteredFollowUps = followUps;
+    let query = {};
     if (status) {
-      filteredFollowUps = followUps.filter(fu => fu.status === status);
+      query = { status };
     }
 
-    return NextResponse.json(filteredFollowUps);
+    // Fetch follow-ups from the database
+    const followUps = await FollowUp.find(query).sort({ scheduledDate: 1 });
+
+    return NextResponse.json(followUps);
   } catch (error) {
     console.error('Error fetching follow-ups:', error);
     return NextResponse.json(
@@ -48,6 +68,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    await dbConnect();
+
     const body = await request.json();
     
     // Validate required fields
@@ -59,19 +81,16 @@ export async function POST(request: NextRequest) {
     }
 
     // Create new follow-up
-    const newFollowUp = {
-      id: `fu-${Date.now()}`,
+    const newFollowUp = new FollowUp({
       leadId: body.leadId,
       leadName: body.leadName || 'Unknown',
       scheduledDate: body.scheduledDate,
       type: body.type,
       status: body.status || 'pending',
-      notes: body.notes || '',
-      createdAt: new Date().toISOString().split('T')[0],
-      updatedAt: new Date().toISOString().split('T')[0]
-    };
+      notes: body.notes || ''
+    });
 
-    followUps.push(newFollowUp);
+    await newFollowUp.save();
 
     return NextResponse.json(
       { message: 'Follow-up created successfully', followUp: newFollowUp },
