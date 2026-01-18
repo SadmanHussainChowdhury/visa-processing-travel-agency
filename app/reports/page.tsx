@@ -10,8 +10,6 @@ interface ReportData {
   weekly: any[];
   monthly: any[];
   visaTypes: any[];
-  revenue: any[];
-  agents: any[];
 }
 
 interface FilterOptions {
@@ -28,9 +26,7 @@ export default function ReportsPage() {
     daily: [],
     weekly: [],
     monthly: [],
-    visaTypes: [],
-    revenue: [],
-    agents: []
+    visaTypes: []
   });
   const [filters, setFilters] = useState<FilterOptions>({
     period: 'monthly',
@@ -53,32 +49,24 @@ export default function ReportsPage() {
         dailyResponse,
         weeklyResponse,
         monthlyResponse,
-        visaTypesResponse,
-        revenueResponse,
-        agentsResponse
+        visaTypesResponse
       ] = await Promise.all([
         fetch('/api/reports/daily'),
         fetch('/api/reports/weekly'),
         fetch('/api/reports/monthly'),
-        fetch('/api/reports/visa-types'),
-        fetch('/api/reports/revenue'),
-        fetch('/api/reports/agents')
+        fetch('/api/reports/visa-types')
       ]);
 
       const daily = dailyResponse.ok ? await dailyResponse.json() : [];
       const weekly = weeklyResponse.ok ? await weeklyResponse.json() : [];
       const monthly = monthlyResponse.ok ? await monthlyResponse.json() : [];
       const visaTypes = visaTypesResponse.ok ? await visaTypesResponse.json() : [];
-      const revenue = revenueResponse.ok ? await revenueResponse.json() : [];
-      const agents = agentsResponse.ok ? await agentsResponse.json() : [];
 
       setReportData({
         daily,
         weekly,
         monthly,
-        visaTypes,
-        revenue,
-        agents
+        visaTypes
       });
     } catch (error) {
       console.error('Error loading report data:', error);
@@ -137,32 +125,6 @@ export default function ReportsPage() {
                 : '0%'
               }
             </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-        <div className="flex items-center">
-          <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-            <DollarSign className="h-6 w-6" />
-          </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-            <p className="text-2xl font-bold text-gray-900">
-              ${reportData.revenue.reduce((sum, item) => sum + (item.total || 0), 0).toLocaleString()}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-        <div className="flex items-center">
-          <div className="p-3 rounded-full bg-orange-100 text-orange-600">
-            <Users className="h-6 w-6" />
-          </div>
-          <div className="ml-4">
-            <p className="text-sm font-medium text-gray-600">Active Agents</p>
-            <p className="text-2xl font-bold text-gray-900">{reportData.agents.length}</p>
           </div>
         </div>
       </div>
@@ -303,127 +265,8 @@ export default function ReportsPage() {
     </div>
   );
 
-  const renderRevenueReport = () => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Revenue & Commission Reports</h3>
-          <button 
-            onClick={() => exportReport('revenue')}
-            className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-          >
-            <Download className="h-4 w-4 mr-1" />
-            Export CSV
-          </button>
-        </div>
-      </div>
-      
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900 mb-3">Revenue by Month</h4>
-              <div className="space-y-2">
-                {reportData.revenue.map((item, index) => (
-                  <div key={index} className="flex justify-between text-sm">
-                    <span>{item.month || `Month ${index + 1}`}</span>
-                    <span className="font-medium">${(item.total || 0).toLocaleString()}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900 mb-3">Commission Summary</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Total Revenue:</span>
-                  <span className="font-medium">${reportData.revenue.reduce((sum, item) => sum + (item.total || 0), 0).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Total Commission:</span>
-                  <span className="font-medium text-green-600">
-                    ${Math.round(reportData.revenue.reduce((sum, item) => sum + (item.total || 0), 0) * 0.15).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Average Commission Rate:</span>
-                  <span className="font-medium">15%</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
 
-  const renderAgentPerformance = () => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Agent Performance</h3>
-          <button 
-            onClick={() => exportReport('agents')}
-            className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-          >
-            <Download className="h-4 w-4 mr-1" />
-            Export CSV
-          </button>
-        </div>
-      </div>
-      
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agent Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applications</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Successful</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Success Rate</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Revenue Generated</th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {reportData.agents.map((agent, index) => (
-                <tr key={index}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {agent.name || `Agent ${index + 1}`}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {agent.applications || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {agent.successful || 0}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                      (agent.successRate || 0) >= 80 ? 'bg-green-100 text-green-800' : 
-                      (agent.successRate || 0) >= 60 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {(agent.successRate || 0).toFixed(1)}%
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    ${(agent.revenue || 0).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
-  );
+
 
   return (
     <ProtectedRoute>
@@ -519,41 +362,13 @@ export default function ReportsPage() {
               </div>
             </button>
             
-            <button
-              className={`px-4 py-2 font-medium text-sm ${
-                activeTab === 'revenue'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('revenue')}
-            >
-              <div className="flex items-center">
-                <DollarSign className="h-4 w-4 mr-2" />
-                Revenue & Commission
-              </div>
-            </button>
-            
-            <button
-              className={`px-4 py-2 font-medium text-sm ${
-                activeTab === 'agents'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('agents')}
-            >
-              <div className="flex items-center">
-                <Users className="h-4 w-4 mr-2" />
-                Agent Performance
-              </div>
-            </button>
+
           </div>
 
           {/* Tab Content */}
           {activeTab === 'overview' && renderOverview()}
           {activeTab === 'time-period' && renderTimePeriodReports()}
           {activeTab === 'visa-types' && renderVisaTypesReport()}
-          {activeTab === 'revenue' && renderRevenueReport()}
-          {activeTab === 'agents' && renderAgentPerformance()}
         </div>
       </SidebarLayout>
     </ProtectedRoute>
