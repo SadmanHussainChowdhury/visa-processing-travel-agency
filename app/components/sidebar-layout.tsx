@@ -31,7 +31,12 @@ import {
   FolderOpen,
   Upload,
   Search,
-  Filter
+  Filter,
+  AlertTriangle,
+  DollarSign,
+  Calculator,
+  BarChart3,
+  FileBarChart
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -56,6 +61,11 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients' },
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
               { id: 'documents', label: 'Document Management', icon: FolderOpen, href: '/documents' },
+              { id: 'forms', label: 'Form Library & Templates', icon: FileText, href: '/forms' },
+              { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications' },
+              { id: 'document-alerts', label: 'Document Alerts', icon: AlertTriangle, href: '/notifications/alerts' },
+              { id: 'export-import', label: 'Export & Import', icon: Upload, href: '/export-import' },
+              { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
               { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' }
             ];
 
