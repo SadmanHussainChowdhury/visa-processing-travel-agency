@@ -73,7 +73,6 @@ const leadSchema = new mongoose.Schema({
 });
 
 // Index for efficient querying
-leadSchema.index({ email: 1 });
 leadSchema.index({ status: 1 });
 leadSchema.index({ assignedTo: 1 });
 leadSchema.index({ createdAt: 1 });
@@ -181,8 +180,8 @@ export async function POST(request: NextRequest) {
     // Create new lead
     const newLead = new Lead({
       name: body.name,
-      email: body.email.toLowerCase(),
-      phone: body.phone || '',
+      email: body.email.toLowerCase().trim(),
+      phone: body.phone?.trim() || '',
       source: body.source || 'website',
       status: body.status || 'new',
       priority: body.priority || 'medium',
@@ -238,7 +237,7 @@ export async function PUT(request: NextRequest) {
 
     // Update the lead
     Object.assign(lead, body);
-    lead.updatedAt = new Date().toISOString().split('T')[0];
+    lead.updatedAt = new Date();
     
     await lead.save();
 

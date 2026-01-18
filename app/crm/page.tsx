@@ -92,7 +92,7 @@ export default function CrmPage() {
     name: '',
     email: '',
     phone: '',
-    source: 'Website',
+    source: 'website',
     countryInterest: '',
     visaType: '',
     notes: ''
@@ -111,7 +111,7 @@ export default function CrmPage() {
           ...newLead,
           status: 'new',
           priority: 'medium',
-          assignedTo: 'Unassigned',
+          assignedTo: 'unassigned',
           lastContact: new Date().toISOString().split('T')[0],
           nextFollowUp: '',
           leadScore: 50,
@@ -125,7 +125,7 @@ export default function CrmPage() {
           name: '',
           email: '',
           phone: '',
-          source: 'Website',
+          source: 'website',
           countryInterest: '',
           visaType: '',
           notes: ''
@@ -560,11 +560,11 @@ export default function CrmPage() {
                         onChange={(e) => setNewLead({...newLead, source: e.target.value})}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                       >
-                        <option value="Website">Website</option>
-                        <option value="Social Media">Social Media</option>
-                        <option value="Referral">Referral</option>
-                        <option value="Advertisement">Advertisement</option>
-                        <option value="Other">Other</option>
+                        <option value="website">Website</option>
+                        <option value="social_media">Social Media</option>
+                        <option value="referral">Referral</option>
+                        <option value="advertisement">Advertisement</option>
+                        <option value="other">Other</option>
                       </select>
                     </div>
                     <div>
