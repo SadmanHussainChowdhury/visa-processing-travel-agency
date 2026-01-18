@@ -253,3 +253,40 @@ export async function PUT(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    await dbConnect();
+
+    const { searchParams } = new URL(request.url);
+    const leadId = searchParams.get('id');
+
+    if (!leadId) {
+      return NextResponse.json(
+        { error: 'Lead ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Find and delete the lead
+    const deletedLead = await Lead.findByIdAndDelete(leadId);
+    
+    if (!deletedLead) {
+      return NextResponse.json(
+        { error: 'Lead not found' },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      message: 'Lead deleted successfully',
+      lead: deletedLead
+    });
+  } catch (error) {
+    console.error('Error deleting lead:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete lead' },
+      { status: 500 }
+    );
+  }
+}

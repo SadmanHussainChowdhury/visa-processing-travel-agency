@@ -166,6 +166,32 @@ export default function CrmPage() {
       alert('An error occurred while converting the lead');
     }
   };
+  
+  const handleDeleteLead = async (leadId: string) => {
+    if (!window.confirm('Are you sure you want to delete this lead?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/crm/leads?id=${leadId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (response.ok) {
+        // Refresh the data
+        fetchLeads();
+        alert('Lead deleted successfully');
+      } else {
+        alert('Failed to delete lead');
+      }
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      alert('An error occurred while deleting the lead');
+    }
+  };
 
   return (
     <ProtectedRoute>
@@ -310,7 +336,13 @@ export default function CrmPage() {
                         <button className="p-1 text-gray-500 hover:text-gray-700">
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="p-1 text-gray-500 hover:text-gray-700">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteLead(lead._id || lead.id);
+                          }}
+                          className="p-1 text-red-500 hover:text-red-700"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
