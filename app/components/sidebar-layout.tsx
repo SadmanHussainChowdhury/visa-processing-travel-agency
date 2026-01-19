@@ -67,6 +67,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'export-import', label: 'Export & Import', icon: Upload, href: '/export-import' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports' },
+              { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
               { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
               { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' }
             ];
