@@ -286,11 +286,14 @@ export default function PaymentBillingPage() {
       
       if (response.ok) {
         const result = await response.json();
+        console.log('Invoice creation result:', result);
         alert(`Invoice ${result.invoice.invoiceNumber} created successfully`);
         // Refresh the data
         loadPaymentData();
       } else {
-        alert('Failed to create invoice');
+        const errorData = await response.json();
+        console.error('Invoice creation error response:', errorData);
+        alert(`Failed to create invoice: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error creating invoice:', error);
@@ -298,13 +301,61 @@ export default function PaymentBillingPage() {
     }
   };
 
+  const handleEditInvoice = async (invoiceId: string) => {
+    if (!confirm('Are you sure you want to edit this invoice?')) {
+      return;
+    }
+    
+    try {
+      console.log('Attempting to update invoice with ID:', invoiceId);
+      
+      const response = await fetch('/api/payment-billing/invoices', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'update-invoice',
+          id: invoiceId,
+          clientId: 'CL001',
+          clientName: 'Updated Client',
+          totalAmount: 250,
+          currency: 'USD',
+          status: 'sent',
+          items: [{
+            description: 'Updated Service',
+            quantity: 1,
+            unitPrice: 250,
+            total: 250
+          }],
+          notes: 'Updated invoice'
+        }),
+      });
+      
+      console.log('Update invoice response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Invoice update result:', result);
+        alert(`Invoice updated successfully: ${result.invoice.invoiceNumber}`);
+        // Refresh the data
+        loadPaymentData();
+      } else {
+        const errorData = await response.json();
+        console.error('Invoice update error response:', errorData);
+        alert(`Failed to update invoice: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error updating invoice:', error);
+      alert('Failed to update invoice');
+    }
+  };
+
   const handleViewInvoice = (invoiceId: string) => {
     alert(`View invoice ${invoiceId} details`);
   };
 
-  const handleEditInvoice = (invoiceId: string) => {
-    alert(`Edit invoice ${invoiceId}`);
-  };
+
 
   const handleDeleteInvoice = async (invoiceId: string) => {
     if (confirm('Are you sure you want to delete this invoice?')) {
