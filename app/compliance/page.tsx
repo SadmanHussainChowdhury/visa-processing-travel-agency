@@ -154,7 +154,8 @@ export default function CompliancePage() {
         },
         body: JSON.stringify({
           action: 'toggle-two-factor',
-          config: { currentStatus: complianceData.twoFactorEnabled }
+          config: { currentStatus: complianceData.twoFactorEnabled },
+          userId: 'current-user-id' // In a real app, this would come from the authenticated user session
         }),
       });
       
@@ -183,6 +184,7 @@ export default function CompliancePage() {
         },
         body: JSON.stringify({
           action: 'run-backup',
+          userId: 'current-user-id' // In a real app, this would come from the authenticated user session
         }),
       });
       

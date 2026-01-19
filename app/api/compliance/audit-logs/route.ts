@@ -1,72 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
-
-// Mock audit log data since we don't have a specific audit log model
-const mockAuditLogs = [
-  {
-    id: 'log1',
-    timestamp: new Date(Date.now() - 3600000).toISOString(),
-    user: 'admin@visaagency.com',
-    action: 'login',
-    resource: 'dashboard',
-    ip: '192.168.1.100',
-    userAgent: 'Mozilla/5.0...'
-  },
-  {
-    id: 'log2',
-    timestamp: new Date(Date.now() - 7200000).toISOString(),
-    user: 'agent1@visaagency.com',
-    action: 'view_client',
-    resource: 'client/CL001',
-    ip: '192.168.1.101',
-    userAgent: 'Mozilla/5.0...'
-  },
-  {
-    id: 'log3',
-    timestamp: new Date(Date.now() - 10800000).toISOString(),
-    user: 'admin@visaagency.com',
-    action: 'update_settings',
-    resource: 'settings/security',
-    ip: '192.168.1.100',
-    userAgent: 'Mozilla/5.0...'
-  },
-  {
-    id: 'log4',
-    timestamp: new Date(Date.now() - 14400000).toISOString(),
-    user: 'agent2@visaagency.com',
-    action: 'upload_document',
-    resource: 'document/upload',
-    ip: '192.168.1.102',
-    userAgent: 'Mozilla/5.0...'
-  },
-  {
-    id: 'log5',
-    timestamp: new Date(Date.now() - 18000000).toISOString(),
-    user: 'admin@visaagency.com',
-    action: 'generate_report',
-    resource: 'reports/compliance',
-    ip: '192.168.1.100',
-    userAgent: 'Mozilla/5.0...'
-  },
-  {
-    id: 'log6',
-    timestamp: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
-    user: 'agent3@visaagency.com',
-    action: 'create_visa_application',
-    resource: 'visa-applications/new',
-    ip: '192.168.1.103',
-    userAgent: 'Mozilla/5.0...'
-  },
-  {
-    id: 'log7',
-    timestamp: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
-    user: 'admin@visaagency.com',
-    action: 'export_data',
-    resource: 'exports/compliance-report',
-    ip: '192.168.1.100',
-    userAgent: 'Mozilla/5.0...'
-  }
-];
+import AuditLog from '@/models/AuditLog';
 
 export async function GET(request: NextRequest) {
   try {
@@ -77,43 +11,50 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(url.searchParams.get('limit') || '10');
     const offset = parseInt(url.searchParams.get('offset') || '0');
     const action = url.searchParams.get('action') || '';
-    const user = url.searchParams.get('user') || '';
+    const userId = url.searchParams.get('userId') || '';
+    const resource = url.searchParams.get('resource') || '';
     const startDate = url.searchParams.get('startDate') || '';
     const endDate = url.searchParams.get('endDate') || '';
-
-    // Filter logs based on query parameters
-    let filteredLogs = [...mockAuditLogs];
-
-    if (action) {
-      filteredLogs = filteredLogs.filter(log => log.action.includes(action));
-    }
-
-    if (user) {
-      filteredLogs = filteredLogs.filter(log => log.user.includes(user));
-    }
-
-    if (startDate) {
-      const start = new Date(startDate);
-      filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) >= start);
-    }
-
-    if (endDate) {
-      const end = new Date(endDate);
-      filteredLogs = filteredLogs.filter(log => new Date(log.timestamp) <= end);
-    }
-
-    // Sort logs by timestamp (newest first)
-    filteredLogs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
-    // Apply pagination
-    const paginatedLogs = filteredLogs.slice(offset, offset + limit);
+    
+    // Build query filters
+    const filters: any = {};
+    if (action) filters.action = { $regex: action, $options: 'i' };
+    if (userId) filters.userId = { $regex: userId, $options: 'i' };
+    if (resource) filters.resource = { $regex: resource, $options: 'i' };
+    if (startDate) filters.timestamp = { ...filters.timestamp, $gte: new Date(startDate) };
+    if (endDate) filters.timestamp = { ...filters.timestamp, $lte: new Date(endDate) };
+    
+    // Query the database for audit logs
+    const query = AuditLog.find(filters);
+    
+    // Count total documents for pagination
+    const totalCount = await AuditLog.countDocuments(filters);
+    
+    // Apply sorting and pagination
+    const logs = await query
+      .sort({ timestamp: -1 })
+      .skip(offset)
+      .limit(limit)
+      .lean();
+    
+    // Transform the logs to match the expected format
+    const transformedLogs = logs.map(log => ({
+      id: log._id.toString(),
+      timestamp: log.timestamp.toISOString(),
+      user: log.userId,
+      action: log.action,
+      resource: log.resource,
+      ip: log.ipAddress,
+      userAgent: log.userAgent,
+      metadata: log.metadata
+    }));
 
     const auditData = {
-      logs: paginatedLogs,
-      totalCount: filteredLogs.length,
+      logs: transformedLogs,
+      totalCount,
       limit,
       offset,
-      totalPages: Math.ceil(filteredLogs.length / limit),
+      totalPages: Math.ceil(totalCount / limit),
       currentPage: Math.floor(offset / limit) + 1
     };
 
@@ -136,18 +77,74 @@ export async function POST(request: NextRequest) {
 
     switch(action) {
       case 'export-logs':
-        // In a real app, this would generate and return an export file
-        return NextResponse.json({ 
+        // Return audit logs for export
+        const filters: any = {};
+        if (body.startDate) filters.timestamp = { ...filters.timestamp, $gte: new Date(body.startDate) };
+        if (body.endDate) filters.timestamp = { ...filters.timestamp, $lte: new Date(body.endDate) };
+        if (body.action) filters.action = { $regex: body.action, $options: 'i' };
+        if (body.userId) filters.userId = { $regex: body.userId, $options: 'i' };
+        if (body.resource) filters.resource = { $regex: body.resource, $options: 'i' };
+        
+        const logs = await AuditLog.find(filters)
+          .sort({ timestamp: -1 })
+          .limit(10000) // Limit export to 10k records
+          .lean();
+        
+        const transformedLogs = logs.map(log => ({
+          id: log._id.toString(),
+          timestamp: log.timestamp.toISOString(),
+          user: log.userId,
+          action: log.action,
+          resource: log.resource,
+          ip: log.ipAddress,
+          userAgent: log.userAgent,
+          metadata: log.metadata
+        }));
+        
+        // Set response headers for CSV download
+        const response = new NextResponse(JSON.stringify(transformedLogs, null, 2));
+        response.headers.set('Content-Type', 'application/json');
+        response.headers.set('Content-Disposition', `attachment; filename=audit-logs-${new Date().toISOString().split('T')[0]}.json`);
+        
+        return response;
+        
+      case 'create-log':
+        // Create a new audit log entry
+        if (!body.userId || !body.action || !body.resource) {
+          return NextResponse.json(
+            { error: 'Missing required fields: userId, action, resource' }, 
+            { status: 400 }
+          );
+        }
+        
+        const newLog = await AuditLog.create({
+          userId: body.userId,
+          action: body.action,
+          resource: body.resource,
+          ipAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
+          userAgent: request.headers.get('user-agent') || 'unknown',
+          metadata: body.metadata || {}
+        });
+        
+        return NextResponse.json({
           success: true,
-          exportId: 'exp_' + Date.now(),
-          message: 'Audit logs export started'
+          logId: newLog._id.toString(),
+          message: 'Audit log created successfully'
         });
         
       case 'clear-logs':
-        // In a real app, this would clear old audit logs based on retention policy
+        // Clear old audit logs based on retention policy (e.g., keep last 30 days)
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - 30); // Keep last 30 days
+        
+        const result = await AuditLog.deleteMany({
+          timestamp: { $lt: cutoffDate }
+        });
+        
         return NextResponse.json({ 
           success: true,
-          message: 'Audit logs cleared according to retention policy'
+          deletedCount: result.deletedCount,
+          message: `${result.deletedCount} old audit logs cleared according to retention policy`
         });
         
       default:
