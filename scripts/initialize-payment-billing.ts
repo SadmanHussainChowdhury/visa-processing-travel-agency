@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { dbConnect } from '../lib/db';
+import { dbConnect } from '../lib/db.ts';
 import FeeStructure from '../models/FeeStructure';
 import Invoice from '../models/Invoice';
 import Payment from '../models/Payment';
@@ -142,12 +142,17 @@ async function initializePaymentBilling() {
     // Check if payments already exist
     const existingPayments = await Payment.countDocuments();
     if (existingPayments === 0) {
+      // Get the invoices we just created to link payments to them
+      const createdInvoices = await Invoice.find({}).sort({ createdAt: 1 }).limit(3);
+      
       // Create sample payments
-      const payments = [
-        {
-          invoiceId: 'sample_invoice_1',
-          invoiceNumber: 'INV-2024-0001',
-          clientName: 'John Smith',
+      const payments = [];
+      
+      if (createdInvoices.length > 0) {
+        payments.push({
+          invoiceId: createdInvoices[0]._id.toString(),
+          invoiceNumber: createdInvoices[0].invoiceNumber,
+          clientName: createdInvoices[0].clientName,
           amount: 210,
           currency: 'USD',
           status: 'completed',
@@ -155,11 +160,14 @@ async function initializePaymentBilling() {
           transactionId: 'txn_123456789',
           gateway: 'Stripe',
           date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-        },
-        {
-          invoiceId: 'sample_invoice_2',
-          invoiceNumber: 'INV-2024-0002',
-          clientName: 'Sarah Johnson',
+        });
+      }
+      
+      if (createdInvoices.length > 1) {
+        payments.push({
+          invoiceId: createdInvoices[1]._id.toString(),
+          invoiceNumber: createdInvoices[1].invoiceNumber,
+          clientName: createdInvoices[1].clientName,
           amount: 265,
           currency: 'USD',
           status: 'pending',
@@ -167,11 +175,14 @@ async function initializePaymentBilling() {
           transactionId: 'bt_987654321',
           gateway: 'Bank Transfer',
           date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
-        },
-        {
-          invoiceId: 'sample_invoice_3',
-          invoiceNumber: 'INV-2024-0003',
-          clientName: 'Michael Brown',
+        });
+      }
+      
+      if (createdInvoices.length > 2) {
+        payments.push({
+          invoiceId: createdInvoices[2]._id.toString(),
+          invoiceNumber: createdInvoices[2].invoiceNumber,
+          clientName: createdInvoices[2].clientName,
           amount: 240,
           currency: 'USD',
           status: 'pending',
@@ -179,8 +190,8 @@ async function initializePaymentBilling() {
           transactionId: 'pp_456789123',
           gateway: 'PayPal',
           date: new Date(Date.now())
-        }
-      ];
+        });
+      }
       
       await Payment.insertMany(payments);
       console.log('Created sample payments');

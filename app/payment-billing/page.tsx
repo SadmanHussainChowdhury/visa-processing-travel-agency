@@ -341,6 +341,8 @@ export default function PaymentBillingPage() {
 
   const handleProcessPayment = async (invoiceId: string) => {
     try {
+      console.log('Attempting to process payment for invoice ID:', invoiceId);
+      
       const response = await fetch('/api/payment-billing/payments', {
         method: 'POST',
         headers: {
@@ -356,17 +358,115 @@ export default function PaymentBillingPage() {
         }),
       });
       
+      console.log('Process payment response status:', response.status);
+      
       if (response.ok) {
         const result = await response.json();
+        console.log('Payment process result:', result);
         alert(`Payment processed successfully for invoice ${invoiceId}`);
         // Refresh the data
         loadPaymentData();
       } else {
-        alert('Failed to process payment');
+        const errorData = await response.json();
+        console.error('Payment process error response:', errorData);
+        alert(`Failed to process payment: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
       console.error('Error processing payment:', error);
       alert('Failed to process payment');
+    }
+  };
+
+  const handleAddPayment = async () => {
+    try {
+      // First, let's get an existing invoice to attach the payment to
+      if (invoices.length === 0) {
+        alert('No invoices available to create a payment for. Please create an invoice first.');
+        return;
+      }
+      
+      const sampleInvoice = invoices[0]; // Use the first invoice as an example
+      
+      // Log the invoice ID for debugging
+      console.log('Attempting to create payment for invoice ID:', sampleInvoice.id);
+      
+      const response = await fetch('/api/payment-billing/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'create-payment',
+          invoiceId: sampleInvoice.id,
+          amount: 150,
+          currency: 'USD',
+          status: 'completed',
+          method: 'credit-card',
+          gateway: 'Stripe',
+          transactionId: `txn_${Date.now()}`
+        }),
+      });
+      
+      console.log('Response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Payment creation result:', result);
+        alert(`Payment added successfully: ${result.payment.transactionId}`);
+        // Refresh the data
+        loadPaymentData();
+      } else {
+        const errorData = await response.json();
+        console.error('Payment creation error response:', errorData);
+        alert(`Failed to add payment: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error adding payment:', error);
+      alert('Failed to add payment');
+    }
+  };
+
+  const handleEditPayment = async (paymentId: string) => {
+    if (!confirm('Are you sure you want to edit this payment?')) {
+      return;
+    }
+    
+    try {
+      console.log('Attempting to update payment with ID:', paymentId);
+      
+      const response = await fetch('/api/payment-billing/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'update-payment',
+          id: paymentId,
+          amount: 250, // In a real app, this would come from a form
+          currency: 'USD',
+          status: 'completed',
+          method: 'bank-transfer',
+          gateway: 'Bank Transfer',
+          transactionId: 'updated_txn_123'
+        }),
+      });
+      
+      console.log('Update response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Payment update result:', result);
+        alert(`Payment updated successfully: ${result.payment.transactionId}`);
+        // Refresh the data
+        loadPaymentData();
+      } else {
+        const errorData = await response.json();
+        console.error('Payment update error response:', errorData);
+        alert(`Failed to update payment: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error updating payment:', error);
+      alert('Failed to update payment');
     }
   };
 
@@ -654,6 +754,13 @@ export default function PaymentBillingPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
           <h3 className="text-lg font-semibold text-gray-900">Payment Status Tracking</h3>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+            <button 
+              onClick={handleAddPayment}
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            >
+              <Plus className="h-4 w-4 mr-1" />
+              Add Payment
+            </button>
             <div className="flex space-x-2">
               <select
                 value={filter}
@@ -743,6 +850,14 @@ export default function PaymentBillingPage() {
                     }`}>
                       {payment.status}
                     </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => handleEditPayment(payment.id)}
+                      className="text-green-600 hover:text-green-900 mr-3"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
