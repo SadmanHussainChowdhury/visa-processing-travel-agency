@@ -49,11 +49,30 @@ interface Payment {
   gateway: string;
 }
 
+interface Transaction {
+  id: string;
+  transactionId: string;
+  invoiceId: string;
+  invoiceNumber: string;
+  clientName: string;
+  amount: number;
+  currency: string;
+  type: 'payment' | 'refund' | 'adjustment' | 'fee';
+  description: string;
+  status: 'completed' | 'pending' | 'cancelled' | 'failed';
+  method: 'credit-card' | 'bank-transfer' | 'paypal' | 'cash' | 'cheque';
+  gateway: string;
+  date: string;
+  processedBy: string;
+  notes: string;
+}
+
 export default function PaymentBillingPage() {
   const [activeTab, setActiveTab] = useState('overview');
   const [feeStructures, setFeeStructures] = useState<FeeStructure[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [currencies, setCurrencies] = useState<string[]>(['USD', 'EUR', 'GBP', 'CAD', 'AUD']);
   const [filter, setFilter] = useState('all');
@@ -67,12 +86,13 @@ export default function PaymentBillingPage() {
     setLoading(true);
     try {
       // Fetch data from specialized API routes
-      const [paymentRes, feeStructureRes, invoiceRes, paymentDetailsRes, currencyRes] = await Promise.all([
+      const [paymentRes, feeStructureRes, invoiceRes, paymentDetailsRes, currencyRes, transactionRes] = await Promise.all([
         fetch('/api/payment-billing'),
         fetch('/api/payment-billing/fee-structure'),
         fetch('/api/payment-billing/invoices'),
         fetch('/api/payment-billing/payments'),
-        fetch('/api/payment-billing/currency')
+        fetch('/api/payment-billing/currency'),
+        fetch('/api/payment-billing/transactions')
       ]);
       
       const paymentData = await paymentRes.json();
@@ -80,11 +100,13 @@ export default function PaymentBillingPage() {
       const invoiceData = await invoiceRes.json();
       const paymentDetailsData = await paymentDetailsRes.json();
       const currencyData = await currencyRes.json();
+      const transactionData = await transactionRes.json();
       
       // Set the data in state
       setFeeStructures(feeStructureData.feeStructures || []);
       setInvoices(invoiceData.invoices || []);
       setPayments(paymentDetailsData.payments || []);
+      setTransactions(transactionData.transactions || []);
       
       // Update currencies state if needed
       if (currencyData.currencies) {
@@ -376,6 +398,97 @@ export default function PaymentBillingPage() {
       setFeeStructures(sampleFeeStructures);
       setInvoices(sampleInvoices);
       setPayments(samplePayments);
+      
+      // Sample transaction data
+      const sampleTransactions: Transaction[] = [
+        {
+          id: 'trans1',
+          transactionId: 'TRX-2024-001',
+          invoiceId: 'inv1',
+          invoiceNumber: 'INV-2024-001',
+          clientName: 'John Smith',
+          amount: 210,
+          currency: 'USD',
+          type: 'payment',
+          description: 'Visa processing payment',
+          status: 'completed',
+          method: 'credit-card',
+          gateway: 'Stripe',
+          date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          processedBy: 'Admin User',
+          notes: 'Initial visa processing fee'
+        },
+        {
+          id: 'trans2',
+          transactionId: 'TRX-2024-002',
+          invoiceId: 'inv2',
+          invoiceNumber: 'INV-2024-002',
+          clientName: 'Sarah Johnson',
+          amount: 265,
+          currency: 'USD',
+          type: 'payment',
+          description: 'Business visa with expedited processing',
+          status: 'completed',
+          method: 'bank-transfer',
+          gateway: 'Bank Transfer',
+          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          processedBy: 'Admin User',
+          notes: 'Expedited service fee included'
+        },
+        {
+          id: 'trans3',
+          transactionId: 'TRX-2024-003',
+          invoiceId: 'inv4',
+          invoiceNumber: 'INV-2024-004',
+          clientName: 'Emma Wilson',
+          amount: 350,
+          currency: 'USD',
+          type: 'payment',
+          description: 'Work visa processing',
+          status: 'completed',
+          method: 'bank-transfer',
+          gateway: 'Bank Transfer',
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          processedBy: 'Admin User',
+          notes: 'Legal support included'
+        },
+        {
+          id: 'trans4',
+          transactionId: 'TRX-2024-004',
+          invoiceId: 'inv5',
+          invoiceNumber: 'INV-2024-005',
+          clientName: 'David Chen',
+          amount: 300,
+          currency: 'USD',
+          type: 'payment',
+          description: 'Medical visa processing',
+          status: 'failed',
+          method: 'credit-card',
+          gateway: 'Stripe',
+          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          processedBy: 'Admin User',
+          notes: 'Payment declined by bank'
+        },
+        {
+          id: 'trans5',
+          transactionId: 'TRX-2024-005',
+          invoiceId: 'inv3',
+          invoiceNumber: 'INV-2024-003',
+          clientName: 'Michael Brown',
+          amount: 240,
+          currency: 'USD',
+          type: 'payment',
+          description: 'Student visa processing',
+          status: 'pending',
+          method: 'paypal',
+          gateway: 'PayPal',
+          date: new Date(Date.now()).toISOString(),
+          processedBy: 'Admin User',
+          notes: 'Awaiting payment confirmation'
+        }
+      ];
+      
+      setTransactions(sampleTransactions);
     } finally {
       setLoading(false);
     }
@@ -1162,6 +1275,130 @@ export default function PaymentBillingPage() {
     </div>
   );
 
+  const renderTransactions = () => (
+    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+          <h3 className="text-lg font-semibold text-gray-900">Transaction History</h3>
+          <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+            <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+              <Plus className="h-4 w-4 mr-1" />
+              New Transaction
+            </button>
+            <div className="flex space-x-2">
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+              >
+                <option value="all">All Types</option>
+                <option value="payment">Payment</option>
+                <option value="refund">Refund</option>
+                <option value="adjustment">Adjustment</option>
+                <option value="fee">Fee</option>
+              </select>
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-4 w-4 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 py-2 sm:text-sm border-gray-300 rounded-md"
+                  placeholder="Search..."
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {loading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Transaction ID
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Invoice
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Client
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Processed By
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {transactions.map((transaction) => (
+                <tr key={transaction.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {transaction.transactionId}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {transaction.invoiceNumber}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {transaction.clientName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                      transaction.type === 'payment' ? 'bg-blue-100 text-blue-800' :
+                      transaction.type === 'refund' ? 'bg-green-100 text-green-800' :
+                      transaction.type === 'adjustment' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-purple-100 text-purple-800'
+                    }`}>
+                      {transaction.type}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {transaction.currency} {transaction.amount.toFixed(2)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full capitalize ${
+                      transaction.status === 'completed' ? 'bg-green-100 text-green-800' :
+                      transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                      transaction.status === 'failed' ? 'bg-red-100 text-red-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {transaction.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {new Date(transaction.date).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {transaction.processedBy}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <ProtectedRoute>
       <SidebarLayout 
@@ -1229,6 +1466,20 @@ export default function PaymentBillingPage() {
             
             <button
               className={`px-4 py-2 font-medium text-sm ${
+                activeTab === 'transactions'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('transactions')}
+            >
+              <div className="flex items-center">
+                <CreditCard className="h-4 w-4 mr-2" />
+                Transaction History
+              </div>
+            </button>
+            
+            <button
+              className={`px-4 py-2 font-medium text-sm ${
                 activeTab === 'currency'
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -1247,6 +1498,7 @@ export default function PaymentBillingPage() {
           {activeTab === 'fee-structure' && renderFeeStructure()}
           {activeTab === 'invoices' && renderInvoices()}
           {activeTab === 'payments' && renderPayments()}
+          {activeTab === 'transactions' && renderTransactions()}
           {activeTab === 'currency' && renderCurrencySupport()}
         </div>
       </SidebarLayout>

@@ -1,70 +1,71 @@
-import mongoose, { Schema, Document, Types } from 'mongoose';
+import mongoose from 'mongoose';
 
-export interface IClientRef {
-  id: string;
-  name: string;
-}
-
-export interface ITransaction extends Document {
-  date: Date;
-  type: 'revenue' | 'expense';
-  description: string;
-  amount: number;
-  category: string;
-  client?: IClientRef;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const clientRefSchema = new Schema<IClientRef>({
-  id: {
+const transactionSchema = new mongoose.Schema({
+  transactionId: {
     type: String,
     required: true,
+    unique: true
   },
-  name: {
+  invoiceId: {
     type: String,
-    required: true,
+    required: true
   },
-});
-
-const transactionSchema = new Schema<ITransaction>({
-  date: {
-    type: Date,
-    required: true,
-    default: Date.now,
-  },
-  type: {
+  invoiceNumber: {
     type: String,
-    enum: ['revenue', 'expense'],
-    required: true,
+    required: true
   },
-  description: {
+  clientName: {
     type: String,
-    required: true,
-    trim: true,
+    required: true
   },
   amount: {
     type: Number,
-    required: true,
-    min: 0,
+    required: true
   },
-  category: {
+  currency: {
     type: String,
     required: true,
-    trim: true,
+    default: 'USD'
   },
-  client: {
-    type: clientRefSchema,
-    required: false,
+  type: {
+    type: String,
+    enum: ['payment', 'refund', 'adjustment', 'fee'],
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ['completed', 'pending', 'cancelled', 'failed'],
+    default: 'pending'
+  },
+  method: {
+    type: String,
+    enum: ['credit-card', 'bank-transfer', 'paypal', 'cash', 'cheque'],
+    required: true
+  },
+  gateway: {
+    type: String,
+    required: true
+  },
+  date: {
+    type: Date,
+    default: Date.now
+  },
+  processedBy: {
+    type: String,
+    required: true
   },
   notes: {
     type: String,
-    trim: true,
+    default: ''
   },
-}, {
-  timestamps: true,
-});
+  metadata: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  }
+}, { timestamps: true });
 
-export default mongoose.models.Transaction || 
-  mongoose.model<ITransaction>('Transaction', transactionSchema);
+export default mongoose.models.VisaTransaction || mongoose.model('VisaTransaction', transactionSchema);
