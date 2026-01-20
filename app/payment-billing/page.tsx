@@ -125,6 +125,38 @@ export default function PaymentBillingPage() {
           serviceFee: 30,
           currency: 'USD',
           description: 'Short-term transit visa'
+        },
+        {
+          id: 'fs5',
+          name: 'Work Visa',
+          governmentFee: 250,
+          serviceFee: 100,
+          currency: 'USD',
+          description: 'Employment-based visa with legal support'
+        },
+        {
+          id: 'fs6',
+          name: 'Family Reunion Visa',
+          governmentFee: 220,
+          serviceFee: 80,
+          currency: 'USD',
+          description: 'Family reunification visa processing'
+        },
+        {
+          id: 'fs7',
+          name: 'Medical Visa',
+          governmentFee: 180,
+          serviceFee: 70,
+          currency: 'USD',
+          description: 'Medical treatment visa with assistance'
+        },
+        {
+          id: 'fs8',
+          name: 'Diplomatic Visa',
+          governmentFee: 0,
+          serviceFee: 50,
+          currency: 'USD',
+          description: 'Diplomatic and official visa processing'
         }
       ];
 
@@ -209,6 +241,67 @@ export default function PaymentBillingPage() {
               total: 60
             }
           ]
+        },
+        {
+          id: 'inv4',
+          invoiceNumber: 'INV-2024-004',
+          clientName: 'Emma Wilson',
+          clientId: 'CL004',
+          issueDate: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
+          dueDate: new Date(Date.now() + 27 * 24 * 60 * 60 * 1000).toISOString(),
+          totalAmount: 350,
+          currency: 'USD',
+          status: 'paid',
+          items: [
+            {
+              id: 'item7',
+              description: 'Work Visa Processing',
+              quantity: 1,
+              unitPrice: 250,
+              total: 250
+            },
+            {
+              id: 'item8',
+              description: 'Legal Support Service',
+              quantity: 1,
+              unitPrice: 100,
+              total: 100
+            }
+          ]
+        },
+        {
+          id: 'inv5',
+          invoiceNumber: 'INV-2024-005',
+          clientName: 'David Chen',
+          clientId: 'CL005',
+          issueDate: new Date(Date.now() - 4 * 24 * 60 * 60 * 1000).toISOString(),
+          dueDate: new Date(Date.now() + 26 * 24 * 60 * 60 * 1000).toISOString(),
+          totalAmount: 300,
+          currency: 'USD',
+          status: 'overdue',
+          items: [
+            {
+              id: 'item9',
+              description: 'Medical Visa Processing',
+              quantity: 1,
+              unitPrice: 180,
+              total: 180
+            },
+            {
+              id: 'item10',
+              description: 'Medical Assistance Package',
+              quantity: 1,
+              unitPrice: 70,
+              total: 70
+            },
+            {
+              id: 'item11',
+              description: 'Travel Insurance',
+              quantity: 1,
+              unitPrice: 50,
+              total: 50
+            }
+          ]
         }
       ];
 
@@ -251,6 +344,32 @@ export default function PaymentBillingPage() {
           transactionId: 'pp_456789123',
           date: new Date(Date.now()).toISOString(),
           gateway: 'PayPal'
+        },
+        {
+          id: 'pay4',
+          invoiceId: 'inv4',
+          invoiceNumber: 'INV-2024-004',
+          clientName: 'Emma Wilson',
+          amount: 350,
+          currency: 'USD',
+          status: 'completed',
+          method: 'bank-transfer',
+          transactionId: 'bt_112233445',
+          date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+          gateway: 'Bank Transfer'
+        },
+        {
+          id: 'pay5',
+          invoiceId: 'inv5',
+          invoiceNumber: 'INV-2024-005',
+          clientName: 'David Chen',
+          amount: 300,
+          currency: 'USD',
+          status: 'failed',
+          method: 'credit-card',
+          transactionId: 'txn_fail_55667788',
+          date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+          gateway: 'Stripe'
         }
       ];
 
@@ -272,12 +391,18 @@ export default function PaymentBillingPage() {
         body: JSON.stringify({
           action: 'create-invoice',
           clientId: 'CL001',
-          clientName: 'New Client',
+          clientName: 'New Visa Client',
           items: [{
-            description: 'Sample Service',
+            description: 'Tourist Visa Processing',
             quantity: 1,
-            unitPrice: 100,
-            total: 100
+            unitPrice: 160,
+            total: 160
+          },
+          {
+            description: 'Service Fee',
+            quantity: 1,
+            unitPrice: 50,
+            total: 50
           }],
           currency: 'USD',
           dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -287,27 +412,27 @@ export default function PaymentBillingPage() {
       if (response.ok) {
         const result = await response.json();
         console.log('Invoice creation result:', result);
-        alert(`Invoice ${result.invoice.invoiceNumber} created successfully`);
+        alert(`Visa Invoice ${result.invoice.invoiceNumber} created successfully`);
         // Refresh the data
         loadPaymentData();
       } else {
         const errorData = await response.json();
         console.error('Invoice creation error response:', errorData);
-        alert(`Failed to create invoice: ${errorData.error || 'Unknown error'}`);
+        alert(`Failed to create visa invoice: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error creating invoice:', error);
-      alert('Failed to create invoice');
+      console.error('Error creating visa invoice:', error);
+      alert('Failed to create visa invoice');
     }
   };
 
   const handleEditInvoice = async (invoiceId: string) => {
-    if (!confirm('Are you sure you want to edit this invoice?')) {
+    if (!confirm('Are you sure you want to edit this visa invoice?')) {
       return;
     }
     
     try {
-      console.log('Attempting to update invoice with ID:', invoiceId);
+      console.log('Attempting to update visa invoice with ID:', invoiceId);
       
       const response = await fetch('/api/payment-billing/invoices', {
         method: 'POST',
@@ -318,47 +443,53 @@ export default function PaymentBillingPage() {
           action: 'update-invoice',
           id: invoiceId,
           clientId: 'CL001',
-          clientName: 'Updated Client',
+          clientName: 'Updated Visa Client',
           totalAmount: 250,
           currency: 'USD',
           status: 'sent',
           items: [{
-            description: 'Updated Service',
+            description: 'Business Visa Processing',
             quantity: 1,
-            unitPrice: 250,
-            total: 250
+            unitPrice: 190,
+            total: 190
+          },
+          {
+            description: 'Expedited Service',
+            quantity: 1,
+            unitPrice: 60,
+            total: 60
           }],
-          notes: 'Updated invoice'
+          notes: 'Updated visa invoice'
         }),
       });
       
-      console.log('Update invoice response status:', response.status);
+      console.log('Update visa invoice response status:', response.status);
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Invoice update result:', result);
-        alert(`Invoice updated successfully: ${result.invoice.invoiceNumber}`);
+        console.log('Visa invoice update result:', result);
+        alert(`Visa Invoice updated successfully: ${result.invoice.invoiceNumber}`);
         // Refresh the data
         loadPaymentData();
       } else {
         const errorData = await response.json();
-        console.error('Invoice update error response:', errorData);
-        alert(`Failed to update invoice: ${errorData.error || 'Unknown error'}`);
+        console.error('Visa invoice update error response:', errorData);
+        alert(`Failed to update visa invoice: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error updating invoice:', error);
-      alert('Failed to update invoice');
+      console.error('Error updating visa invoice:', error);
+      alert('Failed to update visa invoice');
     }
   };
 
   const handleViewInvoice = (invoiceId: string) => {
-    alert(`View invoice ${invoiceId} details`);
+    alert(`View visa invoice ${invoiceId} details`);
   };
 
 
 
   const handleDeleteInvoice = async (invoiceId: string) => {
-    if (confirm('Are you sure you want to delete this invoice?')) {
+    if (confirm('Are you sure you want to delete this visa invoice?')) {
       try {
         const response = await fetch('/api/payment-billing/invoices', {
           method: 'POST',
@@ -373,26 +504,26 @@ export default function PaymentBillingPage() {
         
         if (response.ok) {
           const result = await response.json();
-          alert('Invoice deleted successfully');
+          alert('Visa invoice deleted successfully');
           // Refresh the data
           loadPaymentData();
         } else {
-          alert('Failed to delete invoice');
+          alert('Failed to delete visa invoice');
         }
       } catch (error) {
-        console.error('Error deleting invoice:', error);
-        alert('Failed to delete invoice');
+        console.error('Error deleting visa invoice:', error);
+        alert('Failed to delete visa invoice');
       }
     }
   };
 
   const handlePrintInvoice = (invoiceId: string) => {
-    alert(`Print invoice ${invoiceId}`);
+    alert(`Print visa invoice ${invoiceId}`);
   };
 
   const handleProcessPayment = async (invoiceId: string) => {
     try {
-      console.log('Attempting to process payment for invoice ID:', invoiceId);
+      console.log('Attempting to process visa payment for invoice ID:', invoiceId);
       
       const response = await fetch('/api/payment-billing/payments', {
         method: 'POST',
@@ -409,22 +540,22 @@ export default function PaymentBillingPage() {
         }),
       });
       
-      console.log('Process payment response status:', response.status);
+      console.log('Process visa payment response status:', response.status);
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Payment process result:', result);
-        alert(`Payment processed successfully for invoice ${invoiceId}`);
+        console.log('Visa payment process result:', result);
+        alert(`Visa payment processed successfully for invoice ${invoiceId}`);
         // Refresh the data
         loadPaymentData();
       } else {
         const errorData = await response.json();
-        console.error('Payment process error response:', errorData);
-        alert(`Failed to process payment: ${errorData.error || 'Unknown error'}`);
+        console.error('Visa payment process error response:', errorData);
+        alert(`Failed to process visa payment: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error processing payment:', error);
-      alert('Failed to process payment');
+      console.error('Error processing visa payment:', error);
+      alert('Failed to process visa payment');
     }
   };
 
@@ -432,14 +563,14 @@ export default function PaymentBillingPage() {
     try {
       // First, let's get an existing invoice to attach the payment to
       if (invoices.length === 0) {
-        alert('No invoices available to create a payment for. Please create an invoice first.');
+        alert('No visa invoices available to create a payment for. Please create a visa invoice first.');
         return;
       }
       
       const sampleInvoice = invoices[0]; // Use the first invoice as an example
       
       // Log the invoice ID for debugging
-      console.log('Attempting to create payment for invoice ID:', sampleInvoice.id);
+      console.log('Attempting to create visa payment for invoice ID:', sampleInvoice.id);
       
       const response = await fetch('/api/payment-billing/payments', {
         method: 'POST',
@@ -462,28 +593,28 @@ export default function PaymentBillingPage() {
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Payment creation result:', result);
-        alert(`Payment added successfully: ${result.payment.transactionId}`);
+        console.log('Visa payment creation result:', result);
+        alert(`Visa payment added successfully: ${result.payment.transactionId}`);
         // Refresh the data
         loadPaymentData();
       } else {
         const errorData = await response.json();
-        console.error('Payment creation error response:', errorData);
-        alert(`Failed to add payment: ${errorData.error || 'Unknown error'}`);
+        console.error('Visa payment creation error response:', errorData);
+        alert(`Failed to add visa payment: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error adding payment:', error);
-      alert('Failed to add payment');
+      console.error('Error adding visa payment:', error);
+      alert('Failed to add visa payment');
     }
   };
 
   const handleEditPayment = async (paymentId: string) => {
-    if (!confirm('Are you sure you want to edit this payment?')) {
+    if (!confirm('Are you sure you want to edit this visa payment?')) {
       return;
     }
     
     try {
-      console.log('Attempting to update payment with ID:', paymentId);
+      console.log('Attempting to update visa payment with ID:', paymentId);
       
       const response = await fetch('/api/payment-billing/payments', {
         method: 'POST',
@@ -502,22 +633,22 @@ export default function PaymentBillingPage() {
         }),
       });
       
-      console.log('Update response status:', response.status);
+      console.log('Update visa payment response status:', response.status);
       
       if (response.ok) {
         const result = await response.json();
-        console.log('Payment update result:', result);
-        alert(`Payment updated successfully: ${result.payment.transactionId}`);
+        console.log('Visa payment update result:', result);
+        alert(`Visa payment updated successfully: ${result.payment.transactionId}`);
         // Refresh the data
         loadPaymentData();
       } else {
         const errorData = await response.json();
-        console.error('Payment update error response:', errorData);
-        alert(`Failed to update payment: ${errorData.error || 'Unknown error'}`);
+        console.error('Visa payment update error response:', errorData);
+        alert(`Failed to update visa payment: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error updating payment:', error);
-      alert('Failed to update payment');
+      console.error('Error updating visa payment:', error);
+      alert('Failed to update visa payment');
     }
   };
 
@@ -591,10 +722,10 @@ export default function PaymentBillingPage() {
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Fee Structure</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Visa Fee Structure</h3>
           <button className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
             <Plus className="h-4 w-4 mr-1" />
-            Add Fee
+            Add Visa Fee
           </button>
         </div>
       </div>
@@ -662,14 +793,14 @@ export default function PaymentBillingPage() {
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <h3 className="text-lg font-semibold text-gray-900">Invoices</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Visa Invoices</h3>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
             <button 
               onClick={handleCreateInvoice}
               className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="h-4 w-4 mr-1" />
-              New Invoice
+              New Visa Invoice
             </button>
             <div className="flex space-x-2">
               <select
@@ -803,14 +934,14 @@ export default function PaymentBillingPage() {
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
-          <h3 className="text-lg font-semibold text-gray-900">Payment Status Tracking</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Visa Payment Status</h3>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
             <button 
               onClick={handleAddPayment}
               className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
             >
               <Plus className="h-4 w-4 mr-1" />
-              Add Payment
+              Add Visa Payment
             </button>
             <div className="flex space-x-2">
               <select
@@ -923,10 +1054,10 @@ export default function PaymentBillingPage() {
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Multi-Currency Support</h3>
+          <h3 className="text-lg font-semibold text-gray-900">Multi-Currency for Visa Fees</h3>
           <button className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
             <Plus className="h-4 w-4 mr-1" />
-            Add Currency
+            Add Supported Currency
           </button>
         </div>
       </div>
@@ -1035,7 +1166,7 @@ export default function PaymentBillingPage() {
     <ProtectedRoute>
       <SidebarLayout 
         title="Payment & Billing" 
-        description="Manage fee structures, invoices, payments, and multi-currency support"
+        description="Manage visa processing fees, client invoices, payments, and multi-currency support for travel agency operations"
       >
         <div className="max-w-7xl mx-auto">
           {/* Tab Navigation */}
@@ -1050,7 +1181,7 @@ export default function PaymentBillingPage() {
             >
               <div className="flex items-center">
                 <CreditCard className="h-4 w-4 mr-2" />
-                Overview
+                Financial Overview
               </div>
             </button>
             
@@ -1092,7 +1223,7 @@ export default function PaymentBillingPage() {
             >
               <div className="flex items-center">
                 <CreditCard className="h-4 w-4 mr-2" />
-                Payment Tracking
+                Payment Status
               </div>
             </button>
             
