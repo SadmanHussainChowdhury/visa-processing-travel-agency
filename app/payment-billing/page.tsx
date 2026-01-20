@@ -1275,13 +1275,105 @@ export default function PaymentBillingPage() {
     </div>
   );
 
+  const handleCreateTransaction = async () => {
+    try {
+      // First, let's get an existing invoice to attach the transaction to
+      if (invoices.length === 0) {
+        alert('No invoices available to create a transaction for. Please create an invoice first.');
+        return;
+      }
+      
+      const sampleInvoice = invoices[0]; // Use the first invoice as an example
+      
+      const response = await fetch('/api/payment-billing/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'create-transaction',
+          invoiceId: sampleInvoice.id,
+          invoiceNumber: sampleInvoice.invoiceNumber,
+          clientName: sampleInvoice.clientName,
+          amount: 200,
+          currency: 'USD',
+          type: 'payment',
+          description: 'Visa processing payment',
+          status: 'completed',
+          method: 'credit-card',
+          gateway: 'Stripe',
+          processedBy: 'Admin User',
+          notes: 'Created from transaction history page'
+        }),
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Transaction creation result:', result);
+        alert(`Transaction created successfully: ${result.transaction.transactionId}`);
+        // Refresh the data
+        loadPaymentData();
+      } else {
+        const errorData = await response.json();
+        console.error('Transaction creation error response:', errorData);
+        alert(`Failed to create transaction: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error creating transaction:', error);
+      alert('Failed to create transaction');
+    }
+  };
+
+  const handleEditTransaction = async (transactionId: string) => {
+    if (!confirm('Are you sure you want to edit this transaction?')) {
+      return;
+    }
+    
+    try {
+      console.log('Attempting to update transaction with ID:', transactionId);
+      
+      const response = await fetch('/api/payment-billing/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'update-transaction',
+          id: transactionId,
+          amount: 250, // In a real app, this would come from a form
+          status: 'completed',
+          notes: 'Updated from transaction history page'
+        }),
+      });
+      
+      console.log('Update transaction response status:', response.status);
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Transaction update result:', result);
+        alert(`Transaction updated successfully: ${result.transaction.transactionId}`);
+        // Refresh the data
+        loadPaymentData();
+      } else {
+        const errorData = await response.json();
+        console.error('Transaction update error response:', errorData);
+        alert(`Failed to update transaction: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error updating transaction:', error);
+      alert('Failed to update transaction');
+    }
+  };
+
   const renderTransactions = () => (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
           <h3 className="text-lg font-semibold text-gray-900">Transaction History</h3>
           <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-            <button className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
+            <button 
+              onClick={handleCreateTransaction}
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700">
               <Plus className="h-4 w-4 mr-1" />
               New Transaction
             </button>
@@ -1347,6 +1439,9 @@ export default function PaymentBillingPage() {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Processed By
                 </th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -1389,6 +1484,14 @@ export default function PaymentBillingPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {transaction.processedBy}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button
+                      onClick={() => handleEditTransaction(transaction.id)}
+                      className="text-green-600 hover:text-green-900 mr-3"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
                   </td>
                 </tr>
               ))}
