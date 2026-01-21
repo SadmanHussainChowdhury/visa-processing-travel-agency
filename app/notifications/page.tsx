@@ -135,7 +135,7 @@ export default function NotificationsPage() {
     <ProtectedRoute>
       <SidebarLayout 
         title="Communication & Notifications" 
-        description="Manage email/SMS notifications, client updates, and document alerts"
+        description="Manage email/SMS notifications and client updates"
       >
         {/* Header Actions */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -159,13 +159,7 @@ export default function NotificationsPage() {
               <FileText className="h-4 w-4" />
               <span>Message Templates</span>
             </Link>
-            <Link
-              href="/notifications/alerts"
-              className="inline-flex items-center space-x-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors"
-            >
-              <AlertTriangle className="h-4 w-4" />
-              <span>Document Alerts</span>
-            </Link>
+
           </div>
         </div>
 
