@@ -36,7 +36,10 @@ import {
   DollarSign,
   Calculator,
   BarChart3,
-  FileBarChart
+  FileBarChart,
+  Fingerprint,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -68,6 +71,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports' },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
+              { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' },
               { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
               { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' }
             ];
