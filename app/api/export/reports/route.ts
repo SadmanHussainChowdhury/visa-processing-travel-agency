@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
-import Transaction from '@/models/Transaction';
 import Commission from '@/models/Commission';
 
 export async function GET(request: NextRequest) {
@@ -10,17 +9,16 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'json'; // json, csv, excel, pdf
 
-    // Fetch all transactions and commissions for report data
-    const transactions = await Transaction.find({}).sort({ createdAt: -1 });
+    // Fetch commissions for report data (transactions are no longer available)
     const commissions = await Commission.find({}).sort({ createdAt: -1 });
 
     // Combine or process data as needed for reports
     const reportData = {
-      transactions,
+      transactions: [], // No transaction data available
       commissions,
       summary: {
-        totalTransactions: transactions.length,
-        totalRevenue: transactions.reduce((sum, t) => sum + (t.amount || 0), 0),
+        totalTransactions: 0, // No transaction data available
+        totalRevenue: 0, // No transaction data available
         totalCommissions: commissions.length,
         totalCommissionAmount: commissions.reduce((sum, c) => sum + (c.amount || 0), 0),
       }
@@ -29,29 +27,28 @@ export async function GET(request: NextRequest) {
     if (format === 'json') {
       return NextResponse.json(reportData);
     } else if (format === 'csv' || format === 'excel') {
-      // Convert to CSV format - this would be more complex in a real application
-      // For simplicity, we'll return transaction data
+      // Convert to CSV format - since transactions are no longer available, return commissions instead
       const csvHeader = [
-        'Transaction ID',
+        'Commission ID',
         'Amount',
         'Type',
         'Description',
         'Date',
-        'Category',
+        'Agent',
         'CreatedBy',
         'CreatedAt'
       ].join(',');
-
-      const csvRows = transactions.map(transaction => {
+      
+      const csvRows = commissions.map(commission => {
         const values = [
-          `"${transaction.transactionId || ''}"`,
-          `"${transaction.amount || 0}"`,
-          `"${transaction.type || ''}"`,
-          `"${(transaction.description || '').replace(/"/g, '""')}"`,
-          `"${transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : ''}"`,
-          `"${transaction.category || ''}"`,
-          `"${transaction.createdBy || ''}"`,
-          `"${transaction.createdAt ? new Date(transaction.createdAt).toISOString() : ''}"`
+          `"${commission._id || ''}"`,
+          `"${commission.amount || 0}"`,
+          `"${commission.type || ''}"`,
+          `"${(commission.description || '').replace(/"/g, '\\"')}"`,
+          `"${commission.date ? new Date(commission.date).toISOString().split('T')[0] : ''}"`,
+          `"${commission.agent || ''}"`,
+          `"${commission.createdBy || ''}"`,
+          `"${commission.createdAt ? new Date(commission.createdAt).toISOString() : ''}"`
         ];
         return values.join(',');
       });

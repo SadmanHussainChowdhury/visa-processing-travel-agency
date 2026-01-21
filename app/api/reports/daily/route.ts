@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
 import VisaApplication from '@/models/VisaApplication';
-import Payment from '@/models/Payment';
 
 export async function GET(request: NextRequest) {
   try {
@@ -32,16 +31,8 @@ export async function GET(request: NextRequest) {
         }
       });
       
-      // Calculate revenue for this day
-      const payments = await Payment.find({
-        createdAt: {
-          $gte: currentDate,
-          $lt: nextDate
-        }
-      });
-      
-      const dailyRevenue = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-      const dailyCommission = payments.reduce((sum, payment) => sum + (payment.commission || 0), 0);
+      const dailyRevenue = 0; // No payment data available
+      const dailyCommission = 0; // No payment data available
       
       dailyReports.push({
         date: currentDate.toISOString().split('T')[0],
@@ -70,9 +61,7 @@ export async function GET(request: NextRequest) {
         'Applications',
         'Approved',
         'Rejected',
-        'Pending',
-        'Revenue',
-        'Commission'
+        'Pending'
       ].join(',');
       
       const csvRows = dailyReports.map(report => {
@@ -81,9 +70,7 @@ export async function GET(request: NextRequest) {
           `"${report.count}"`,
           `"${report.approved}"`,
           `"${report.rejected}"`,
-          `"${report.pending}"`,
-          `"${report.revenue}"`,
-          `"${report.commission}"`
+          `"${report.pending}"`
         ].join(',');
       });
       

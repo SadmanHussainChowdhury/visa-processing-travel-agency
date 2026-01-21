@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
 import VisaApplication from '@/models/VisaApplication';
-import Payment from '@/models/Payment';
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,22 +15,13 @@ export async function GET(request: NextRequest) {
     const end = endDate ? new Date(endDate) : new Date();
     const start = startDate ? new Date(startDate) : new Date(end.getFullYear() - 1, end.getMonth(), 1);
     
-    // Get all applications and payments in the date range
-    const [applications, payments] = await Promise.all([
-      VisaApplication.find({
-        createdAt: {
-          $gte: start,
-          $lte: end
-        }
-      }),
-      Payment.find({
-        createdAt: {
-          $gte: start,
-          $lte: end
-        },
-        status: 'paid'
-      })
-    ]);
+    // Get all applications in the date range
+    const applications = await VisaApplication.find({
+      createdAt: {
+        $gte: start,
+        $lte: end
+      }
+    });
     
     // Group by agent for performance analysis
     const agentStats: { [key: string]: any } = {};
@@ -71,25 +61,7 @@ export async function GET(request: NextRequest) {
       }
     });
     
-    // Process payments
-    payments.forEach(payment => {
-      const agent = payment.agent || 'Unassigned';
-      if (!agentStats[agent]) {
-        agentStats[agent] = {
-          name: agent,
-          applications: 0,
-          successful: 0,
-          rejected: 0,
-          pending: 0,
-          processing: 0,
-          revenue: 0,
-          commission: 0
-        };
-      }
-      
-      agentStats[agent].revenue += payment.amount || 0;
-      agentStats[agent].commission += payment.commission || 0;
-    });
+
     
     // Calculate performance metrics
     const agentReports = Object.values(agentStats).map((stats: any) => ({
@@ -97,8 +69,8 @@ export async function GET(request: NextRequest) {
       successRate: stats.applications > 0 ? ((stats.successful / stats.applications) * 100) : 0,
       rejectionRate: stats.applications > 0 ? ((stats.rejected / stats.applications) * 100) : 0,
       pendingRate: stats.applications > 0 ? (((stats.pending + stats.processing) / stats.applications) * 100) : 0,
-      avgRevenuePerApplication: stats.applications > 0 ? Math.round(stats.revenue / stats.applications) : 0,
-      commissionRate: stats.revenue > 0 ? ((stats.commission / stats.revenue) * 100) : 0
+      avgRevenuePerApplication: 0, // No payment data available
+      commissionRate: 0 // No payment data available
     }));
     
     // Sort by revenue generated descending
@@ -109,12 +81,11 @@ export async function GET(request: NextRequest) {
     const teamTotals = {
       totalApplications: agentReports.reduce((sum: number, agent: any) => sum + agent.applications, 0),
       totalSuccessful: agentReports.reduce((sum: number, agent: any) => sum + agent.successful, 0),
-      totalRevenue: agentReports.reduce((sum: number, agent: any) => sum + agent.revenue, 0),
-      totalCommission: agentReports.reduce((sum: number, agent: any) => sum + agent.commission, 0),
+      totalRevenue: 0, // No payment data available
+      totalCommission: 0, // No payment data available
       avgSuccessRate: totalAgents > 0 ? 
         agentReports.reduce((sum: number, agent: any) => sum + agent.successRate, 0) / totalAgents : 0,
-      avgRevenuePerAgent: totalAgents > 0 ? 
-        Math.round(agentReports.reduce((sum: number, agent: any) => sum + agent.revenue, 0) / totalAgents) : 0
+      avgRevenuePerAgent: 0 // No payment data available
     };
     
     const performanceSummary = {
@@ -135,23 +106,17 @@ export async function GET(request: NextRequest) {
         'Successful',
         'Rejected',
         'Pending',
-        'Success Rate %',
-        'Revenue Generated',
-        'Commission Earned',
-        'Avg Revenue/App'
+        'Success Rate %'
       ].join(',');
       
       const csvRows = agentReports.map((agent: any) => {
         return [
-          `"${agent.name.replace(/"/g, '""')}"`,
+          `"${agent.name.replace(/"/g, '"')}"`,
           `"${agent.applications}"`,
           `"${agent.successful}"`,
           `"${agent.rejected}"`,
           `"${agent.pending + agent.processing}"`,
-          `"${agent.successRate.toFixed(1)}"`,
-          `"${agent.revenue}"`,
-          `"${agent.commission}"`,
-          `"${agent.avgRevenuePerApplication}"`
+          `"${agent.successRate.toFixed(1)}"`
         ].join(',');
       });
       
@@ -160,12 +125,9 @@ export async function GET(request: NextRequest) {
         '"TEAM TOTAL/AVERAGE"',
         `"${teamTotals.totalApplications}"`,
         `"${teamTotals.totalSuccessful}"`,
-        '""',
-        '""',
-        `"${teamTotals.avgSuccessRate.toFixed(1)}"`,
-        `"${teamTotals.totalRevenue}"`,
-        `"${teamTotals.totalCommission}"`,
-        `"${teamTotals.avgRevenuePerAgent}"`
+        '',
+        '',
+        `"${teamTotals.avgSuccessRate.toFixed(1)}"`
       ].join(',');
       
       const csvContent = [csvHeader, ...csvRows, summaryRow].join('\n');

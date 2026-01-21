@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
 import VisaApplication from '@/models/VisaApplication';
-import Payment from '@/models/Payment';
 
 export async function GET(request: NextRequest) {
   try {
@@ -35,16 +34,8 @@ export async function GET(request: NextRequest) {
         }
       });
       
-      // Calculate revenue for this week
-      const payments = await Payment.find({
-        createdAt: {
-          $gte: currentDate,
-          $lt: weekEnd
-        }
-      });
-      
-      const weeklyRevenue = payments.reduce((sum, payment) => sum + (payment.amount || 0), 0);
-      const weeklyCommission = payments.reduce((sum, payment) => sum + (payment.commission || 0), 0);
+      const weeklyRevenue = 0; // No payment data available
+      const weeklyCommission = 0; // No payment data available
       
       // Format week range
       const weekLabel = `${currentDate.toISOString().split('T')[0]} to ${new Date(weekEnd.getTime() - 1).toISOString().split('T')[0]}`;
@@ -78,9 +69,7 @@ export async function GET(request: NextRequest) {
         'Applications',
         'Approved',
         'Rejected',
-        'Pending',
-        'Revenue',
-        'Commission'
+        'Pending'
       ].join(',');
       
       const csvRows = weeklyReports.map(report => {
@@ -90,9 +79,7 @@ export async function GET(request: NextRequest) {
           `"${report.count}"`,
           `"${report.approved}"`,
           `"${report.rejected}"`,
-          `"${report.pending}"`,
-          `"${report.revenue}"`,
-          `"${report.commission}"`
+          `"${report.pending}"`
         ].join(',');
       });
       
