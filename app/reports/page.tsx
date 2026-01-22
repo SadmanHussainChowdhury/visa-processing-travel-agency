@@ -94,6 +94,10 @@ export default function ReportsPage() {
     }
   };
 
+  const refreshReportData = async () => {
+    await loadReportData();
+  };
+
 
 
   const renderOverview = () => (
@@ -103,7 +107,7 @@ export default function ReportsPage() {
           <div className="p-3 rounded-full bg-blue-100 text-blue-600">
             <FileText className="h-6 w-6" />
           </div>
-          <div className="ml-4">
+          <div className="ml-4 flex-1">
             <p className="text-sm font-medium text-gray-600">Total Applications</p>
             <p className="text-2xl font-bold text-gray-900">
               {reportData.daily.reduce((sum, item) => sum + (item.count || 0), 0) +
@@ -111,6 +115,15 @@ export default function ReportsPage() {
                reportData.monthly.reduce((sum, item) => sum + (item.count || 0), 0)}
             </p>
           </div>
+          <button 
+            onClick={refreshReportData}
+            className="p-2 text-gray-500 hover:text-gray-700"
+            title="Refresh Data"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
         </div>
       </div>
 
@@ -119,7 +132,7 @@ export default function ReportsPage() {
           <div className="p-3 rounded-full bg-green-100 text-green-600">
             <TrendingUp className="h-6 w-6" />
           </div>
-          <div className="ml-4">
+          <div className="ml-4 flex-1">
             <p className="text-sm font-medium text-gray-600">Success Rate</p>
             <p className="text-2xl font-bold text-gray-900">
               {reportData.visaTypes.length > 0 
@@ -128,6 +141,15 @@ export default function ReportsPage() {
               }
             </p>
           </div>
+          <button 
+            onClick={refreshReportData}
+            className="p-2 text-gray-500 hover:text-gray-700"
+            title="Refresh Data"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
