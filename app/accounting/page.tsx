@@ -73,48 +73,48 @@ export default function AccountingPage() {
     });
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        // Fetch accounting data
-        const accountingRes = await fetch('/api/accounting');
-        if (accountingRes.ok) {
-          const accountingData = await accountingRes.json();
-          // Use the fetched data
-          setAccountingData({
-            totalRevenue: accountingData.totalRevenue || 0,
-            totalExpenses: accountingData.totalExpenses || 0,
-            netProfit: accountingData.netProfit || 0,
-            profitMargin: accountingData.totalRevenue > 0 ? (accountingData.netProfit / accountingData.totalRevenue) * 100 : 0,
-            commissionEarned: accountingData.totalCommissionEarned || 0,
-            pendingInvoices: 0,
-            overdueInvoices: 0
-          });
-        }
-        
-        // Fetch transactions
-        const transactionsRes = await fetch('/api/accounting/transactions');
-        if (transactionsRes.ok) {
-          const transactionsData = await transactionsRes.json();
-          setTransactions(transactionsData);
-        }
-        
-        // Fetch commissions
-        const commissionsRes = await fetch('/api/accounting/commissions');
-        if (commissionsRes.ok) {
-          const commissionsData = await commissionsRes.json();
-          setCommissionData(commissionsData);
-        }
-      } catch (error) {
-        console.error('Error fetching accounting data:', error);
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Fetch accounting data
+      const accountingRes = await fetch('/api/accounting');
+      if (accountingRes.ok) {
+        const accountingData = await accountingRes.json();
+        // Use the fetched data
+        setAccountingData({
+          totalRevenue: accountingData.totalRevenue || 0,
+          totalExpenses: accountingData.totalExpenses || 0,
+          netProfit: accountingData.netProfit || 0,
+          profitMargin: accountingData.totalRevenue > 0 ? (accountingData.netProfit / accountingData.totalRevenue) * 100 : 0,
+          commissionEarned: accountingData.totalCommissionEarned || 0,
+          pendingInvoices: 0,
+          overdueInvoices: 0
+        });
       }
-    };
-    
+      
+      // Fetch transactions
+      const transactionsRes = await fetch('/api/accounting/transactions');
+      if (transactionsRes.ok) {
+        const transactionsData = await transactionsRes.json();
+        setTransactions(transactionsData);
+      }
+      
+      // Fetch commissions
+      const commissionsRes = await fetch('/api/accounting/commissions');
+      if (commissionsRes.ok) {
+        const commissionsData = await commissionsRes.json();
+        setCommissionData(commissionsData);
+      }
+    } catch (error) {
+      console.error('Error fetching accounting data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [dateRange]);
 
   useEffect(() => {
     calculateTotals();
@@ -123,6 +123,45 @@ export default function AccountingPage() {
   const handleExportReport = (reportType: string) => {
     alert(`Exporting ${reportType} report...`);
     // In a real implementation, this would generate and download the report
+  };
+
+  const refreshAccountingData = async () => {
+    setLoading(true);
+    try {
+      // Fetch accounting data
+      const accountingRes = await fetch('/api/accounting');
+      if (accountingRes.ok) {
+        const accountingData = await accountingRes.json();
+        // Use the fetched data
+        setAccountingData({
+          totalRevenue: accountingData.totalRevenue || 0,
+          totalExpenses: accountingData.totalExpenses || 0,
+          netProfit: accountingData.netProfit || 0,
+          profitMargin: accountingData.totalRevenue > 0 ? (accountingData.netProfit / accountingData.totalRevenue) * 100 : 0,
+          commissionEarned: accountingData.totalCommissionEarned || 0,
+          pendingInvoices: 0,
+          overdueInvoices: 0
+        });
+      }
+      
+      // Fetch transactions
+      const transactionsRes = await fetch('/api/accounting/transactions');
+      if (transactionsRes.ok) {
+        const transactionsData = await transactionsRes.json();
+        setTransactions(transactionsData);
+      }
+      
+      // Fetch commissions
+      const commissionsRes = await fetch('/api/accounting/commissions');
+      if (commissionsRes.ok) {
+        const commissionsData = await commissionsRes.json();
+        setCommissionData(commissionsData);
+      }
+    } catch (error) {
+      console.error('Error refreshing accounting data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -169,12 +208,21 @@ export default function AccountingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-medium text-blue-600">Total Revenue</p>
                 <p className="text-2xl font-bold text-gray-900">${accountingData.totalRevenue.toFixed(2)}</p>
                 <p className="text-xs text-gray-600">+12.5% from last month</p>
               </div>
-              <div className="p-3 bg-blue-500 rounded-lg">
+              <button 
+                onClick={refreshAccountingData}
+                className="p-2 text-gray-500 hover:text-gray-700 ml-2"
+                title="Refresh Data"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <div className="p-3 bg-blue-500 rounded-lg ml-2">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
             </div>
@@ -182,12 +230,21 @@ export default function AccountingPage() {
 
           <div className="bg-gradient-to-r from-red-50 to-red-100 p-6 rounded-xl border border-red-200">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-medium text-red-600">Total Expenses</p>
                 <p className="text-2xl font-bold text-gray-900">${accountingData.totalExpenses.toFixed(2)}</p>
                 <p className="text-xs text-gray-600">-3.2% from last month</p>
               </div>
-              <div className="p-3 bg-red-500 rounded-lg">
+              <button 
+                onClick={refreshAccountingData}
+                className="p-2 text-gray-500 hover:text-gray-700 ml-2"
+                title="Refresh Data"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <div className="p-3 bg-red-500 rounded-lg ml-2">
                 <TrendingDown className="h-6 w-6 text-white" />
               </div>
             </div>
@@ -195,12 +252,21 @@ export default function AccountingPage() {
 
           <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-medium text-green-600">Net Profit</p>
                 <p className="text-2xl font-bold text-gray-900">${accountingData.netProfit.toFixed(2)}</p>
                 <p className="text-xs text-gray-600">+15.7% from last month</p>
               </div>
-              <div className="p-3 bg-green-500 rounded-lg">
+              <button 
+                onClick={refreshAccountingData}
+                className="p-2 text-gray-500 hover:text-gray-700 ml-2"
+                title="Refresh Data"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <div className="p-3 bg-green-500 rounded-lg ml-2">
                 <PiggyBank className="h-6 w-6 text-white" />
               </div>
             </div>
@@ -208,12 +274,21 @@ export default function AccountingPage() {
 
           <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex-1">
                 <p className="text-sm font-medium text-purple-600">Profit Margin</p>
                 <p className="text-2xl font-bold text-gray-900">{accountingData.profitMargin.toFixed(1)}%</p>
                 <p className="text-xs text-gray-600">+2.3% from last month</p>
               </div>
-              <div className="p-3 bg-purple-500 rounded-lg">
+              <button 
+                onClick={refreshAccountingData}
+                className="p-2 text-gray-500 hover:text-gray-700 ml-2"
+                title="Refresh Data"
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+              </button>
+              <div className="p-3 bg-purple-500 rounded-lg ml-2">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
             </div>
