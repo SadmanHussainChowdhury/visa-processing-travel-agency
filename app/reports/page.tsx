@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, TrendingUp, DollarSign, Users, FileText, Download, Filter } from 'lucide-react';
+import { BarChart3, Calendar, TrendingUp, DollarSign, Users, FileText, Download, Filter } from 'lucide-react';
 import ProtectedRoute from '../protected-route';
 import SidebarLayout from '../components/sidebar-layout';
 
@@ -21,7 +21,7 @@ interface FilterOptions {
 }
 
 export default function ReportsPage() {
-  const [activeTab, setActiveTab] = useState('time-period');
+  const [activeTab, setActiveTab] = useState('overview');
   const [reportData, setReportData] = useState<ReportData>({
     daily: [],
     weekly: [],
@@ -95,6 +95,43 @@ export default function ReportsPage() {
   };
 
 
+
+  const renderOverview = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div className="flex items-center">
+          <div className="p-3 rounded-full bg-blue-100 text-blue-600">
+            <FileText className="h-6 w-6" />
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">Total Applications</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {reportData.daily.reduce((sum, item) => sum + (item.count || 0), 0) +
+               reportData.weekly.reduce((sum, item) => sum + (item.count || 0), 0) +
+               reportData.monthly.reduce((sum, item) => sum + (item.count || 0), 0)}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div className="flex items-center">
+          <div className="p-3 rounded-full bg-green-100 text-green-600">
+            <TrendingUp className="h-6 w-6" />
+          </div>
+          <div className="ml-4">
+            <p className="text-sm font-medium text-gray-600">Success Rate</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {reportData.visaTypes.length > 0 
+                ? Math.round(reportData.visaTypes.reduce((sum, item) => sum + (item.successRate || 0), 0) / reportData.visaTypes.length) + '%'
+                : '0%'
+              }
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   const renderTimePeriodReports = () => (
     <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
@@ -287,6 +324,20 @@ export default function ReportsPage() {
           <div className="flex border-b border-gray-200 mb-6">
             <button
               className={`px-4 py-2 font-medium text-sm ${
+                activeTab === 'overview'
+                  ? 'text-blue-600 border-b-2 border-blue-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+              onClick={() => setActiveTab('overview')}
+            >
+              <div className="flex items-center">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Overview
+              </div>
+            </button>
+            
+            <button
+              className={`px-4 py-2 font-medium text-sm ${
                 activeTab === 'time-period'
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -315,6 +366,7 @@ export default function ReportsPage() {
           </div>
 
           {/* Tab Content */}
+          {activeTab === 'overview' && renderOverview()}
           {activeTab === 'time-period' && renderTimePeriodReports()}
           {activeTab === 'visa-types' && renderVisaTypesReport()}
         </div>
