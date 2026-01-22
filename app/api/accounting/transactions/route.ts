@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import VisaApplication from '@/models/VisaApplication';
+import Transaction from '@/models/Transaction';
 
-interface Transaction {
+interface TransactionInterface {
   id: string;
   description: string;
   client: string;
@@ -16,11 +17,11 @@ export async function GET() {
   try {
     await dbConnect();
     
-    // Get all applications to create transaction data
+    // Get all applications to create transaction data from visa applications
     const applications = await VisaApplication.find({}).populate('clientId');
     
     // Create transaction data from applications
-    const transactions: Transaction[] = applications
+    const applicationTransactions: TransactionInterface[] = applications
       .filter(app => (app.fee || app.applicationFee || app.serviceFee || 0) > 0)
       .map(app => ({
         id: app._id.toString(),
@@ -32,7 +33,27 @@ export async function GET() {
         date: app.createdAt ? new Date(app.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
       }));
     
-    return NextResponse.json(transactions);
+    // Get additional transactions from the Transaction model
+    const additionalTransactions = await Transaction.find({}).populate('clientId');
+    
+    // Map additional transactions to the same interface
+    const additionalTransactionData: TransactionInterface[] = additionalTransactions.map(tx => ({
+      id: tx._id.toString(),
+      description: tx.description,
+      client: tx.clientName,
+      amount: tx.amount,
+      type: tx.type,
+      category: tx.category,
+      date: tx.date
+    }));
+    
+    // Combine both sets of transactions
+    const allTransactions = [...applicationTransactions, ...additionalTransactionData];
+    
+    // Sort by date descending
+    allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
+    return NextResponse.json(allTransactions);
   } catch (error) {
     console.error('Error fetching transactions:', error);
     return NextResponse.json(
@@ -46,13 +67,50 @@ export async function POST(request: NextRequest) {
   try {
     await dbConnect();
     
-    // Transaction creation is not implemented in this simplified version
-    // In a real application, you would create a Transaction model and save the data
     const body = await request.json();
     
-    // For now, just return a success response
+    // Validate required fields
+    if (!body.description || !body.amount || !body.type || !body.category || !body.date) {
+      return NextResponse.json(
+        { error: 'Missing required fields: description, amount, type, category, date' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate amount is positive
+    if (body.amount <= 0) {
+      return NextResponse.json(
+        { error: 'Amount must be greater than zero' },
+        { status: 400 }
+      );
+    }
+    
+    // Validate transaction type
+    if (!['revenue', 'expense'].includes(body.type)) {
+      return NextResponse.json(
+        { error: 'Type must be either revenue or expense' },
+        { status: 400 }
+      );
+    }
+    
+    // Create new transaction
+    const newTransaction = new Transaction({
+      description: body.description,
+      clientId: body.clientId,
+      clientName: body.clientName || 'Unknown Client',
+      amount: body.amount,
+      type: body.type,
+      category: body.category,
+      date: body.date,
+      applicationId: body.applicationId,
+      userId: body.userId,
+      notes: body.notes || ''
+    });
+    
+    await newTransaction.save();
+    
     return NextResponse.json(
-      { message: 'Transaction created successfully', transaction: body },
+      { message: 'Transaction created successfully', transaction: newTransaction },
       { status: 201 }
     );
   } catch (error) {

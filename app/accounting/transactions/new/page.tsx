@@ -144,6 +144,8 @@ export default function NewTransactionPage() {
 
       if (response.ok) {
         alert('Transaction created successfully!');
+        // Trigger a refresh event to update the accounting overview
+        window.dispatchEvent(new CustomEvent('transactionCreated'));
         router.push('/accounting/transactions');
       } else {
         const errorData = await response.json();

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import VisaApplication from '@/models/VisaApplication';
 import Commission from '@/models/Commission';
+import Transaction from '@/models/Transaction';
 
 interface Transaction {
   id: string;
@@ -21,15 +22,28 @@ export async function GET() {
     const applications = await VisaApplication.find({}).populate('clientId'); // populate client info if needed
     
     // Calculate revenue from applications (assuming fee field exists)
-    const totalRevenue = applications.reduce((sum, app) => sum + (app.fee || app.applicationFee || app.serviceFee || 0), 0);
+    const applicationRevenue = applications.reduce((sum, app) => sum + (app.fee || app.applicationFee || app.serviceFee || 0), 0);
     
-    // For now, using a simple calculation - in a real system this would come from expense records
-    const totalExpenses = applications.length * 15; // Assuming $15 per application in expenses
+    // Get additional revenue/expense transactions
+    const additionalTransactions = await Transaction.find({});
+    
+    // Calculate additional revenue and expenses
+    const additionalRevenue = additionalTransactions
+      .filter(tx => tx.type === 'revenue')
+      .reduce((sum, tx) => sum + tx.amount, 0);
+    
+    const additionalExpenses = additionalTransactions
+      .filter(tx => tx.type === 'expense')
+      .reduce((sum, tx) => sum + tx.amount, 0);
+    
+    // Total calculations
+    const totalRevenue = applicationRevenue + additionalRevenue;
+    const totalExpenses = (applications.length * 15) + additionalExpenses; // $15 per application + additional expenses
     
     const netProfit = totalRevenue - totalExpenses;
     
     // Create transaction data from applications
-    const transactions: Transaction[] = applications
+    const applicationTransactions: Transaction[] = applications
       .filter(app => (app.fee || app.applicationFee || app.serviceFee || 0) > 0)
       .map(app => ({
         id: app._id.toString(),
@@ -40,6 +54,20 @@ export async function GET() {
         category: 'Application Fees',
         date: app.createdAt ? new Date(app.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
       }));
+    
+    // Add additional transactions
+    const additionalTransactionData: Transaction[] = additionalTransactions.map(tx => ({
+      id: tx._id.toString(),
+      description: tx.description,
+      client: tx.clientName,
+      amount: tx.amount,
+      type: tx.type,
+      category: tx.category,
+      date: tx.date
+    }));
+    
+    // Combine all transactions
+    const transactions = [...applicationTransactions, ...additionalTransactionData];
     
     // Get commission data
     const totalCommissionEarned = await Commission.aggregate([

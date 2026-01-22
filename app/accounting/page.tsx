@@ -120,6 +120,18 @@ export default function AccountingPage() {
     calculateTotals();
   }, [transactions, commissionData]);
 
+  useEffect(() => {
+    const handleTransactionCreated = () => {
+      fetchData();
+    };
+    
+    window.addEventListener('transactionCreated', handleTransactionCreated);
+    
+    return () => {
+      window.removeEventListener('transactionCreated', handleTransactionCreated);
+    };
+  }, [fetchData]);
+
   const handleExportReport = (reportType: string) => {
     alert(`Exporting ${reportType} report...`);
     // In a real implementation, this would generate and download the report
