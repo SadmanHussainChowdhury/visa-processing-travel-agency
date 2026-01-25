@@ -1,6 +1,8 @@
 import { dbConnect } from './db';
 import Client from '@/models/Client';
 import VisaCase from '@/models/VisaCase';
+import Commission from '@/models/Commission';
+import DocModel from '@/models/Document';
 
 // Function to generate PDF for clients data
 export async function generateClientsPdf(format: string = 'json') {
@@ -78,7 +80,7 @@ export async function generateDocumentsPdf(format: string = 'json') {
   await dbConnect();
 
   // Fetch all documents
-  const documents = await Document.find({}).sort({ createdAt: -1 });
+  const documents = await DocModel.find({}).sort({ createdAt: -1 });
 
   if (format === 'pdf') {
     // For PDF generation, we'll return HTML content that can be converted to PDF
@@ -114,7 +116,7 @@ export async function generateDocumentsPdf(format: string = 'json') {
           <tbody>
     `;
 
-    documents.forEach(document => {
+    documents.forEach((document: any) => {
       htmlContent += `
         <tr>
           <td>${document.documentId || ''}</td>
@@ -217,86 +219,3 @@ export async function generateApplicationsPdf(format: string = 'json') {
   }
 }
 
-// Function to generate PDF for reports data
-export async function generateReportsPdf(format: string = 'json') {
-  await dbConnect();
-
-  // Fetch commissions for report data
-  const commissions = await Commission.find({}).sort({ createdAt: -1 });
-
-  // Calculate report summary
-  const summary = {
-    totalCommissions: commissions.length,
-    totalCommissionAmount: commissions.reduce((sum: number, c: any) => sum + (c.commissionEarned || 0), 0),
-  };
-
-  if (format === 'pdf') {
-    // For PDF generation, we'll return HTML content that can be converted to PDF
-    let htmlContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Reports Summary</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          table { border-collapse: collapse; width: 100%; }
-          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-          th { background-color: #f2f2f2; }
-          h1, h2 { color: #333; }
-          .summary { margin-bottom: 20px; }
-        </style>
-      </head>
-      <body>
-        <h1>Reports Summary</h1>
-        
-        <div class="summary">
-          <h2>Summary</h2>
-          <p>Total Commissions: ${summary.totalCommissions}</p>
-          <p>Total Commission Amount: $${summary.totalCommissionAmount.toFixed(2)}</p>
-        </div>
-        
-        <h2>Detailed Commissions</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Agent Name</th>
-              <th>Period</th>
-              <th>Transactions Count</th>
-              <th>Total Amount</th>
-              <th>Commission Rate (%)</th>
-              <th>Commission Earned</th>
-              <th>Status</th>
-              <th>Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-
-    commissions.forEach((commission: any) => {
-      htmlContent += `
-        <tr>
-          <td>${commission.agentName || ''}</td>
-          <td>${commission.period || ''}</td>
-          <td>${commission.transactionsCount || 0}</td>
-          <td>$${(commission.totalAmount || 0).toFixed(2)}</td>
-          <td>${(commission.commissionRate || 0).toFixed(2)}%</td>
-          <td>$${(commission.commissionEarned || 0).toFixed(2)}</td>
-          <td>${commission.status || ''}</td>
-          <td>${commission.createdAt ? new Date(commission.createdAt).toISOString().split('T')[0] : ''}</td>
-        </tr>
-      `;
-    });
-
-    htmlContent += `
-          </tbody>
-        </table>
-      </body>
-      </html>
-    `;
-
-    return htmlContent;
-  } else {
-    // Return JSON data
-    return { commissions, summary };
-  }
-}

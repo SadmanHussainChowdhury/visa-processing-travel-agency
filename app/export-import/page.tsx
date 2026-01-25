@@ -292,64 +292,7 @@ export default function ExportImportPage() {
                   </div>
                 </div>
 
-                {/* Export Other Data Card */}
-                <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-                  <div className="flex items-start">
-                    <div className="bg-yellow-100 p-3 rounded-lg">
-                      <FileSpreadsheet className="h-6 w-6 text-yellow-600" />
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">Export Other Data</h3>
-                      <p className="text-gray-600 mt-1">Export documents, appointments, and other data</p>
-                      <div className="mt-4 flex space-x-3">
-                        <button 
-                          onClick={() => handleExport('documents', 'excel')}
-                          className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                          <FileSpreadsheet className="h-4 w-4" />
-                          <span>Excel</span>
-                        </button>
-                        <button 
-                          onClick={() => handleExport('documents', 'pdf')}
-                          className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                          title="Will open print dialog to save as PDF"
-                        >
-                          <FileText className="h-4 w-4" />
-                          <span>PDF</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                {/* Export Reports Card */}
-                <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-                  <div className="flex items-start">
-                    <div className="bg-indigo-100 p-3 rounded-lg">
-                      <FileText className="h-6 w-6 text-indigo-600" />
-                    </div>
-                    <div className="ml-4 flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">Export Reports</h3>
-                      <p className="text-gray-600 mt-1">Export financial reports and analytics to Excel or PDF</p>
-                      <div className="mt-4 flex space-x-3">
-                        <button 
-                          onClick={() => handleExport('reports', 'excel')}
-                          className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                          <FileSpreadsheet className="h-4 w-4" />
-                          <span>Excel</span>
-                        </button>
-                        <button 
-                          onClick={() => handleExport('reports', 'pdf')}
-                          className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
-                        >
-                          <FileText className="h-4 w-4" />
-                          <span>PDF</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           )}
