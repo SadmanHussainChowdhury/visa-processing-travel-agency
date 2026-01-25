@@ -41,7 +41,8 @@
     "clients": "Clients",
     "appointments": "Appointments",
     "settings": "Settings",
-    "profile": "Profile"
+    "profile": "Profile",
+    "workflowTracking": "Workflow & Tracking"
   },
   "dashboard": {
     "welcome": {

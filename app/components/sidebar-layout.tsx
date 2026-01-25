@@ -67,6 +67,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'forms', label: 'Form Library & Templates', icon: FileText, href: '/forms' },
               { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications' },
               { id: 'export-import', label: 'Export & Import', icon: Upload, href: '/export-import' },
+              { id: 'workflow-tracking', label: t('navigation.workflowTracking'), icon: FileBarChart, href: '/workflow-tracking' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports' },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
