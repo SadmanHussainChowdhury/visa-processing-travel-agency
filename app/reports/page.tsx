@@ -110,9 +110,7 @@ export default function ReportsPage() {
           <div className="ml-4 flex-1">
             <p className="text-sm font-medium text-gray-600">Total Applications</p>
             <p className="text-2xl font-bold text-gray-900">
-              {reportData.daily.reduce((sum, item) => sum + (item.count || 0), 0) +
-               reportData.weekly.reduce((sum, item) => sum + (item.count || 0), 0) +
-               reportData.monthly.reduce((sum, item) => sum + (item.count || 0), 0)}
+              {reportData.monthly.reduce((sum, item) => sum + (item.count || 0), 0)}
             </p>
           </div>
           <button 
@@ -139,6 +137,52 @@ export default function ReportsPage() {
                 ? Math.round(reportData.visaTypes.reduce((sum, item) => sum + (item.successRate || 0), 0) / reportData.visaTypes.length) + '%'
                 : '0%'
               }
+            </p>
+          </div>
+          <button 
+            onClick={refreshReportData}
+            className="p-2 text-gray-500 hover:text-gray-700"
+            title="Refresh Data"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div className="flex items-center">
+          <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
+            <DollarSign className="h-6 w-6" />
+          </div>
+          <div className="ml-4 flex-1">
+            <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+            <p className="text-2xl font-bold text-gray-900">
+              ${reportData.monthly.reduce((sum, item) => sum + (item.revenue || 0), 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+            </p>
+          </div>
+          <button 
+            onClick={refreshReportData}
+            className="p-2 text-gray-500 hover:text-gray-700"
+            title="Refresh Data"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+        <div className="flex items-center">
+          <div className="p-3 rounded-full bg-purple-100 text-purple-600">
+            <Users className="h-6 w-6" />
+          </div>
+          <div className="ml-4 flex-1">
+            <p className="text-sm font-medium text-gray-600">Active Agents</p>
+            <p className="text-2xl font-bold text-gray-900">
+              {Array.from(new Set(reportData.monthly.flatMap(item => item.applications?.map((app: any) => app.agent) || []))).length}
             </p>
           </div>
           <button 
@@ -295,7 +339,7 @@ export default function ReportsPage() {
   return (
     <ProtectedRoute>
       <SidebarLayout 
-        title="Reporting & Dashboards" 
+        title="Reporting & Analytics" 
         description="Comprehensive reporting and analytics for visa processing operations"
       >
         <div className="max-w-7xl mx-auto">
