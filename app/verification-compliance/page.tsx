@@ -477,7 +477,6 @@ const VerificationCompliancePage = () => {
                       value={formData.verificationType}
                       onChange={(e) => setFormData({...formData, verificationType: e.target.value})}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      disabled // Disable changing type after creation
                     >
                       <option value="identity">Identity Verification</option>
                       <option value="biometric">Biometric Data</option>
