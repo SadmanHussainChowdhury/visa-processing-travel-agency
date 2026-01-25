@@ -74,6 +74,9 @@ export async function POST(request: NextRequest) {
 
     switch(action) {
       case 'run-backup':
+        // Get the latest backup check to preserve existing details
+        const latestBackupCheck = await Compliance.findOne({ type: 'BACKUP' }).sort({ createdAt: -1 });
+        
         // Update backup compliance record
         const backupCompliance = await Compliance.findOneAndUpdate(
           { type: 'BACKUP' },
