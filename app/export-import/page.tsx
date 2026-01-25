@@ -317,13 +317,6 @@ export default function ExportImportPage() {
                           <FileText className="h-4 w-4" />
                           <span>PDF</span>
                         </button>
-                        <button 
-                          onClick={() => handleExport('documents', 'excel')}
-                          className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                          <FileSpreadsheet className="h-4 w-4" />
-                          <span>Excel</span>
-                        </button>
                       </div>
                     </div>
                   </div>

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
 import Commission from '@/models/Commission';
+import { generateReportsPdf } from '@/lib/pdf-generator';
 
 export async function GET(request: NextRequest) {
   try {
@@ -60,6 +61,27 @@ export async function GET(request: NextRequest) {
       response.headers.set('Content-Type', 'text/csv');
       response.headers.set('Content-Disposition', `attachment; filename="${fileName}"`);
       return response;
+    } else if (format === 'pdf') {
+      // Generate PDF from HTML content
+      const htmlContent = await generateReportsPdf('pdf');
+          
+      try {
+        // For production, you might want to use a headless browser service
+        // For now, we'll return the HTML which can be converted to PDF by the frontend
+        const fileName = `reports_${new Date().toISOString().slice(0, 10)}.pdf`;
+            
+        // Return HTML content with instructions for PDF conversion
+        const response = new NextResponse(htmlContent);
+        response.headers.set('Content-Type', 'text/html');
+        response.headers.set('Content-Disposition', `attachment; filename="${fileName.replace('.pdf', '.html')}"`);
+        return response;
+      } catch (pdfError) {
+        console.error('Error generating PDF:', pdfError);
+        // Fallback to returning HTML
+        const response = new NextResponse(htmlContent);
+        response.headers.set('Content-Type', 'text/html');
+        return response;
+      }
     } else {
       // Default to JSON
       return NextResponse.json(reportData);
