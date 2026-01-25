@@ -42,7 +42,8 @@
     "appointments": "Appointments",
     "settings": "Settings",
     "profile": "Profile",
-    "workflowTracking": "Workflow & Tracking"
+    "workflowTracking": "Workflow & Tracking",
+    "smartCaseIntelligence": "Smart Case Intelligence"
   },
   "dashboard": {
     "welcome": {

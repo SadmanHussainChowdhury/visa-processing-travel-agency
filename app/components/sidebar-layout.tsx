@@ -39,7 +39,8 @@ import {
   FileBarChart,
   Fingerprint,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Target
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -68,6 +69,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications' },
               { id: 'export-import', label: 'Export & Import', icon: Upload, href: '/export-import' },
               { id: 'workflow-tracking', label: t('navigation.workflowTracking'), icon: FileBarChart, href: '/workflow-tracking' },
+              { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports' },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
