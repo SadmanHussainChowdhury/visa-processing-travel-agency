@@ -190,7 +190,7 @@ const VerificationCompliancePage = () => {
       const client = clients.find(c => c._id === clientId);
       return client ? `${client.firstName} ${client.lastName}` : 'Unknown Client';
     } else if (clientId && typeof clientId === 'object') {
-      return `${clientId.firstName} ${clientId.lastName}`;
+      return `${clientId.firstName || clientId.name || 'Unknown'} ${clientId.lastName || ''}`;
     }
     return 'Unknown Client';
   };

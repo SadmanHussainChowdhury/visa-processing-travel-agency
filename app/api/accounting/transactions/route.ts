@@ -34,7 +34,7 @@ export async function GET() {
       }));
     
     // Get additional transactions from the Transaction model
-    const additionalTransactions = await Transaction.find({}).populate('clientId');
+    const additionalTransactions = await Transaction.find({});
     
     // Map additional transactions to the same interface
     const additionalTransactionData: TransactionInterface[] = additionalTransactions.map(tx => ({

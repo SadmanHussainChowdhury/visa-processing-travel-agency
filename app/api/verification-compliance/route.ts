@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     if (riskLevel) query.riskLevel = riskLevel;
 
     const verifications = await Verification.find(query)
-      .populate('clientId', 'name email phone')
+      .populate('clientId', 'firstName lastName email phone')
       .populate('verifiedBy', 'name email')
       .sort({ createdAt: -1 });
 
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     await newVerification.save();
 
     // Populate the saved verification for response
-    await newVerification.populate('clientId', 'name email phone');
+    await newVerification.populate('clientId', 'firstName lastName email phone');
     await newVerification.populate('verifiedBy', 'name email');
 
     return NextResponse.json(newVerification, { status: 201 });
@@ -111,7 +111,7 @@ export async function PUT(request: NextRequest) {
         updatedAt: new Date()
       },
       { new: true }
-    ).populate('clientId', 'name email phone')
+    ).populate('clientId', 'firstName lastName email phone')
       .populate('verifiedBy', 'name email');
 
     if (!updatedVerification) {

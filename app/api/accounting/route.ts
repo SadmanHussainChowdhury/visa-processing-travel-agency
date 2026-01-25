@@ -19,7 +19,7 @@ export async function GET() {
     await dbConnect();
     
     // Get all applications to calculate revenue
-    const applications = await VisaApplication.find({}).populate('clientId'); // populate client info if needed
+    const applications = await VisaApplication.find({}); // client info stored directly
     
     // Calculate revenue from applications (assuming fee field exists)
     const applicationRevenue = applications.reduce((sum, app) => sum + (app.fee || app.applicationFee || app.serviceFee || 0), 0);
