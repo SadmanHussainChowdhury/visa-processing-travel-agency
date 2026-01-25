@@ -408,18 +408,7 @@ export default function ExportImportPage() {
                               Selected: {documentFile.name}
                             </div>
                           )}
-                          <button 
-                            onClick={() => handleImport('documents')}
-                            disabled={!documentFile}
-                            className={`mt-4 w-full py-2 rounded-lg transition-colors ${
-                              documentFile 
-                                ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            }`}
-                          >
-                            Import Documents
-                          </button>
-                        </div> {/* Close the document upload section div */}
+                        </div>
                         <button 
                           onClick={() => handleImport('applications')}
                           disabled={!applicationFile}
@@ -430,6 +419,17 @@ export default function ExportImportPage() {
                           }`}
                         >
                           Import Applications
+                        </button>
+                        <button 
+                          onClick={() => handleImport('documents')}
+                          disabled={!documentFile}
+                          className={`mt-4 w-full py-2 rounded-lg transition-colors ${
+                            documentFile 
+                              ? 'bg-indigo-600 text-white hover:bg-indigo-700' 
+                              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                          }`}
+                        >
+                          Import Documents
                         </button>
                       </div> {/* Close the flex-1 div */}
                     </div> {/* Close the items-start div */}

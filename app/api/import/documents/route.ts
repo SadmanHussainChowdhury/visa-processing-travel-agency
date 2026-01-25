@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
-import Document from '@/models/Document';
+import DocumentModel from '@/models/Document';
 import { parse } from 'csv-parse/sync';
 
 export async function POST(request: NextRequest) {
@@ -67,13 +67,13 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if document already exists
-        const existingDocument = await Document.findOne({ documentId: documentData.documentId });
+        const existingDocument = await DocumentModel.findOne({ documentId: documentData.documentId });
         if (existingDocument) {
           throw new Error(`Document with ID ${documentData.documentId} already exists`);
         }
 
         // Create new document
-        const newDocument = new Document(documentData);
+        const newDocument = new DocumentModel(documentData);
         await newDocument.save();
         importedCount++;
       } catch (err: any) {
