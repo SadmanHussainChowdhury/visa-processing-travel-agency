@@ -385,7 +385,7 @@ export default function KnowledgeHelpSystem() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {visaKnowledgeBase.map((entry) => (
-                    <div key={entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <div key={entry._id || entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                       <div className="p-5">
                         <div className="flex items-start justify-between">
                           <div>
@@ -468,7 +468,7 @@ export default function KnowledgeHelpSystem() {
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
                         {sopDocuments.map((doc) => (
-                          <tr key={doc.id} className="hover:bg-gray-50">
+                          <tr key={doc._id || doc.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <FileText className="h-5 w-5 text-blue-500 mr-3" />
@@ -499,7 +499,7 @@ export default function KnowledgeHelpSystem() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {learningGuidelines.map((guideline) => (
-                    <div key={guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                    <div key={guideline._id || guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                       <div className="p-5">
                         <div className="flex items-start justify-between">
                           <div>
@@ -555,7 +555,7 @@ export default function KnowledgeHelpSystem() {
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {rejectionTips.map((tip) => (
-                    <div key={tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                    <div key={tip._id || tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                       <div className="p-5 border-b border-gray-200">
                         <div className="flex items-start justify-between">
                           <div>
