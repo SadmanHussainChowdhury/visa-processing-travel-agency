@@ -1,0 +1,669 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { BookOpen, Globe, FileText, AlertTriangle, Search, Filter, Download, Star, Clock, User } from 'lucide-react';
+import ProtectedRoute from '../protected-route';
+import SidebarLayout from '../components/sidebar-layout';
+
+export default function KnowledgeHelpSystem() {
+  const [activeTab, setActiveTab] = useState<'knowledge-base' | 'sop-docs' | 'learning-guidelines' | 'rejection-tips'>('knowledge-base');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [visaKnowledgeBase, setVisaKnowledgeBase] = useState<any[]>([]);
+  const [sopDocuments, setSopDocuments] = useState<any[]>([]);
+  const [learningGuidelines, setLearningGuidelines] = useState<any[]>([]);
+  const [rejectionTips, setRejectionTips] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch data from API
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/knowledge-help');
+      const data = await response.json();
+      setVisaKnowledgeBase(data.visaKnowledge);
+      setSopDocuments(data.sopDocs);
+      setLearningGuidelines(data.learningGuidelines);
+      setRejectionTips(data.rejectionTips);
+    } catch (error) {
+      console.error('Error fetching knowledge help data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Function to add a new visa knowledge entry
+  const addVisaKnowledge = async (entry: any) => {
+    try {
+      const response = await fetch('/api/knowledge-help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'visa-knowledge', entry })
+      });
+      
+      if (response.ok) {
+        const newEntry = await response.json();
+        setVisaKnowledgeBase([...visaKnowledgeBase, newEntry]);
+      }
+    } catch (error) {
+      console.error('Error adding visa knowledge:', error);
+    }
+  };
+
+  // Function to add a new SOP document
+  const addSOPDocument = async (doc: any) => {
+    try {
+      const response = await fetch('/api/knowledge-help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'sop-docs', doc })
+      });
+      
+      if (response.ok) {
+        const newDoc = await response.json();
+        setSopDocuments([...sopDocuments, newDoc]);
+      }
+    } catch (error) {
+      console.error('Error adding SOP document:', error);
+    }
+  };
+
+  // Function to add a new learning guideline
+  const addLearningGuideline = async (guideline: any) => {
+    try {
+      const response = await fetch('/api/knowledge-help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'learning-guidelines', guideline })
+      });
+      
+      if (response.ok) {
+        const newGuideline = await response.json();
+        setLearningGuidelines([...learningGuidelines, newGuideline]);
+      }
+    } catch (error) {
+      console.error('Error adding learning guideline:', error);
+    }
+  };
+
+  // Function to add a new rejection tip
+  const addRejectionTip = async (tip: any) => {
+    try {
+      const response = await fetch('/api/knowledge-help', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'rejection-tips', tip })
+      });
+      
+      if (response.ok) {
+        const newTip = await response.json();
+        setRejectionTips([...rejectionTips, newTip]);
+      }
+    } catch (error) {
+      console.error('Error adding rejection tip:', error);
+    }
+  };
+
+  return (
+    <ProtectedRoute>
+      <SidebarLayout 
+        title="Knowledge & Help System" 
+        description="Access visa knowledge base, SOPs, guidelines, and rejection prevention tips"
+      >
+        <div className="max-w-7xl mx-auto">
+          {/* Header with search and filters */}
+          <div className="mb-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Search knowledge base, SOPs, guidelines..."
+                  className="pl-10 pr-4 py-2 w-full md:w-80 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <button 
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  onClick={() => {
+                    // Open modal to add new entry based on active tab
+                    if (activeTab === 'knowledge-base') {
+                      // Open add knowledge base modal
+                    } else if (activeTab === 'sop-docs') {
+                      // Open add SOP modal
+                    } else if (activeTab === 'learning-guidelines') {
+                      // Open add guideline modal
+                    } else if (activeTab === 'rejection-tips') {
+                      // Open add tip modal
+                    }
+                  }}
+                >
+                  <BookOpen className="h-4 w-4" />
+                  <span>Add New</span>
+                </button>
+                <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                  <Download className="h-4 w-4" />
+                  <span>Export</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="border-b border-gray-200 mb-6">
+            <nav className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('knowledge-base')}
+                className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'knowledge-base'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <Globe className="h-4 w-4" />
+                  <span>Country Visa Knowledge Base</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('sop-docs')}
+                className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'sop-docs'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <FileText className="h-4 w-4" />
+                  <span>SOP Documentation</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('learning-guidelines')}
+                className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'learning-guidelines'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <BookOpen className="h-4 w-4" />
+                  <span>Agent Learning Guidelines</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setActiveTab('rejection-tips')}
+                className={`py-3 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'rejection-tips'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                <div className="flex items-center space-x-2">
+                  <AlertTriangle className="h-4 w-4" />
+                  <span>Rejection Prevention Tips</span>
+                </div>
+              </button>
+            </nav>
+          </div>
+
+          {/* Tab Content */}
+          <div>
+            {/* Country Visa Knowledge Base Tab */}
+            {activeTab === 'knowledge-base' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {visaKnowledgeBase.map((entry) => (
+                    <div key={entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="p-5">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{entry.country}</h3>
+                            <p className="text-sm text-gray-600">{entry.visaType}</p>
+                          </div>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            entry.difficulty === 'Easy' 
+                              ? 'bg-green-100 text-green-800' 
+                              : entry.difficulty === 'Medium' 
+                                ? 'bg-yellow-100 text-yellow-800' 
+                                : 'bg-red-100 text-red-800'
+                          }`}>
+                            {entry.difficulty}
+                          </span>
+                        </div>
+                        
+                        <div className="mt-4 space-y-2">
+                          <div className="flex items-center text-sm text-gray-600">
+                            <Clock className="h-4 w-4 mr-2" />
+                            <span>Processing: {entry.processingTime}</span>
+                          </div>
+                          <div className="flex items-center text-sm text-gray-600">
+                            <span>Fees: {entry.fees}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4">
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">Requirements:</h4>
+                          <ul className="text-sm text-gray-600 space-y-1">
+                            {entry.requirements.slice(0, 3).map((req: string, idx: number) => (
+                              <li key={idx} className="flex items-start">
+                                <span className="text-green-500 mr-2">•</span>
+                                {req}
+                              </li>
+                            ))}
+                            {entry.requirements.length > 3 && (
+                              <li className="text-blue-600">+ {entry.requirements.length - 3} more</li>
+                            )}
+                          </ul>
+                        </div>
+                        
+                        <div className="mt-4 pt-4 border-t border-gray-200">
+                          <p className="text-sm text-gray-600">{entry.tips}</p>
+                        </div>
+                        
+                        <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
+                          <span>Last updated: {entry.lastUpdated}</span>
+                          <button className="text-blue-600 hover:text-blue-800">View Details</button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                <div className="text-center">
+                  <button className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                    Load More Countries
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* SOP Documentation Tab */}
+            {activeTab === 'sop-docs' && (
+              <div className="space-y-6">
+                <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {sopDocuments.map((doc) => (
+                          <tr key={doc.id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <FileText className="h-5 w-5 text-blue-500 mr-3" />
+                                <div className="text-sm font-medium text-gray-900">{doc.title}</div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.type}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.country}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.version}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.lastUpdated}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.author}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                              <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
+                              <button className="text-gray-600 hover:text-gray-900">Download</button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Agent Learning Guidelines Tab */}
+            {activeTab === 'learning-guidelines' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {learningGuidelines.map((guideline) => (
+                    <div key={guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                      <div className="p-5">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{guideline.title}</h3>
+                            <p className="text-sm text-gray-600">{guideline.category}</p>
+                          </div>
+                          <span className={`px-2 py-1 text-xs rounded-full ${
+                            guideline.level === 'Beginner' 
+                              ? 'bg-green-100 text-green-800' 
+                              : guideline.level === 'Intermediate' 
+                                ? 'bg-yellow-100 text-yellow-800' 
+                                : 'bg-red-100 text-red-800'
+                          }`}>
+                            {guideline.level}
+                          </span>
+                        </div>
+                        
+                        <div className="mt-4 flex items-center text-sm text-gray-600">
+                          <Clock className="h-4 w-4 mr-2" />
+                          <span>{guideline.duration}</span>
+                          <div className="ml-auto flex items-center">
+                            <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                            <span>{guideline.rating}</span>
+                          </div>
+                        </div>
+                        
+                        <div className="mt-4 flex items-center text-sm text-gray-600">
+                          <User className="h-4 w-4 mr-2" />
+                          <span>{guideline.enrolled} enrolled</span>
+                        </div>
+                        
+                        <div className="mt-6 flex justify-between">
+                          <button className={`flex-1 mr-2 py-2 px-4 rounded-md text-sm font-medium ${
+                            guideline.completed 
+                              ? 'bg-green-100 text-green-800 border border-green-200' 
+                              : 'bg-blue-600 text-white hover:bg-blue-700'
+                          }`}>
+                            {guideline.completed ? 'Completed' : 'Start Learning'}
+                          </button>
+                          <button className="ml-2 py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
+                            Info
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Rejection Prevention Tips Tab */}
+            {activeTab === 'rejection-tips' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {rejectionTips.map((tip) => (
+                    <div key={tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                      <div className="p-5 border-b border-gray-200">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <h3 className="font-semibold text-gray-900">{tip.title}</h3>
+                            <p className="text-sm text-gray-600">{tip.country} - {tip.visaType}</p>
+                          </div>
+                          <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                            {tip.tipCategory}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="p-5">
+                        <div className="mb-4">
+                          <h4 className="text-sm font-medium text-gray-900 mb-1">Problem Description</h4>
+                          <p className="text-sm text-gray-600">{tip.description}</p>
+                        </div>
+                        
+                        <div className="mb-4">
+                          <h4 className="text-sm font-medium text-gray-900 mb-1">Solution</h4>
+                          <p className="text-sm text-gray-600">{tip.solution}</p>
+                        </div>
+                        
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-1">Real Example</h4>
+                          <p className="text-sm text-gray-600 italic">{tip.example}</p>
+                        </div>
+                        
+                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+                          <button className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            <AlertTriangle className="h-4 w-4 mr-1" />
+                            Save Tip
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+          {/* Loading indicator */}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+          )}
+
+          {!loading && (
+            <div>
+              {/* Tab Content */}
+              <div>
+                {/* Country Visa Knowledge Base Tab */}
+                {activeTab === 'knowledge-base' && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {visaKnowledgeBase.map((entry) => (
+                        <div key={entry._id || entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                          <div className="p-5">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="font-semibold text-gray-900">{entry.country}</h3>
+                                <p className="text-sm text-gray-600">{entry.visaType}</p>
+                              </div>
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                entry.difficulty === 'Easy' 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : entry.difficulty === 'Medium' 
+                                    ? 'bg-yellow-100 text-yellow-800' 
+                                    : 'bg-red-100 text-red-800'
+                              }`}>
+                                {entry.difficulty}
+                              </span>
+                            </div>
+                            
+                            <div className="mt-4 space-y-2">
+                              <div className="flex items-center text-sm text-gray-600">
+                                <Clock className="h-4 w-4 mr-2" />
+                                <span>Processing: {entry.processingTime}</span>
+                              </div>
+                              <div className="flex items-center text-sm text-gray-600">
+                                <span>Fees: {entry.fees}</span>
+                              </div>
+                            </div>
+                            
+                            <div className="mt-4">
+                              <h4 className="text-sm font-medium text-gray-900 mb-2">Requirements:</h4>
+                              <ul className="text-sm text-gray-600 space-y-1">
+                                {entry.requirements.slice(0, 3).map((req: string, idx: number) => (
+                                  <li key={idx} className="flex items-start">
+                                    <span className="text-green-500 mr-2">•</span>
+                                    {req}
+                                  </li>
+                                ))}
+                                {entry.requirements.length > 3 && (
+                                  <li className="text-blue-600">+ {entry.requirements.length - 3} more</li>
+                                )}
+                              </ul>
+                            </div>
+                            
+                            <div className="mt-4 pt-4 border-t border-gray-200">
+                              <p className="text-sm text-gray-600">{entry.tips}</p>
+                            </div>
+                            
+                            <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
+                              <span>Last updated: {new Date(entry.lastUpdated).toLocaleDateString()}</span>
+                              <button className="text-blue-600 hover:text-blue-800">View Details</button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className="text-center">
+                      <button className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        Load More Countries
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* SOP Documentation Tab */}
+                {activeTab === 'sop-docs' && (
+                  <div className="space-y-6">
+                    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                      <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                          <thead className="bg-gray-50">
+                            <tr>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
+                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody className="bg-white divide-y divide-gray-200">
+                            {sopDocuments.map((doc) => (
+                              <tr key={doc._id || doc.id} className="hover:bg-gray-50">
+                                <td className="px-6 py-4 whitespace-nowrap">
+                                  <div className="flex items-center">
+                                    <FileText className="h-5 w-5 text-blue-500 mr-3" />
+                                    <div className="text-sm font-medium text-gray-900">{doc.title}</div>
+                                  </div>
+                                </td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.type}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.country}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.version}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(doc.lastUpdated).toLocaleDateString()}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.author}</td>
+                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                  <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                                  <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
+                                  <button className="text-gray-600 hover:text-gray-900">Download</button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Agent Learning Guidelines Tab */}
+                {activeTab === 'learning-guidelines' && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {learningGuidelines.map((guideline) => (
+                        <div key={guideline._id || guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                          <div className="p-5">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="font-semibold text-gray-900">{guideline.title}</h3>
+                                <p className="text-sm text-gray-600">{guideline.category}</p>
+                              </div>
+                              <span className={`px-2 py-1 text-xs rounded-full ${
+                                guideline.level === 'Beginner' 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : guideline.level === 'Intermediate' 
+                                    ? 'bg-yellow-100 text-yellow-800' 
+                                    : 'bg-red-100 text-red-800'
+                              }`}>
+                                {guideline.level}
+                              </span>
+                            </div>
+                            
+                            <div className="mt-4 flex items-center text-sm text-gray-600">
+                              <Clock className="h-4 w-4 mr-2" />
+                              <span>{guideline.duration}</span>
+                              <div className="ml-auto flex items-center">
+                                <Star className="h-4 w-4 text-yellow-400 mr-1" />
+                                <span>{guideline.rating}</span>
+                              </div>
+                            </div>
+                            
+                            <div className="mt-4 flex items-center text-sm text-gray-600">
+                              <User className="h-4 w-4 mr-2" />
+                              <span>{guideline.enrolled} enrolled</span>
+                            </div>
+                            
+                            <div className="mt-6 flex justify-between">
+                              <button className={`flex-1 mr-2 py-2 px-4 rounded-md text-sm font-medium ${
+                                guideline.completed 
+                                  ? 'bg-green-100 text-green-800 border border-green-200' 
+                                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                              }`}>
+                                {guideline.completed ? 'Completed' : 'Start Learning'}
+                              </button>
+                              <button className="ml-2 py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
+                                Info
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Rejection Prevention Tips Tab */}
+                {activeTab === 'rejection-tips' && (
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {rejectionTips.map((tip) => (
+                        <div key={tip._id || tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+                          <div className="p-5 border-b border-gray-200">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <h3 className="font-semibold text-gray-900">{tip.title}</h3>
+                                <p className="text-sm text-gray-600">{tip.country} - {tip.visaType}</p>
+                              </div>
+                              <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
+                                {tip.tipCategory}
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div className="p-5">
+                            <div className="mb-4">
+                              <h4 className="text-sm font-medium text-gray-900 mb-1">Problem Description</h4>
+                              <p className="text-sm text-gray-600">{tip.description}</p>
+                            </div>
+                            
+                            <div className="mb-4">
+                              <h4 className="text-sm font-medium text-gray-900 mb-1">Solution</h4>
+                              <p className="text-sm text-gray-600">{tip.solution}</p>
+                            </div>
+                            
+                            <div>
+                              <h4 className="text-sm font-medium text-gray-900 mb-1">Real Example</h4>
+                              <p className="text-sm text-gray-600 italic">{tip.example}</p>
+                            </div>
+                            
+                            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+                              <button className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                <AlertTriangle className="h-4 w-4 mr-1" />
+                                Save Tip
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      </SidebarLayout>
+    </ProtectedRoute>
+  );
+}

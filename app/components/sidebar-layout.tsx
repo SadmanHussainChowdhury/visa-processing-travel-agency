@@ -41,7 +41,8 @@ import {
   CheckCircle,
   AlertCircle,
   Target,
-  Send
+  Send,
+  BookOpen
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -77,6 +78,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'reports', label: 'Reports', icon: BarChart3, href: '/reports', hasSubmenu: true },
               { id: 'case-control', label: 'Case Control & Quality Assurance', icon: Shield, href: '/case-control' },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
+              { id: 'knowledge-help', label: 'Knowledge & Help System', icon: BookOpen, href: '/knowledge-help' },
               { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' }
             ];
 
