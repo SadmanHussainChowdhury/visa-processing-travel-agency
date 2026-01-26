@@ -67,6 +67,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               const navigation = [
               { id: 'dashboard', label: t('navigation.dashboard'), icon: Home, href: '/' },
               { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients', hasSubmenu: true },
+              { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' },
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
               { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications', hasSubmenu: true },
@@ -75,8 +76,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports', hasSubmenu: true },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
               { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' },
-              { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
-              { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' }
+              { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' }
             ];
 
   const handleLogout = () => {
