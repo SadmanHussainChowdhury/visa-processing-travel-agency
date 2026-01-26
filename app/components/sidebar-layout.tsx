@@ -145,10 +145,10 @@ export default function SidebarLayout({ children, title, description }: SidebarL
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">
-                {settings?.systemTitle || 'Visa Cases Management'}
+                {settings?.systemTitle || 'Visa Processing Travel Agency'}
               </h1>
               <p className="text-xs text-gray-700">
-                {settings?.systemDescription || ''}
+                {settings?.systemDescription || 'Visa Processing & Management System'}
               </p>
             </div>
           </div>

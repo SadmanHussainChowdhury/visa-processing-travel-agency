@@ -60,8 +60,8 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  systemTitle: '',
-  systemDescription: 'Practice Management System',
+  systemTitle: 'Visa Processing Travel Agency',
+  systemDescription: 'Visa Processing & Management System',
   currency: 'USD',
   timezone: 'UTC',
   dateFormat: 'MM/DD/YYYY',
