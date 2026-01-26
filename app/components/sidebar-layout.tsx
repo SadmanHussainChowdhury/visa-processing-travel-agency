@@ -40,7 +40,8 @@ import {
   Fingerprint,
   CheckCircle,
   AlertCircle,
-  Target
+  Target,
+  Send
 } from 'lucide-react';
 
 interface SidebarLayoutProps {
@@ -53,6 +54,8 @@ export default function SidebarLayout({ children, title, description }: SidebarL
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [mobileProfileMenuOpen, setMobileProfileMenuOpen] = useState(false);
+  const [isNotificationsSubmenuOpen, setIsNotificationsSubmenuOpen] = useState(false);
+  const [isClientsSubmenuOpen, setIsClientsSubmenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
   const { t, translationsLoaded } = useTranslations();
@@ -62,12 +65,10 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
               const navigation = [
               { id: 'dashboard', label: t('navigation.dashboard'), icon: Home, href: '/' },
-              { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients' },
+              { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients', hasSubmenu: true },
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
               { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
-              { id: 'forms', label: 'Form Library & Templates', icon: FileText, href: '/forms' },
-              { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications' },
-              { id: 'export-import', label: 'Export & Import', icon: Upload, href: '/export-import' },
+              { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications', hasSubmenu: true },
               { id: 'workflow-tracking', label: t('navigation.workflowTracking'), icon: FileBarChart, href: '/workflow-tracking' },
               { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
@@ -161,23 +162,151 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
         {/* Navigation Menu */}
         <nav className="px-3 py-4 space-y-1">
-          {navigation.map((item) => (
-            <Link
-              key={item.id}
-              href={item.href}
-              className={`
-                flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                ${isActiveRoute(item.href)
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
-                }
-              `}
-              onClick={() => setSidebarOpen(false)}
-            >
-              <item.icon className="h-5 w-5" />
-              <span>{item.label}</span>
-            </Link>
-          ))}
+          {navigation.map((item) => {
+            if (item.id === 'notifications' && item.hasSubmenu) {
+              return (
+                <div key={item.id}>
+                  <button
+                    className={`
+                      flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-colors
+                      ${isActiveRoute(item.href)
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }
+                    `}
+                    onClick={() => {
+                      setIsNotificationsSubmenuOpen(!isNotificationsSubmenuOpen);
+                      setSidebarOpen(false);
+                    }}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                    <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${isNotificationsSubmenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isNotificationsSubmenuOpen && (
+                    <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1">
+                      <Link
+                        href="/notifications/new"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/notifications/new')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <Send className="h-4 w-4" />
+                        <span>New Notification</span>
+                      </Link>
+                      <Link
+                        href="/notifications/templates"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/notifications/templates')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <FileText className="h-4 w-4" />
+                        <span>Message Templates</span>
+                      </Link>
+                      <Link
+                        href="/forms"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/forms')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <FileText className="h-4 w-4" />
+                        <span>Form Library & Templates</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            } else if (item.id === 'clients' && item.hasSubmenu) {
+              return (
+                <div key={item.id}>
+                  <button
+                    className={`
+                      flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-colors
+                      ${isActiveRoute(item.href)
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }
+                    `}
+                    onClick={() => {
+                      setIsClientsSubmenuOpen(!isClientsSubmenuOpen);
+                      setSidebarOpen(false);
+                    }}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                    <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${isClientsSubmenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isClientsSubmenuOpen && (
+                    <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1">
+                      <Link
+                        href="/clients/new"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/clients/new')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span>Add New Client</span>
+                      </Link>
+                      <Link
+                        href="/export-import"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/export-import')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <Upload className="h-4 w-4" />
+                        <span>Export & Import</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            } else {
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`
+                    flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                    ${isActiveRoute(item.href)
+                      ? 'bg-blue-100 text-blue-700'
+                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    }
+                  `}
+                  onClick={() => setSidebarOpen(false)}
+                >
+                  <item.icon className="h-5 w-5" />
+                  <span>{item.label}</span>
+                </Link>
+              );
+            }
+          })}
         </nav>
 
         {/* General Settings */}
