@@ -87,86 +87,120 @@ const CaseDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('details');
 
-  // Mock data for demonstration
+  // Fetch data from API
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockCase: CaseApproval = {
-        id: params.id as string,
-        caseId: 'VC-001',
-        applicantName: 'John Smith',
-        visaType: 'Tourist',
-        country: 'United States',
-        status: 'pending',
-        versionHistory: [
-          {
-            id: 'vh-1',
-            date: '2024-01-15',
-            user: 'Alice Johnson',
-            changes: ['Updated personal information', 'Added supporting documents'],
-            documentChanges: ['Passport.pdf added', 'Financial proof.pdf updated']
-          },
-          {
-            id: 'vh-2',
-            date: '2024-01-16',
-            user: 'Bob Williams',
-            changes: ['Corrected birth date', 'Updated travel dates'],
-            documentChanges: []
-          }
-        ],
-        approvalSteps: [
-          { id: 'as-1', step: 1, title: 'Initial Review', completed: true, completedBy: 'Alice Johnson', completedDate: '2024-01-15', notes: 'Initial review completed successfully' },
-          { id: 'as-2', step: 2, title: 'Document Verification', completed: true, completedBy: 'Bob Williams', completedDate: '2024-01-16', notes: 'All documents verified' },
-          { id: 'as-3', step: 3, title: 'Supervisor Approval', completed: false, title: 'Supervisor Approval' },
-          { id: 'as-4', step: 4, title: 'Final Check', completed: false, title: 'Final Check' }
-        ],
-        applicantData: {
-          firstName: 'John',
-          lastName: 'Smith',
-          email: 'john.smith@example.com',
-          phone: '+1-555-123-4567',
-          dateOfBirth: '1985-06-15',
-          nationality: 'American',
-          passportNumber: 'P12345678',
-          travelDates: {
-            departure: '2024-03-15',
-            return: '2024-04-15'
-          }
-        },
-        documents: [
-          { id: 'doc-1', name: 'Passport.pdf', type: 'Passport', uploadedBy: 'John Smith', uploadDate: '2024-01-15', status: 'verified' },
-          { id: 'doc-2', name: 'Financial Proof.pdf', type: 'Financial', uploadedBy: 'John Smith', uploadDate: '2024-01-15', status: 'verified' },
-          { id: 'doc-3', name: 'Travel Itinerary.pdf', type: 'Travel', uploadedBy: 'John Smith', uploadDate: '2024-01-16', status: 'pending' },
-          { id: 'doc-4', name: 'Hotel Booking.pdf', type: 'Accommodation', uploadedBy: 'John Smith', uploadDate: '2024-01-16', status: 'needs-correction' }
-        ]
-      };
-      setCaseData(mockCase);
-      setLoading(false);
-    }, 800);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        // In a real implementation, we would fetch the specific case data from the API
+        // For now, simulating API call
+        const response = await fetch(`/api/visa-cases/${params.id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch case data');
+        }
+        const data = await response.json();
+        setCaseData(data);
+      } catch (error) {
+        console.error('Error fetching case data:', error);
+        // Handle error appropriately
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [params.id]);
 
   const handleBack = () => {
     router.push('/case-control');
   };
 
-  const handleLockCase = () => {
-    alert(`Case ${caseData?.id} has been locked. No further edits allowed.`);
-    // In a real implementation, this would call an API to lock the case
+  const handleLockCase = async () => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'lock', caseId: caseData?.id })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to lock case');
+      }
+      
+      // Refresh the data
+      const data = await response.json();
+      alert(`Case ${caseData?.id} has been locked. No further edits allowed.`);
+      // In a real implementation, we would update the UI with the new data
+    } catch (error) {
+      console.error('Error locking case:', error);
+      alert('Error locking case. Please try again.');
+    }
   };
 
-  const handleUnlockCase = () => {
-    alert(`Case ${caseData?.id} has been unlocked. Edits are now allowed.`);
-    // In a real implementation, this would call an API to unlock the case
+  const handleUnlockCase = async () => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'unlock', caseId: caseData?.id })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to unlock case');
+      }
+      
+      // Refresh the data
+      const data = await response.json();
+      alert(`Case ${caseData?.id} has been unlocked. Edits are now allowed.`);
+      // In a real implementation, we would update the UI with the new data
+    } catch (error) {
+      console.error('Error unlocking case:', error);
+      alert('Error unlocking case. Please try again.');
+    }
   };
 
-  const handleApproveStep = (stepId: string) => {
-    alert(`Step ${stepId} approved.`);
-    // In a real implementation, this would call an API to approve the step
+  const handleApproveStep = async (stepId: string) => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve-step', caseId: caseData?.id, stepId })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to approve step');
+      }
+      
+      // Refresh the data
+      const data = await response.json();
+      alert(`Step ${stepId} approved.`);
+      // In a real implementation, we would update the UI with the new data
+    } catch (error) {
+      console.error('Error approving step:', error);
+      alert('Error approving step. Please try again.');
+    }
   };
 
-  const handleRequestCorrection = (stepId: string) => {
-    alert(`Correction requested for step ${stepId}.`);
-    // In a real implementation, this would call an API to request corrections
+  const handleRequestCorrection = async (stepId: string) => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'request-correction', caseId: caseData?.id, stepId })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to request correction');
+      }
+      
+      // Refresh the data
+      const data = await response.json();
+      alert(`Correction requested for step ${stepId}.`);
+      // In a real implementation, we would update the UI with the new data
+    } catch (error) {
+      console.error('Error requesting correction:', error);
+      alert('Error requesting correction. Please try again.');
+    }
   };
 
   const getStatusColor = (status: string) => {

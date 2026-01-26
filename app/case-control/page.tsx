@@ -63,115 +63,27 @@ const CaseControlPage = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showLockedCases, setShowLockedCases] = useState(false);
 
-  // Mock data for demonstration
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockCases: CaseApproval[] = [
-        {
-          id: 'CCQA-001',
-          caseId: 'VC-001',
-          applicantName: 'John Smith',
-          visaType: 'Tourist',
-          status: 'pending',
-          versionHistory: [
-            {
-              id: 'vh-1',
-              date: '2024-01-15',
-              user: 'Alice Johnson',
-              changes: ['Updated personal information', 'Added supporting documents'],
-              documentChanges: ['Passport.pdf added', 'Financial proof.pdf updated']
-            },
-            {
-              id: 'vh-2',
-              date: '2024-01-16',
-              user: 'Bob Williams',
-              changes: ['Corrected birth date', 'Updated travel dates'],
-              documentChanges: []
-            }
-          ],
-          approvalSteps: [
-            { id: 'as-1', step: 1, title: 'Initial Review', completed: true, completedBy: 'Alice Johnson', completedDate: '2024-01-15' },
-            { id: 'as-2', step: 2, title: 'Document Verification', completed: true, completedBy: 'Bob Williams', completedDate: '2024-01-16' },
-            { id: 'as-3', step: 3, title: 'Supervisor Approval', completed: false, title: 'Supervisor Approval' },
-            { id: 'as-4', step: 4, title: 'Final Check', completed: false, title: 'Final Check' }
-          ]
-        },
-        {
-          id: 'CCQA-002',
-          caseId: 'VC-002',
-          applicantName: 'Maria Garcia',
-          visaType: 'Student',
-          status: 'approved',
-          submittedDate: '2024-01-14',
-          versionHistory: [
-            {
-              id: 'vh-1',
-              date: '2024-01-12',
-              user: 'Charlie Brown',
-              changes: ['Created initial application'],
-              documentChanges: ['Application form.pdf added']
-            }
-          ],
-          approvalSteps: [
-            { id: 'as-1', step: 1, title: 'Initial Review', completed: true, completedBy: 'Charlie Brown', completedDate: '2024-01-12' },
-            { id: 'as-2', step: 2, title: 'Document Verification', completed: true, completedBy: 'Diana Prince', completedDate: '2024-01-13' },
-            { id: 'as-3', step: 3, title: 'Supervisor Approval', completed: true, completedBy: 'Eve Wilson', completedDate: '2024-01-14' },
-            { id: 'as-4', step: 4, title: 'Final Check', completed: true, completedBy: 'Frank Miller', completedDate: '2024-01-14' }
-          ]
-        },
-        {
-          id: 'CCQA-003',
-          caseId: 'VC-003',
-          applicantName: 'Ahmed Hassan',
-          visaType: 'Business',
-          status: 'locked',
-          lockedDate: '2024-01-13',
-          supervisorReview: 'Requires additional documentation before proceeding',
-          versionHistory: [
-            {
-              id: 'vh-1',
-              date: '2024-01-10',
-              user: 'Grace Lee',
-              changes: ['Submitted initial application'],
-              documentChanges: ['Application form.pdf added', 'Business invitation letter.pdf added']
-            }
-          ],
-          approvalSteps: [
-            { id: 'as-1', step: 1, title: 'Initial Review', completed: true, completedBy: 'Grace Lee', completedDate: '2024-01-10' },
-            { id: 'as-2', step: 2, title: 'Document Verification', completed: true, completedBy: 'Henry Davis', completedDate: '2024-01-11' },
-            { id: 'as-3', step: 3, title: 'Supervisor Approval', completed: false, title: 'Supervisor Approval', notes: 'Requires additional documentation' },
-            { id: 'as-4', step: 4, title: 'Final Check', completed: false, title: 'Final Check' }
-          ]
-        },
-        {
-          id: 'CCQA-004',
-          caseId: 'VC-004',
-          applicantName: 'Sarah Johnson',
-          visaType: 'Work',
-          status: 'submitted',
-          submittedDate: '2024-01-16',
-          versionHistory: [
-            {
-              id: 'vh-1',
-              date: '2024-01-14',
-              user: 'Ivan Petrov',
-              changes: ['Completed application'],
-              documentChanges: ['Application form.pdf added', 'Employment letter.pdf added']
-            }
-          ],
-          approvalSteps: [
-            { id: 'as-1', step: 1, title: 'Initial Review', completed: true, completedBy: 'Ivan Petrov', completedDate: '2024-01-14' },
-            { id: 'as-2', step: 2, title: 'Document Verification', completed: true, completedBy: 'Julia Chen', completedDate: '2024-01-15' },
-            { id: 'as-3', step: 3, title: 'Supervisor Approval', completed: true, completedBy: 'Kevin Liu', completedDate: '2024-01-16' },
-            { id: 'as-4', step: 4, title: 'Final Check', completed: true, completedBy: 'Laura Martin', completedDate: '2024-01-16' }
-          ]
-        }
-      ];
-      setCases(mockCases);
-      setFilteredCases(mockCases);
+  // Define fetchData function outside useEffect
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/case-control`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      setCases(data);
+      setFilteredCases(data);
+    } catch (error) {
+      console.error('Error fetching case control data:', error);
+    } finally {
       setLoading(false);
-    }, 800);
+    }
+  };
+
+  // Fetch data from API
+  useEffect(() => {
+    fetchData();
   }, []);
 
   // Filter cases based on search term and status
@@ -201,19 +113,67 @@ const CaseControlPage = () => {
     router.push(`/case-control/${caseId}`);
   };
 
-  const handleLockCase = (caseId: string) => {
-    alert(`Case ${caseId} has been locked. No further edits allowed.`);
-    // In a real implementation, this would call an API to lock the case
+  const handleLockCase = async (caseId: string) => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'lock', caseId })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to lock case');
+      }
+      
+      // Refresh the data
+      await fetchData();
+      alert(`Case ${caseId} has been locked. No further edits allowed.`);
+    } catch (error) {
+      console.error('Error locking case:', error);
+      alert('Error locking case. Please try again.');
+    }
   };
 
-  const handleUnlockCase = (caseId: string) => {
-    alert(`Case ${caseId} has been unlocked. Edits are now allowed.`);
-    // In a real implementation, this would call an API to unlock the case
+  const handleUnlockCase = async (caseId: string) => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'unlock', caseId })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to unlock case');
+      }
+      
+      // Refresh the data
+      await fetchData();
+      alert(`Case ${caseId} has been unlocked. Edits are now allowed.`);
+    } catch (error) {
+      console.error('Error unlocking case:', error);
+      alert('Error unlocking case. Please try again.');
+    }
   };
 
-  const handleRequestCorrection = (caseId: string) => {
-    alert(`Correction requested for case ${caseId}. Supervisor will be notified.`);
-    // In a real implementation, this would call an API to request corrections
+  const handleRequestCorrection = async (caseId: string) => {
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'request-correction', caseId })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to request correction');
+      }
+      
+      // Refresh the data
+      await fetchData();
+      alert(`Correction requested for case ${caseId}. Supervisor will be notified.`);
+    } catch (error) {
+      console.error('Error requesting correction:', error);
+      alert('Error requesting correction. Please try again.');
+    }
   };
 
   const getStatusColor = (status: string) => {
