@@ -69,14 +69,14 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients', hasSubmenu: true },
               { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' },
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
+              { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
               { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications', hasSubmenu: true },
               { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports', hasSubmenu: true },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
-              { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' },
-              { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' }
+              { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' }
             ];
 
   const handleLogout = () => {
