@@ -13,6 +13,50 @@ export default function KnowledgeHelpSystem() {
   const [learningGuidelines, setLearningGuidelines] = useState<any[]>([]);
   const [rejectionTips, setRejectionTips] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showVisaKnowledgeModal, setShowVisaKnowledgeModal] = useState(false);
+  const [showSOPModal, setShowSOPModal] = useState(false);
+  const [showGuidelineModal, setShowGuidelineModal] = useState(false);
+  const [showTipModal, setShowTipModal] = useState(false);
+  
+  // State for form inputs
+  const [newVisaKnowledge, setNewVisaKnowledge] = useState({
+    country: '',
+    visaType: '',
+    requirements: [''],
+    processingTime: '',
+    fees: '',
+    difficulty: 'Medium',
+    tips: ''
+  });
+  
+  const [newSOPDoc, setNewSOPDoc] = useState({
+    title: '',
+    type: '',
+    country: '',
+    version: '1.0',
+    content: '',
+    author: ''
+  });
+  
+  const [newGuideline, setNewGuideline] = useState({
+    title: '',
+    category: '',
+    duration: '10 min',
+    level: 'Beginner',
+    completed: false,
+    rating: 0,
+    enrolled: 0
+  });
+  
+  const [newTip, setNewTip] = useState({
+    country: '',
+    visaType: '',
+    tipCategory: '',
+    title: '',
+    description: '',
+    solution: '',
+    example: ''
+  });
 
   // Fetch data from API
   const fetchData = async () => {
@@ -108,6 +152,127 @@ export default function KnowledgeHelpSystem() {
     }
   };
 
+  // Handler functions for form inputs
+  const handleVisaKnowledgeChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewVisaKnowledge(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSOPDocChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewSOPDoc(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleGuidelineChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewGuideline(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleTipChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setNewTip(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  // Handler for requirements array in visa knowledge
+  const handleRequirementChange = (index: number, value: string) => {
+    const newRequirements = [...newVisaKnowledge.requirements];
+    newRequirements[index] = value;
+    setNewVisaKnowledge(prev => ({
+      ...prev,
+      requirements: newRequirements
+    }));
+  };
+
+  const addRequirementField = () => {
+    setNewVisaKnowledge(prev => ({
+      ...prev,
+      requirements: [...prev.requirements, '']
+    }));
+  };
+
+  const removeRequirementField = (index: number) => {
+    if (newVisaKnowledge.requirements.length > 1) {
+      const newRequirements = [...newVisaKnowledge.requirements];
+      newRequirements.splice(index, 1);
+      setNewVisaKnowledge(prev => ({
+        ...prev,
+        requirements: newRequirements
+      }));
+    }
+  };
+
+  // Handler functions for form submissions
+  const handleSubmitVisaKnowledge = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addVisaKnowledge(newVisaKnowledge);
+    setNewVisaKnowledge({
+      country: '',
+      visaType: '',
+      requirements: [''],
+      processingTime: '',
+      fees: '',
+      difficulty: 'Medium',
+      tips: ''
+    });
+    setShowVisaKnowledgeModal(false);
+  };
+
+  const handleSubmitSOPDoc = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addSOPDocument(newSOPDoc);
+    setNewSOPDoc({
+      title: '',
+      type: '',
+      country: '',
+      version: '1.0',
+      content: '',
+      author: ''
+    });
+    setShowSOPModal(false);
+  };
+
+  const handleSubmitGuideline = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addLearningGuideline(newGuideline);
+    setNewGuideline({
+      title: '',
+      category: '',
+      duration: '10 min',
+      level: 'Beginner',
+      completed: false,
+      rating: 0,
+      enrolled: 0
+    });
+    setShowGuidelineModal(false);
+  };
+
+  const handleSubmitTip = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await addRejectionTip(newTip);
+    setNewTip({
+      country: '',
+      visaType: '',
+      tipCategory: '',
+      title: '',
+      description: '',
+      solution: '',
+      example: ''
+    });
+    setShowTipModal(false);
+  };
+
   return (
     <ProtectedRoute>
       <SidebarLayout 
@@ -134,13 +299,13 @@ export default function KnowledgeHelpSystem() {
                   onClick={() => {
                     // Open modal to add new entry based on active tab
                     if (activeTab === 'knowledge-base') {
-                      // Open add knowledge base modal
+                      setShowVisaKnowledgeModal(true);
                     } else if (activeTab === 'sop-docs') {
-                      // Open add SOP modal
+                      setShowSOPModal(true);
                     } else if (activeTab === 'learning-guidelines') {
-                      // Open add guideline modal
+                      setShowGuidelineModal(true);
                     } else if (activeTab === 'rejection-tips') {
-                      // Open add tip modal
+                      setShowTipModal(true);
                     }
                   }}
                 >
@@ -432,233 +597,443 @@ export default function KnowledgeHelpSystem() {
               </div>
             )}
           </div>
-          {/* Loading indicator */}
-          {loading && (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            </div>
-          )}
 
-          {!loading && (
-            <div>
-              {/* Tab Content */}
-              <div>
-                {/* Country Visa Knowledge Base Tab */}
-                {activeTab === 'knowledge-base' && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {visaKnowledgeBase.map((entry) => (
-                        <div key={entry._id || entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                          <div className="p-5">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <h3 className="font-semibold text-gray-900">{entry.country}</h3>
-                                <p className="text-sm text-gray-600">{entry.visaType}</p>
-                              </div>
-                              <span className={`px-2 py-1 text-xs rounded-full ${
-                                entry.difficulty === 'Easy' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : entry.difficulty === 'Medium' 
-                                    ? 'bg-yellow-100 text-yellow-800' 
-                                    : 'bg-red-100 text-red-800'
-                              }`}>
-                                {entry.difficulty}
-                              </span>
-                            </div>
-                            
-                            <div className="mt-4 space-y-2">
-                              <div className="flex items-center text-sm text-gray-600">
-                                <Clock className="h-4 w-4 mr-2" />
-                                <span>Processing: {entry.processingTime}</span>
-                              </div>
-                              <div className="flex items-center text-sm text-gray-600">
-                                <span>Fees: {entry.fees}</span>
-                              </div>
-                            </div>
-                            
-                            <div className="mt-4">
-                              <h4 className="text-sm font-medium text-gray-900 mb-2">Requirements:</h4>
-                              <ul className="text-sm text-gray-600 space-y-1">
-                                {entry.requirements.slice(0, 3).map((req: string, idx: number) => (
-                                  <li key={idx} className="flex items-start">
-                                    <span className="text-green-500 mr-2">•</span>
-                                    {req}
-                                  </li>
-                                ))}
-                                {entry.requirements.length > 3 && (
-                                  <li className="text-blue-600">+ {entry.requirements.length - 3} more</li>
-                                )}
-                              </ul>
-                            </div>
-                            
-                            <div className="mt-4 pt-4 border-t border-gray-200">
-                              <p className="text-sm text-gray-600">{entry.tips}</p>
-                            </div>
-                            
-                            <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
-                              <span>Last updated: {new Date(entry.lastUpdated).toLocaleDateString()}</span>
-                              <button className="text-blue-600 hover:text-blue-800">View Details</button>
-                            </div>
-                          </div>
+          
+          {/* Modals for adding new entries */}
+          
+          {/* Visa Knowledge Base Modal */}
+          {showVisaKnowledgeModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowVisaKnowledgeModal(false)}>
+              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <Globe className="h-5 w-5" />
+                    <span>Add New Visa Knowledge Entry</span>
+                  </h3>
+                  <button
+                    onClick={() => setShowVisaKnowledgeModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="text-2xl">&times;</span>
+                  </button>
+                </div>
+                <form onSubmit={handleSubmitVisaKnowledge} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Country *</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={newVisaKnowledge.country}
+                      onChange={handleVisaKnowledgeChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Visa Type *</label>
+                    <input
+                      type="text"
+                      name="visaType"
+                      value={newVisaKnowledge.visaType}
+                      onChange={handleVisaKnowledgeChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Processing Time *</label>
+                    <input
+                      type="text"
+                      name="processingTime"
+                      value={newVisaKnowledge.processingTime}
+                      onChange={handleVisaKnowledgeChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Fees *</label>
+                    <input
+                      type="text"
+                      name="fees"
+                      value={newVisaKnowledge.fees}
+                      onChange={handleVisaKnowledgeChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Difficulty *</label>
+                    <select
+                      name="difficulty"
+                      value={newVisaKnowledge.difficulty}
+                      onChange={handleVisaKnowledgeChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    >
+                      <option value="Easy">Easy</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Hard">Hard</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Requirements</label>
+                    <div className="space-y-2 mt-1">
+                      {newVisaKnowledge.requirements.map((req, index) => (
+                        <div key={index} className="flex items-center space-x-2">
+                          <input
+                            type="text"
+                            value={req}
+                            onChange={(e) => handleRequirementChange(index, e.target.value)}
+                            className="flex-1 border border-gray-300 rounded-md shadow-sm p-2"
+                            placeholder={`Requirement ${index + 1}`}
+                          />
+                          {newVisaKnowledge.requirements.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeRequirementField(index)}
+                              className="text-red-600 hover:text-red-800"
+                            >
+                              Remove
+                            </button>
+                          )}
                         </div>
                       ))}
-                    </div>
-                    
-                    <div className="text-center">
-                      <button className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        Load More Countries
+                      <button
+                        type="button"
+                        onClick={addRequirementField}
+                        className="text-blue-600 hover:text-blue-800 text-sm"
+                      >
+                        + Add Requirement
                       </button>
                     </div>
                   </div>
-                )}
-
-                {/* SOP Documentation Tab */}
-                {activeTab === 'sop-docs' && (
-                  <div className="space-y-6">
-                    <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                      <div className="overflow-x-auto">
-                        <table className="min-w-full divide-y divide-gray-200">
-                          <thead className="bg-gray-50">
-                            <tr>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Updated</th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
-                              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody className="bg-white divide-y divide-gray-200">
-                            {sopDocuments.map((doc) => (
-                              <tr key={doc._id || doc.id} className="hover:bg-gray-50">
-                                <td className="px-6 py-4 whitespace-nowrap">
-                                  <div className="flex items-center">
-                                    <FileText className="h-5 w-5 text-blue-500 mr-3" />
-                                    <div className="text-sm font-medium text-gray-900">{doc.title}</div>
-                                  </div>
-                                </td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.type}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.country}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.version}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{new Date(doc.lastUpdated).toLocaleDateString()}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.author}</td>
-                                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                  <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                                  <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
-                                  <button className="text-gray-600 hover:text-gray-900">Download</button>
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Tips</label>
+                    <textarea
+                      name="tips"
+                      value={newVisaKnowledge.tips}
+                      onChange={handleVisaKnowledgeChange}
+                      rows={3}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    ></textarea>
                   </div>
-                )}
-
-                {/* Agent Learning Guidelines Tab */}
-                {activeTab === 'learning-guidelines' && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {learningGuidelines.map((guideline) => (
-                        <div key={guideline._id || guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                          <div className="p-5">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <h3 className="font-semibold text-gray-900">{guideline.title}</h3>
-                                <p className="text-sm text-gray-600">{guideline.category}</p>
-                              </div>
-                              <span className={`px-2 py-1 text-xs rounded-full ${
-                                guideline.level === 'Beginner' 
-                                  ? 'bg-green-100 text-green-800' 
-                                  : guideline.level === 'Intermediate' 
-                                    ? 'bg-yellow-100 text-yellow-800' 
-                                    : 'bg-red-100 text-red-800'
-                              }`}>
-                                {guideline.level}
-                              </span>
-                            </div>
-                            
-                            <div className="mt-4 flex items-center text-sm text-gray-600">
-                              <Clock className="h-4 w-4 mr-2" />
-                              <span>{guideline.duration}</span>
-                              <div className="ml-auto flex items-center">
-                                <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                                <span>{guideline.rating}</span>
-                              </div>
-                            </div>
-                            
-                            <div className="mt-4 flex items-center text-sm text-gray-600">
-                              <User className="h-4 w-4 mr-2" />
-                              <span>{guideline.enrolled} enrolled</span>
-                            </div>
-                            
-                            <div className="mt-6 flex justify-between">
-                              <button className={`flex-1 mr-2 py-2 px-4 rounded-md text-sm font-medium ${
-                                guideline.completed 
-                                  ? 'bg-green-100 text-green-800 border border-green-200' 
-                                  : 'bg-blue-600 text-white hover:bg-blue-700'
-                              }`}>
-                                {guideline.completed ? 'Completed' : 'Start Learning'}
-                              </button>
-                              <button className="ml-2 py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
-                                Info
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowVisaKnowledgeModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Add Entry
+                    </button>
                   </div>
-                )}
-
-                {/* Rejection Prevention Tips Tab */}
-                {activeTab === 'rejection-tips' && (
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {rejectionTips.map((tip) => (
-                        <div key={tip._id || tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-                          <div className="p-5 border-b border-gray-200">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <h3 className="font-semibold text-gray-900">{tip.title}</h3>
-                                <p className="text-sm text-gray-600">{tip.country} - {tip.visaType}</p>
-                              </div>
-                              <span className="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">
-                                {tip.tipCategory}
-                              </span>
-                            </div>
-                          </div>
-                          
-                          <div className="p-5">
-                            <div className="mb-4">
-                              <h4 className="text-sm font-medium text-gray-900 mb-1">Problem Description</h4>
-                              <p className="text-sm text-gray-600">{tip.description}</p>
-                            </div>
-                            
-                            <div className="mb-4">
-                              <h4 className="text-sm font-medium text-gray-900 mb-1">Solution</h4>
-                              <p className="text-sm text-gray-600">{tip.solution}</p>
-                            </div>
-                            
-                            <div>
-                              <h4 className="text-sm font-medium text-gray-900 mb-1">Real Example</h4>
-                              <p className="text-sm text-gray-600 italic">{tip.example}</p>
-                            </div>
-                            
-                            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
-                              <button className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                                <AlertTriangle className="h-4 w-4 mr-1" />
-                                Save Tip
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                </form>
+              </div>
+            </div>
+          )}
+          
+          {/* SOP Document Modal */}
+          {showSOPModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowSOPModal(false)}>
+              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <FileText className="h-5 w-5" />
+                    <span>Add New SOP Document</span>
+                  </h3>
+                  <button
+                    onClick={() => setShowSOPModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="text-2xl">&times;</span>
+                  </button>
+                </div>
+                <form onSubmit={handleSubmitSOPDoc} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={newSOPDoc.title}
+                      onChange={handleSOPDocChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
                   </div>
-                )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Type *</label>
+                    <input
+                      type="text"
+                      name="type"
+                      value={newSOPDoc.type}
+                      onChange={handleSOPDocChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Country *</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={newSOPDoc.country}
+                      onChange={handleSOPDocChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Version *</label>
+                    <input
+                      type="text"
+                      name="version"
+                      value={newSOPDoc.version}
+                      onChange={handleSOPDocChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Author *</label>
+                    <input
+                      type="text"
+                      name="author"
+                      value={newSOPDoc.author}
+                      onChange={handleSOPDocChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Content *</label>
+                    <textarea
+                      name="content"
+                      value={newSOPDoc.content}
+                      onChange={handleSOPDocChange}
+                      rows={5}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    ></textarea>
+                  </div>
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowSOPModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Add Document
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          
+          {/* Learning Guideline Modal */}
+          {showGuidelineModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowGuidelineModal(false)}>
+              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <BookOpen className="h-5 w-5" />
+                    <span>Add New Learning Guideline</span>
+                  </h3>
+                  <button
+                    onClick={() => setShowGuidelineModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="text-2xl">&times;</span>
+                  </button>
+                </div>
+                <form onSubmit={handleSubmitGuideline} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={newGuideline.title}
+                      onChange={handleGuidelineChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Category *</label>
+                    <input
+                      type="text"
+                      name="category"
+                      value={newGuideline.category}
+                      onChange={handleGuidelineChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Duration *</label>
+                    <input
+                      type="text"
+                      name="duration"
+                      value={newGuideline.duration}
+                      onChange={handleGuidelineChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Level *</label>
+                    <select
+                      name="level"
+                      value={newGuideline.level}
+                      onChange={handleGuidelineChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    >
+                      <option value="Beginner">Beginner</option>
+                      <option value="Intermediate">Intermediate</option>
+                      <option value="Advanced">Advanced</option>
+                    </select>
+                  </div>
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowGuidelineModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Add Guideline
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+          
+          {/* Rejection Tip Modal */}
+          {showTipModal && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowTipModal(false)}>
+              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <AlertTriangle className="h-5 w-5" />
+                    <span>Add New Rejection Prevention Tip</span>
+                  </h3>
+                  <button
+                    onClick={() => setShowTipModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="text-2xl">&times;</span>
+                  </button>
+                </div>
+                <form onSubmit={handleSubmitTip} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Country *</label>
+                    <input
+                      type="text"
+                      name="country"
+                      value={newTip.country}
+                      onChange={handleTipChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Visa Type *</label>
+                    <input
+                      type="text"
+                      name="visaType"
+                      value={newTip.visaType}
+                      onChange={handleTipChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Tip Category *</label>
+                    <input
+                      type="text"
+                      name="tipCategory"
+                      value={newTip.tipCategory}
+                      onChange={handleTipChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Title *</label>
+                    <input
+                      type="text"
+                      name="title"
+                      value={newTip.title}
+                      onChange={handleTipChange}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Description *</label>
+                    <textarea
+                      name="description"
+                      value={newTip.description}
+                      onChange={handleTipChange}
+                      rows={3}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    ></textarea>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Solution *</label>
+                    <textarea
+                      name="solution"
+                      value={newTip.solution}
+                      onChange={handleTipChange}
+                      rows={3}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                      required
+                    ></textarea>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Real Example</label>
+                    <textarea
+                      name="example"
+                      value={newTip.example}
+                      onChange={handleTipChange}
+                      rows={3}
+                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2"
+                    ></textarea>
+                  </div>
+                  <div className="flex justify-end space-x-3 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setShowTipModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                    >
+                      Add Tip
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
           )}
