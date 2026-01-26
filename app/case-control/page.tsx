@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { ProtectedRoute } from '@/components/protected-route';
+import ProtectedRoute from '@/app/protected-route';
 import SidebarLayout from '@/app/components/sidebar-layout';
 import { 
   Lock, 
