@@ -56,6 +56,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
   const [mobileProfileMenuOpen, setMobileProfileMenuOpen] = useState(false);
   const [isNotificationsSubmenuOpen, setIsNotificationsSubmenuOpen] = useState(false);
   const [isClientsSubmenuOpen, setIsClientsSubmenuOpen] = useState(false);
+  const [isReportsSubmenuOpen, setIsReportsSubmenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
   const { t, translationsLoaded } = useTranslations();
@@ -69,10 +70,9 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
               { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications', hasSubmenu: true },
-              { id: 'workflow-tracking', label: t('navigation.workflowTracking'), icon: FileBarChart, href: '/workflow-tracking' },
               { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
-              { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports' },
+              { id: 'reports', label: 'Reporting & Analytics', icon: BarChart3, href: '/reports', hasSubmenu: true },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
               { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' },
               { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
@@ -282,6 +282,61 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                       >
                         <Upload className="h-4 w-4" />
                         <span>Export & Import</span>
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              );
+            } else if (item.id === 'reports' && item.hasSubmenu) {
+              return (
+                <div key={item.id}>
+                  <button
+                    className={`
+                      flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-colors
+                      ${isActiveRoute(item.href)
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      }
+                    `}
+                    onClick={() => {
+                      setIsReportsSubmenuOpen(!isReportsSubmenuOpen);
+                      setSidebarOpen(false);
+                    }}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    <span>{item.label}</span>
+                    <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${isReportsSubmenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  
+                  {isReportsSubmenuOpen && (
+                    <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1">
+                      <Link
+                        href="/reports"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/reports')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <LineChart className="h-4 w-4" />
+                        <span>Analytics</span>
+                      </Link>
+                      <Link
+                        href="/workflow-tracking"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/workflow-tracking')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <FileBarChart className="h-4 w-4" />
+                        <span>Workflow & Tracking</span>
                       </Link>
                     </div>
                   )}
