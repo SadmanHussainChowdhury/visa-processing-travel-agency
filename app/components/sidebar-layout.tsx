@@ -66,7 +66,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
               const navigation = [
               { id: 'dashboard', label: t('navigation.dashboard'), icon: Home, href: '/' },
-              { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients', hasSubmenu: true },
+              { id: 'clients', label: 'Client Management', icon: Users, href: '/clients', hasSubmenu: true },
               { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' },
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
               { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
@@ -256,6 +256,20 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                   
                   {isClientsSubmenuOpen && (
                     <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1">
+                      <Link
+                        href="/clients"
+                        className={`
+                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          ${isActiveRoute('/clients')
+                            ? 'bg-blue-100 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                          }
+                        `}
+                        onClick={() => setSidebarOpen(false)}
+                      >
+                        <Users className="h-4 w-4" />
+                        <span>Clients</span>
+                      </Link>
                       <Link
                         href="/clients/new"
                         className={`
