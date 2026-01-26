@@ -75,6 +75,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reports', icon: BarChart3, href: '/reports', hasSubmenu: true },
+              { id: 'case-control', label: 'Case Control & Quality Assurance', icon: Shield, href: '/case-control' },
               { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
               { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' }
             ];
