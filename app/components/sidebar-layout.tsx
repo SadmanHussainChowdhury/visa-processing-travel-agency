@@ -71,7 +71,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
               { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
               { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
-              { id: 'notifications', label: 'Communication & Notifications', icon: Bell, href: '/notifications', hasSubmenu: true },
+              { id: 'notifications', label: 'Communication', icon: Bell, href: '/notifications', hasSubmenu: true },
               { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
               { id: 'reports', label: 'Reports', icon: BarChart3, href: '/reports', hasSubmenu: true },
