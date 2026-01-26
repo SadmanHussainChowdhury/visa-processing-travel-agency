@@ -144,7 +144,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">
-                {settings?.systemTitle || 'visa-travel'}
+                {settings?.systemTitle || 'Visa Cases Management'}
               </h1>
               <p className="text-xs text-gray-700">
                 {settings?.systemDescription || ''}
