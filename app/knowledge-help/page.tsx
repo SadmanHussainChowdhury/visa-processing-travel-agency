@@ -273,6 +273,127 @@ export default function KnowledgeHelpSystem() {
     setShowTipModal(false);
   };
 
+  // Edit and Delete functions for Visa Knowledge
+  const editVisaKnowledge = (entry: any) => {
+    setNewVisaKnowledge({
+      country: entry.country,
+      visaType: entry.visaType,
+      requirements: entry.requirements || [''],
+      processingTime: entry.processingTime,
+      fees: entry.fees,
+      difficulty: entry.difficulty || 'Medium',
+      tips: entry.tips
+    });
+    // We'll need to store the ID to know which entry to update
+    // For now, we'll just close the modal after editing
+    setShowVisaKnowledgeModal(true);
+  };
+
+  const deleteVisaKnowledge = async (id: string) => {
+    if (confirm('Are you sure you want to delete this entry?')) {
+      try {
+        const response = await fetch(`/api/knowledge-help?type=visa-knowledge&id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setVisaKnowledgeBase(visaKnowledgeBase.filter((entry: any) => entry._id !== id));
+        }
+      } catch (error) {
+        console.error('Error deleting visa knowledge:', error);
+      }
+    }
+  };
+
+  // Edit and Delete functions for SOP Documents
+  const editSOPDocument = (doc: any) => {
+    setNewSOPDoc({
+      title: doc.title,
+      type: doc.type,
+      country: doc.country,
+      version: doc.version,
+      content: doc.content,
+      author: doc.author
+    });
+    setShowSOPModal(true);
+  };
+
+  const deleteSOPDocument = async (id: string) => {
+    if (confirm('Are you sure you want to delete this document?')) {
+      try {
+        const response = await fetch(`/api/knowledge-help?type=sop-docs&id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setSopDocuments(sopDocuments.filter((doc: any) => doc._id !== id));
+        }
+      } catch (error) {
+        console.error('Error deleting SOP document:', error);
+      }
+    }
+  };
+
+  // Edit and Delete functions for Learning Guidelines
+  const editLearningGuideline = (guideline: any) => {
+    setNewGuideline({
+      title: guideline.title,
+      category: guideline.category,
+      duration: guideline.duration || '10 min',
+      level: guideline.level || 'Beginner',
+      completed: guideline.completed || false,
+      rating: guideline.rating || 0,
+      enrolled: guideline.enrolled || 0
+    });
+    setShowGuidelineModal(true);
+  };
+
+  const deleteLearningGuideline = async (id: string) => {
+    if (confirm('Are you sure you want to delete this guideline?')) {
+      try {
+        const response = await fetch(`/api/knowledge-help?type=learning-guidelines&id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setLearningGuidelines(learningGuidelines.filter((guideline: any) => guideline._id !== id));
+        }
+      } catch (error) {
+        console.error('Error deleting learning guideline:', error);
+      }
+    }
+  };
+
+  // Edit and Delete functions for Rejection Tips
+  const editRejectionTip = (tip: any) => {
+    setNewTip({
+      country: tip.country,
+      visaType: tip.visaType,
+      tipCategory: tip.tipCategory,
+      title: tip.title,
+      description: tip.description,
+      solution: tip.solution,
+      example: tip.example
+    });
+    setShowTipModal(true);
+  };
+
+  const deleteRejectionTip = async (id: string) => {
+    if (confirm('Are you sure you want to delete this tip?')) {
+      try {
+        const response = await fetch(`/api/knowledge-help?type=rejection-tips&id=${id}`, {
+          method: 'DELETE'
+        });
+        
+        if (response.ok) {
+          setRejectionTips(rejectionTips.filter((tip: any) => tip._id !== id));
+        }
+      } catch (error) {
+        console.error('Error deleting rejection tip:', error);
+      }
+    }
+  };
+
   return (
     <ProtectedRoute>
       <SidebarLayout 
@@ -434,7 +555,26 @@ export default function KnowledgeHelpSystem() {
                         
                         <div className="mt-4 flex justify-between items-center text-xs text-gray-500">
                           <span>Last updated: {entry.lastUpdated}</span>
-                          <button className="text-blue-600 hover:text-blue-800">View Details</button>
+                          <div className="flex space-x-2">
+                            <button 
+                              onClick={() => editVisaKnowledge(entry)}
+                              className="text-blue-600 hover:text-blue-800 flex items-center"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteVisaKnowledge(entry._id)}
+                              className="text-red-600 hover:text-red-800 flex items-center"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -482,8 +622,19 @@ export default function KnowledgeHelpSystem() {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.author}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
-                              <button className="text-green-600 hover:text-green-900 mr-3">Edit</button>
-                              <button className="text-gray-600 hover:text-gray-900">Download</button>
+                              <button 
+                                onClick={() => editSOPDocument(doc)}
+                                className="text-green-600 hover:text-green-900 mr-3"
+                              >
+                                Edit
+                              </button>
+                              <button 
+                                onClick={() => deleteSOPDocument(doc._id)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                Delete
+                              </button>
+                              <button className="text-gray-600 hover:text-gray-900 ml-3">Download</button>
                             </td>
                           </tr>
                         ))}
@@ -543,6 +694,52 @@ export default function KnowledgeHelpSystem() {
                             Info
                           </button>
                         </div>
+                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-xs text-gray-500">
+                          <span>Last updated: {guideline.lastUpdated}</span>
+                          <div className="flex space-x-2">
+                            <button 
+                              onClick={() => editLearningGuideline(guideline)}
+                              className="text-blue-600 hover:text-blue-800 flex items-center"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteLearningGuideline(guideline._id)}
+                              className="text-red-600 hover:text-red-800 flex items-center"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-xs text-gray-500">
+                          <span>Last updated: {guideline.lastUpdated}</span>
+                          <div className="flex space-x-2">
+                            <button 
+                              onClick={() => editLearningGuideline(guideline)}
+                              className="text-blue-600 hover:text-blue-800 flex items-center"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteLearningGuideline(guideline._id)}
+                              className="text-red-600 hover:text-red-800 flex items-center"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Delete
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -584,11 +781,31 @@ export default function KnowledgeHelpSystem() {
                           <p className="text-sm text-gray-600 italic">{tip.example}</p>
                         </div>
                         
-                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-end">
+                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
                           <button className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                             <AlertTriangle className="h-4 w-4 mr-1" />
                             Save Tip
                           </button>
+                          <div className="flex space-x-2">
+                            <button 
+                              onClick={() => editRejectionTip(tip)}
+                              className="text-blue-600 hover:text-blue-800 flex items-center text-sm"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                              Edit
+                            </button>
+                            <button 
+                              onClick={() => deleteRejectionTip(tip._id)}
+                              className="text-red-600 hover:text-red-800 flex items-center text-sm"
+                            >
+                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
