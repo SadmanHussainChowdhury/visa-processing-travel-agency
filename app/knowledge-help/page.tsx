@@ -83,6 +83,35 @@ export default function KnowledgeHelpSystem() {
   }, []);
 
   // Export functionality
+  // Filter data based on search query
+  const filterData = (data: any[], query: string) => {
+    if (!query.trim()) return data;
+    
+    const lowerQuery = query.toLowerCase();
+    
+    return data.filter(item => {
+      // Check all common fields for each type
+      return (
+        (item.title && item.title.toLowerCase().includes(lowerQuery)) ||
+        (item.country && item.country.toLowerCase().includes(lowerQuery)) ||
+        (item.visaType && item.visaType.toLowerCase().includes(lowerQuery)) ||
+        (item.type && item.type.toLowerCase().includes(lowerQuery)) ||
+        (item.category && item.category.toLowerCase().includes(lowerQuery)) ||
+        (item.description && item.description.toLowerCase().includes(lowerQuery)) ||
+        (item.content && item.content.toLowerCase().includes(lowerQuery)) ||
+        (item.tips && item.tips.toLowerCase().includes(lowerQuery)) ||
+        (item.fees && item.fees.toString().toLowerCase().includes(lowerQuery)) ||
+        (item.processingTime && item.processingTime.toLowerCase().includes(lowerQuery)) ||
+        (item.author && item.author.toLowerCase().includes(lowerQuery)) ||
+        (item.tipCategory && item.tipCategory.toLowerCase().includes(lowerQuery)) ||
+        (item.name && item.name.toLowerCase().includes(lowerQuery)) ||
+        // Check requirements array if it exists
+        (item.requirements && Array.isArray(item.requirements) && 
+          item.requirements.some((req: string) => req.toLowerCase().includes(lowerQuery)))
+      );
+    });
+  };
+
   const exportData = () => {
     let dataToExport: any[] = [];
     let fileName = '';
@@ -584,7 +613,7 @@ export default function KnowledgeHelpSystem() {
             {activeTab === 'knowledge-base' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {visaKnowledgeBase.map((entry) => (
+                  {filterData(visaKnowledgeBase, searchQuery).map((entry) => (
                     <div key={entry._id || entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                       <div className="p-5">
                         <div className="flex items-start justify-between">
@@ -686,7 +715,7 @@ export default function KnowledgeHelpSystem() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {sopDocuments.map((doc) => (
+                        {filterData(sopDocuments, searchQuery).map((doc) => (
                           <tr key={doc._id || doc.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
@@ -732,7 +761,7 @@ export default function KnowledgeHelpSystem() {
             {activeTab === 'learning-guidelines' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {learningGuidelines.map((guideline) => (
+                  {filterData(learningGuidelines, searchQuery).map((guideline) => (
                     <div key={guideline._id || guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                       <div className="p-5">
                         <div className="flex items-start justify-between">
@@ -811,7 +840,7 @@ export default function KnowledgeHelpSystem() {
             {activeTab === 'rejection-tips' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {rejectionTips.map((tip) => (
+                  {filterData(rejectionTips, searchQuery).map((tip) => (
                     <div key={tip._id || tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                       <div className="p-5 border-b border-gray-200">
                         <div className="flex items-start justify-between">
