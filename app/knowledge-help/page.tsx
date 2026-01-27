@@ -17,6 +17,8 @@ export default function KnowledgeHelpSystem() {
   const [showSOPModal, setShowSOPModal] = useState(false);
   const [showGuidelineModal, setShowGuidelineModal] = useState(false);
   const [showTipModal, setShowTipModal] = useState(false);
+  const [showSOPViewModal, setShowSOPViewModal] = useState(false);
+  const [selectedSOPDoc, setSelectedSOPDoc] = useState<any>(null);
   
   // State for form inputs
   const [newVisaKnowledge, setNewVisaKnowledge] = useState({
@@ -303,6 +305,12 @@ export default function KnowledgeHelpSystem() {
         console.error('Error deleting visa knowledge:', error);
       }
     }
+  };
+
+  // View function for SOP Documents
+  const viewSOPDocument = (doc: any) => {
+    setSelectedSOPDoc(doc);
+    setShowSOPViewModal(true);
   };
 
   // Edit and Delete functions for SOP Documents
@@ -621,7 +629,12 @@ export default function KnowledgeHelpSystem() {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.lastUpdated}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{doc.author}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                              <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                              <button 
+                                onClick={() => viewSOPDocument(doc)}
+                                className="text-blue-600 hover:text-blue-900 mr-3"
+                              >
+                                View
+                              </button>
                               <button 
                                 onClick={() => editSOPDocument(doc)}
                                 className="text-green-600 hover:text-green-900 mr-3"
@@ -634,7 +647,6 @@ export default function KnowledgeHelpSystem() {
                               >
                                 Delete
                               </button>
-                              <button className="text-gray-600 hover:text-gray-900 ml-3">Download</button>
                             </td>
                           </tr>
                         ))}
@@ -693,29 +705,6 @@ export default function KnowledgeHelpSystem() {
                           <button className="ml-2 py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 hover:bg-gray-50">
                             Info
                           </button>
-                        </div>
-                        <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-xs text-gray-500">
-                          <span>Last updated: {guideline.lastUpdated}</span>
-                          <div className="flex space-x-2">
-                            <button 
-                              onClick={() => editLearningGuideline(guideline)}
-                              className="text-blue-600 hover:text-blue-800 flex items-center"
-                            >
-                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                              </svg>
-                              Edit
-                            </button>
-                            <button 
-                              onClick={() => deleteLearningGuideline(guideline._id)}
-                              className="text-red-600 hover:text-red-800 flex items-center"
-                            >
-                              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                              Delete
-                            </button>
-                          </div>
                         </div>
                         <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between text-xs text-gray-500">
                           <span>Last updated: {guideline.lastUpdated}</span>
@@ -1251,6 +1240,64 @@ export default function KnowledgeHelpSystem() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* SOP Document View Modal */}
+          {showSOPViewModal && selectedSOPDoc && (
+            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={() => setShowSOPViewModal(false)}>
+              <div className="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <FileText className="h-5 w-5" />
+                    <span>{selectedSOPDoc.title}</span>
+                  </h3>
+                  <button
+                    onClick={() => setShowSOPViewModal(false)}
+                    className="text-gray-400 hover:text-gray-600"
+                  >
+                    <span className="text-2xl">&times;</span>
+                  </button>
+                </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Type</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedSOPDoc.type}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Country</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedSOPDoc.country}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Version</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedSOPDoc.version}</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">Author</label>
+                      <p className="mt-1 text-sm text-gray-900">{selectedSOPDoc.author}</p>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Last Updated</label>
+                    <p className="mt-1 text-sm text-gray-900">{selectedSOPDoc.lastUpdated}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700">Content</label>
+                    <div className="mt-1 p-3 border border-gray-300 rounded-md bg-gray-50">
+                      <p className="text-sm text-gray-800 whitespace-pre-wrap">{selectedSOPDoc.content}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-end pt-4">
+                    <button
+                      onClick={() => setShowSOPViewModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}

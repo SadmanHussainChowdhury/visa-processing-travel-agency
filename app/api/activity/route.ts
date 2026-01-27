@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../auth/[...nextauth]/route';
-import Patient from '../../../models/Patient';
+import Client from '../../../models/Client';
 import Appointment from '../../../models/Appointment';
 import dbConnect from '../../../lib/mongodb';
 
@@ -23,17 +23,17 @@ export async function GET(request: NextRequest) {
     // Fetch all activities
     const [
       recentAppointments,
-      recentPatients
+      recentClients
     ] = await Promise.all([
       // Recent appointments
       Appointment.find()
         .sort({ createdAt: -1 })
         .select('_id patientName doctorName appointmentDate appointmentTime status createdAt'),
 
-      // Recent patients
-      Patient.find()
+      // Recent clients
+      Client.find()
         .sort({ createdAt: -1 })
-        .select('name createdAt')
+        .select('firstName lastName createdAt')
     ]);
 
     // Build recent activities
@@ -52,20 +52,18 @@ export async function GET(request: NextRequest) {
       });
     });
 
-    // Add recent patients
-    recentPatients.forEach(patient => {
+    // Add recent clients
+    recentClients.forEach(client => {
       recentActivities.push({
-        id: `patient-${patient._id}`,
-        type: 'patient',
-        title: 'New patient registered',
-        description: patient.name,
-        time: formatTimeAgo(patient.createdAt),
-        createdAt: patient.createdAt,
+        id: `client-${client._id}`,
+        type: 'client',
+        title: 'New client registered',
+        description: `${client.firstName} ${client.lastName}`,
+        time: formatTimeAgo(client.createdAt),
+        createdAt: client.createdAt,
         status: 'completed'
       });
     });
-
-
 
     // Sort activities by createdAt date (most recent first)
     recentActivities.sort((a, b) => {
@@ -112,4 +110,3 @@ function formatTimeAgo(date: Date): string {
     return 'Just now';
   }
 }
-

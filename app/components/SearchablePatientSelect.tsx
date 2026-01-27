@@ -3,32 +3,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, ChevronDown, X } from 'lucide-react';
 
-interface Patient {
+interface Client {
   _id: string;
-  patientId: string;
-  name: string;
+  clientId: string;
+  firstName: string;
+  lastName: string;
   email: string;
   phone: string;
 }
 
-interface SearchablePatientSelectProps {
+interface SearchableClientSelectProps {
   value: string;
-  onChange: (patient: Patient | null) => void;
+  onChange: (client: Client | null) => void;
   placeholder?: string;
   className?: string;
 }
 
-export default function SearchablePatientSelect({
+export default function SearchableClientSelect({
   value,
   onChange,
-  placeholder = "Search and select a patient...",
+  placeholder = "Search and select a client...",
   className = ""
-}: SearchablePatientSelectProps) {
+}: SearchableClientSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [patients, setPatients] = useState<Patient[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   
   const inputRef = useRef<HTMLInputElement>(null);
@@ -38,18 +39,18 @@ export default function SearchablePatientSelect({
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (searchTerm.trim()) {
-        searchPatients(searchTerm);
+        searchClients(searchTerm);
       } else {
-        setPatients([]);
+        setClients([]);
       }
     }, 300);
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm]);
 
-  // Load initial patients when component mounts
+  // Load initial clients when component mounts
   useEffect(() => {
-    searchPatients('');
+    searchClients('');
   }, []);
 
   // Handle click outside to close dropdown
@@ -64,16 +65,16 @@ export default function SearchablePatientSelect({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const searchPatients = async (query: string) => {
+  const searchClients = async (query: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`/api/patients/search?q=${encodeURIComponent(query)}&limit=20`);
+      const response = await fetch(`/api/clients/search?q=${encodeURIComponent(query)}&limit=20`);
       if (response.ok) {
         const data = await response.json();
-        setPatients(data);
+        setClients(data);
       }
     } catch (error) {
-      console.error('Error searching patients:', error);
+      console.error('Error searching clients:', error);
     } finally {
       setLoading(false);
     }
@@ -87,20 +88,20 @@ export default function SearchablePatientSelect({
     
     // If search term is cleared, clear selection
     if (!newSearchTerm.trim()) {
-      setSelectedPatient(null);
+      setSelectedClient(null);
       onChange(null);
     }
   };
 
-  const handlePatientSelect = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setSearchTerm(patient.name);
+  const handleClientSelect = (client: Client) => {
+    setSelectedClient(client);
+    setSearchTerm(`${client.firstName} ${client.lastName}`);
     setIsOpen(false);
-    onChange(patient);
+    onChange(client);
   };
 
   const handleClear = () => {
-    setSelectedPatient(null);
+    setSelectedClient(null);
     setSearchTerm('');
     onChange(null);
     inputRef.current?.focus();
@@ -118,7 +119,7 @@ export default function SearchablePatientSelect({
       case 'ArrowDown':
         e.preventDefault();
         setHighlightedIndex(prev => 
-          prev < patients.length - 1 ? prev + 1 : prev
+          prev < clients.length - 1 ? prev + 1 : prev
         );
         break;
       case 'ArrowUp':
@@ -127,8 +128,8 @@ export default function SearchablePatientSelect({
         break;
       case 'Enter':
         e.preventDefault();
-        if (highlightedIndex >= 0 && patients[highlightedIndex]) {
-          handlePatientSelect(patients[highlightedIndex]);
+        if (highlightedIndex >= 0 && clients[highlightedIndex]) {
+          handleClientSelect(clients[highlightedIndex]);
         }
         break;
       case 'Escape':
@@ -155,7 +156,7 @@ export default function SearchablePatientSelect({
           className="w-full pl-10 pr-20 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         />
         <div className="absolute inset-y-0 right-0 flex items-center">
-          {selectedPatient && (
+          {selectedClient && (
             <button
               type="button"
               onClick={handleClear}
@@ -181,11 +182,11 @@ export default function SearchablePatientSelect({
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto"></div>
               <span className="ml-2">Searching...</span>
             </div>
-          ) : patients.length > 0 ? (
-            patients.map((patient, index) => (
+          ) : clients.length > 0 ? (
+            clients.map((client, index) => (
               <div
-                key={patient._id}
-                onClick={() => handlePatientSelect(patient)}
+                key={client._id}
+                onClick={() => handleClientSelect(client)}
                 className={`p-3 cursor-pointer border-b border-gray-100 last:border-b-0 ${
                   index === highlightedIndex
                     ? 'bg-blue-50 text-blue-900'
@@ -194,24 +195,24 @@ export default function SearchablePatientSelect({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-gray-900">{patient.name}</div>
+                    <div className="font-medium text-gray-900">{client.firstName} {client.lastName}</div>
                     <div className="text-sm text-gray-500">
-                      ID: {patient.patientId} • {patient.email}
+                      ID: {client.clientId} • {client.email}
                     </div>
                   </div>
                   <div className="text-sm text-gray-400">
-                    {patient.phone}
+                    {client.phone}
                   </div>
                 </div>
               </div>
             ))
           ) : searchTerm.trim() ? (
             <div className="p-3 text-center text-gray-500">
-              No patients found for "{searchTerm}"
+              No clients found for "{searchTerm}"
             </div>
           ) : (
             <div className="p-3 text-center text-gray-500">
-              Start typing to search patients...
+              Start typing to search clients...
             </div>
           )}
         </div>

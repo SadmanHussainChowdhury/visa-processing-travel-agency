@@ -23,10 +23,10 @@ import {
 import ProtectedRoute from '../../../protected-route';
 import SidebarLayout from '../../../components/sidebar-layout';
 
-export default function PatientCasesPage() {
+export default function ClientCasesPage() {
   const params = useParams();
   const router = useRouter();
-  const [patient, setPatient] = useState<any>(null);
+  const [client, setClient] = useState<any>(null);
   const [workflows, setWorkflows] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -36,22 +36,22 @@ export default function PatientCasesPage() {
   useEffect(() => {
     console.log('=== CASES PAGE LOADED ===');
     console.log('Params:', params);
-    console.log('Patient ID:', params.id);
+    console.log('Client ID:', params.id);
     
     const fetchData = async () => {
       try {
-        console.log('Fetching patient data...');
-        // Fetch patient data
-        const patientResponse = await fetch(`/api/patients/${params.id}`);
-        if (patientResponse.ok) {
-          const patientData = await patientResponse.json();
-          console.log('Patient data:', patientData);
-          setPatient(patientData);
+        console.log('Fetching client data...');
+        // Fetch client data
+        const clientResponse = await fetch(`/api/clients/${params.id}`);
+        if (clientResponse.ok) {
+          const clientData = await clientResponse.json();
+          console.log('Client data:', clientData);
+          setClient(clientData);
         }
 
         console.log('Fetching workflows...');
-        // Fetch workflows for this patient
-        const workflowsResponse = await fetch(`/api/workflows?patientId=${params.id}`);
+        // Fetch workflows for this client
+        const workflowsResponse = await fetch(`/api/workflows?clientId=${params.id}`);
         if (workflowsResponse.ok) {
           const workflowsData = await workflowsResponse.json();
           console.log('Workflows data:', workflowsData);
@@ -114,11 +114,11 @@ export default function PatientCasesPage() {
   const getStepLabel = (step: string) => {
     switch (step) {
       case 'symptoms':
-        return 'Patient Input';
+        return 'Client Input';
       case 'analysis':
         return 'AI Analysis';
       case 'diagnosis':
-        return 'Doctor Diagnosis';
+        return 'Consultant Diagnosis';
       case 'treatment':
         return 'Treatment Plan';
       case 'prescription':
@@ -174,8 +174,8 @@ export default function PatientCasesPage() {
     return (
       <ProtectedRoute>
         <SidebarLayout 
-          title="Patient Cases" 
-          description="View patient workflows and cases"
+          title="Client Cases" 
+          description="View client workflows and cases"
         >
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -185,23 +185,23 @@ export default function PatientCasesPage() {
     );
   }
 
-  if (error || !patient) {
+  if (error || !client) {
     return (
       <ProtectedRoute>
         <SidebarLayout 
-          title="Patient Cases" 
-          description="View patient workflows and cases"
+          title="Client Cases" 
+          description="View client workflows and cases"
         >
           <div className="text-center py-12">
             <AlertTriangle className="w-16 h-16 text-red-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">Error</h3>
-            <p className="text-gray-600">{error || 'Patient not found'}</p>
+            <p className="text-gray-600">{error || 'Client not found'}</p>
             <Link
-              href="/patients"
+              href="/clients"
               className="mt-4 inline-flex items-center text-blue-600 hover:text-blue-800"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Patients
+              Back to Clients
             </Link>
           </div>
         </SidebarLayout>
@@ -212,26 +212,26 @@ export default function PatientCasesPage() {
   return (
     <ProtectedRoute>
       <SidebarLayout 
-        title="Patient Cases" 
-        description={`Workflows and cases for ${patient.name}`}
+        title="Client Cases" 
+        description={`Workflows and cases for ${client.firstName} ${client.lastName}`}
       >
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-6">
             <Link 
-              href="/patients"
+              href="/clients"
               className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800 mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Patients
+              Back to Clients
             </Link>
             <div className="flex justify-between items-center">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Cases for {patient.name}</h1>
-                <p className="text-gray-600">View and manage patient workflows and medical cases</p>
+                <h1 className="text-2xl font-bold text-gray-900">Cases for {client.firstName} {client.lastName}</h1>
+                <p className="text-gray-600">View and manage client workflows and visa cases</p>
               </div>
               <Link
-                href={`/ai-treatment-recommendations?patientId=${patient._id}`}
+                href={`/ai-treatment-recommendations?clientId=${client._id}`}
                 className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 <FileText className="h-4 w-4" />
@@ -358,10 +358,10 @@ export default function PatientCasesPage() {
                 <p className="text-gray-600 mb-6">
                   {searchTerm || statusFilter !== 'all' 
                     ? 'No workflows match your search criteria.' 
-                    : 'This patient has no medical cases or workflows yet.'}
+                    : 'This client has no visa cases or workflows yet.'}
                 </p>
                 <Link
-                  href={`/ai-treatment-recommendations?patientId=${patient._id}`}
+                  href={`/ai-treatment-recommendations?clientId=${client._id}`}
                   className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <FileText className="h-4 w-4" />
