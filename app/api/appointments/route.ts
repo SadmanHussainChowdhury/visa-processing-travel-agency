@@ -34,16 +34,13 @@ export async function POST(request: NextRequest) {
       appointmentDate: body.appointmentDate,
       appointmentTime: body.appointmentTime,
       appointmentType: body.appointmentType || 'consultation', // Default to 'consultation' for visa appointments
-      patientId: body.clientId || body.patientId, // Ensure patientId is mapped properly
       status: body.status || 'scheduled',
       reason: body.purpose || body.reason, // Map purpose to reason
       notes: body.notes,
-      
-      // Keep other fields as they are
-      patientId: body.clientId || body.patientId,
       symptoms: body.symptoms,
       diagnosis: body.diagnosis,
-      treatment: body.treatment
+      treatment: body.treatment,
+      patientId: body.clientId || body.patientId // Ensure patientId is mapped properly (only once)
     };
 
     const appointment = new Appointment(mappedData);

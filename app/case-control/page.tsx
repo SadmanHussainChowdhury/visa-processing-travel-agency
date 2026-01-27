@@ -19,7 +19,10 @@ import {
   History,
   Search,
   Filter,
-  MoreVertical
+  MoreVertical,
+  Plus,
+  Trash2,
+  X
 } from 'lucide-react';
 
 interface CaseApproval {
@@ -27,6 +30,7 @@ interface CaseApproval {
   caseId: string;
   applicantName: string;
   visaType: string;
+  country?: string;
   status: 'pending' | 'approved' | 'rejected' | 'locked' | 'submitted';
   submittedDate?: string;
   lockedDate?: string;
@@ -62,6 +66,16 @@ const CaseControlPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [showLockedCases, setShowLockedCases] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingCase, setEditingCase] = useState<CaseApproval | null>(null);
+  const [newCaseData, setNewCaseData] = useState({
+    clientName: '',
+    visaType: '',
+    country: '',
+    status: 'pending' as 'pending' | 'approved' | 'rejected' | 'locked' | 'submitted',
+    notes: ''
+  });
 
   // Define fetchData function outside useEffect
   const fetchData = async () => {
@@ -176,6 +190,111 @@ const CaseControlPage = () => {
     }
   };
 
+  const handleAddNewCase = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newCaseData)
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create case');
+      }
+      
+      // Refresh the data
+      await fetchData();
+      setShowAddModal(false);
+      setNewCaseData({
+        clientName: '',
+        visaType: '',
+        country: '',
+        status: 'pending',
+        notes: ''
+      });
+      alert('Case created successfully!');
+    } catch (error) {
+      console.error('Error creating case:', error);
+      alert('Error creating case. Please try again.');
+    }
+  };
+
+  const handleEditCase = (caseItem: CaseApproval) => {
+    setEditingCase(caseItem);
+    setNewCaseData({
+      clientName: caseItem.applicantName,
+      visaType: caseItem.visaType,
+      country: caseItem.country || '',
+      status: caseItem.status,
+      notes: ''
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateCase = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCase) return;
+    
+    try {
+      const response = await fetch('/api/case-control', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: editingCase.id,
+          clientName: newCaseData.clientName,
+          visaType: newCaseData.visaType,
+          country: newCaseData.country,
+          status: newCaseData.status
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to update case');
+      }
+      
+      // Refresh the data
+      await fetchData();
+      setShowEditModal(false);
+      setEditingCase(null);
+      setNewCaseData({
+        clientName: '',
+        visaType: '',
+        country: '',
+        status: 'pending',
+        notes: ''
+      });
+      alert('Case updated successfully!');
+    } catch (error) {
+      console.error('Error updating case:', error);
+      alert('Error updating case. Please try again.');
+    }
+  };
+
+  const handleDeleteCase = async (caseId: string) => {
+    if (!confirm('Are you sure you want to delete this case? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/case-control?id=${caseId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to delete case');
+      }
+      
+      // Refresh the data
+      await fetchData();
+      alert('Case deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting case:', error);
+      alert('Error deleting case. Please try again.');
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
@@ -268,8 +387,15 @@ const CaseControlPage = () => {
                 </label>
               </div>
               
-              <div className="flex items-end">
-                <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
+              <div className="flex items-end space-x-2">
+                <button 
+                  onClick={() => setShowAddModal(true)}
+                  className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New Case
+                </button>
+                <button className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center">
                   <Download className="h-4 w-4 mr-2" />
                   Export Report
                 </button>
@@ -368,11 +494,18 @@ const CaseControlPage = () => {
                           )}
                           
                           <button
-                            onClick={() => handleRequestCorrection(c.id)}
+                            onClick={() => handleEditCase(c)}
                             className="text-yellow-600 hover:text-yellow-900 flex items-center"
                           >
                             <Edit className="h-4 w-4 mr-1" />
-                            Request Correction
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCase(c.id)}
+                            className="text-red-600 hover:text-red-900 flex items-center"
+                          >
+                            <Trash2 className="h-4 w-4 mr-1" />
+                            Delete
                           </button>
                         </div>
                       </td>
@@ -444,6 +577,188 @@ const CaseControlPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Add New Case Modal */}
+        {showAddModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Add New Case</h3>
+                <button 
+                  onClick={() => setShowAddModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <form onSubmit={handleAddNewCase} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Client Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.clientName}
+                    onChange={(e) => setNewCaseData({...newCaseData, clientName: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Visa Type *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.visaType}
+                    onChange={(e) => setNewCaseData({...newCaseData, visaType: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Country *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.country}
+                    onChange={(e) => setNewCaseData({...newCaseData, country: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.status}
+                    onChange={(e) => setNewCaseData({...newCaseData, status: e.target.value as any})}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="locked">Locked</option>
+                    <option value="submitted">Submitted</option>
+                  </select>
+                </div>
+                
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Create Case
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit Case Modal */}
+        {showEditModal && editingCase && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg max-w-md w-full p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">Edit Case</h3>
+                <button 
+                  onClick={() => setShowEditModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+              
+              <form onSubmit={handleUpdateCase} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Client Name *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.clientName}
+                    onChange={(e) => setNewCaseData({...newCaseData, clientName: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Visa Type *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.visaType}
+                    onChange={(e) => setNewCaseData({...newCaseData, visaType: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Country *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.country}
+                    onChange={(e) => setNewCaseData({...newCaseData, country: e.target.value})}
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    value={newCaseData.status}
+                    onChange={(e) => setNewCaseData({...newCaseData, status: e.target.value as any})}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                    <option value="locked">Locked</option>
+                    <option value="submitted">Submitted</option>
+                  </select>
+                </div>
+                
+                <div className="flex space-x-3 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Update Case
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="flex-1 bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </SidebarLayout>
     </ProtectedRoute>
   );

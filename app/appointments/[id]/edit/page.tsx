@@ -37,10 +37,7 @@ export default function AppointmentEditPage() {
     appointmentType: '',
     status: '',
     location: '',
-    notes: '',
-    symptoms: [] as string[],
-    diagnosis: '',
-    treatment: ''
+    notes: ''
   });
 
   useEffect(() => {
@@ -61,10 +58,7 @@ export default function AppointmentEditPage() {
             appointmentType: data.appointmentType || '',
             status: data.status || '',
             location: data.location || '',
-            notes: data.notes || '',
-            symptoms: data.symptoms || [],
-            diagnosis: data.diagnosis || '',
-            treatment: data.treatment || ''
+            notes: data.notes || ''
           });
         } else {
           setError('Appointment not found');
@@ -92,13 +86,7 @@ export default function AppointmentEditPage() {
     if (error) setError('');
   };
 
-  const handleSymptomsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const symptoms = e.target.value.split(',').map(s => s.trim()).filter(s => s);
-    setFormData(prev => ({
-      ...prev,
-      symptoms
-    }));
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -357,72 +345,7 @@ export default function AppointmentEditPage() {
               </div>
             </div>
 
-            {/* Medical Information */}
-            <div className="bg-white rounded-lg shadow p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Medical Information</h3>
-              <div className="space-y-6">
-                <div>
-                  <label htmlFor="symptoms" className="block text-sm font-medium text-gray-700 mb-2">
-                    Symptoms
-                  </label>
-                  <input
-                    type="text"
-                    id="symptoms"
-                    name="symptoms"
-                    value={formData.symptoms.join(', ')}
-                    onChange={handleSymptomsChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter symptoms separated by commas"
-                  />
-                  <p className="text-sm text-gray-500 mt-1">Separate multiple symptoms with commas</p>
-                </div>
-                
-                <div>
-                  <label htmlFor="diagnosis" className="block text-sm font-medium text-gray-700 mb-2">
-                    Diagnosis
-                  </label>
-                  <textarea
-                    id="diagnosis"
-                    name="diagnosis"
-                    value={formData.diagnosis}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter the diagnosis..."
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="treatment" className="block text-sm font-medium text-gray-700 mb-2">
-                    Treatment
-                  </label>
-                  <textarea
-                    id="treatment"
-                    name="treatment"
-                    value={formData.treatment}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Enter the treatment plan..."
-                  />
-                </div>
-                
-                <div>
-                  <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
-                    Notes
-                  </label>
-                  <textarea
-                    id="notes"
-                    name="notes"
-                    value={formData.notes}
-                    onChange={handleInputChange}
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Any additional notes..."
-                  />
-                </div>
-              </div>
-            </div>
+
 
             {/* Form Actions */}
             <div className="flex justify-end space-x-4">
