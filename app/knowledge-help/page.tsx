@@ -82,6 +82,74 @@ export default function KnowledgeHelpSystem() {
     fetchData();
   }, []);
 
+  // Export functionality
+  const exportData = () => {
+    let dataToExport: any[] = [];
+    let fileName = '';
+    let headers: string[] = [];
+
+    switch (activeTab) {
+      case 'knowledge-base':
+        dataToExport = visaKnowledgeBase;
+        fileName = 'visa-knowledge-base.csv';
+        headers = ['Country', 'Visa Type', 'Processing Time', 'Fees', 'Difficulty', 'Tips'];
+        break;
+      case 'sop-docs':
+        dataToExport = sopDocuments;
+        fileName = 'sop-documents.csv';
+        headers = ['Title', 'Type', 'Country', 'Version', 'Author', 'Last Updated'];
+        break;
+      case 'learning-guidelines':
+        dataToExport = learningGuidelines;
+        fileName = 'learning-guidelines.csv';
+        headers = ['Title', 'Category', 'Duration', 'Level', 'Completed', 'Rating', 'Enrolled'];
+        break;
+      case 'rejection-tips':
+        dataToExport = rejectionTips;
+        fileName = 'rejection-tips.csv';
+        headers = ['Country', 'Visa Type', 'Tip Category', 'Title', 'Description'];
+        break;
+    }
+
+    // Convert data to CSV format
+    const csvContent = [
+      headers.join(','),
+      ...dataToExport.map(item => {
+        const row = headers.map(header => {
+          const key = header.toLowerCase().replace(' ', '');
+          let value = item[key] || '';
+          
+          // Handle special cases
+          if (key === 'requirements' && Array.isArray(value)) {
+            value = value.join('; ');
+          }
+          if (key === 'completed') {
+            value = value ? 'Yes' : 'No';
+          }
+          
+          // Escape commas and quotes in values
+          if (typeof value === 'string' && (value.includes(',') || value.includes('"'))) {
+            value = `"${value.replace(/"/g, '""')}"`;
+          }
+          
+          return value;
+        });
+        return row.join(',');
+      })
+    ].join('\n');
+
+    // Create and download file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', fileName);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Function to add a new visa knowledge entry
   const addVisaKnowledge = async (entry: any) => {
     try {
@@ -441,7 +509,10 @@ export default function KnowledgeHelpSystem() {
                   <BookOpen className="h-4 w-4" />
                   <span>Add New</span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                <button 
+                  className="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  onClick={exportData}
+                >
                   <Download className="h-4 w-4" />
                   <span>Export</span>
                 </button>
