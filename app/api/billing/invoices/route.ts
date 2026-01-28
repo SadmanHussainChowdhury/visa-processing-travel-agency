@@ -126,7 +126,7 @@ export async function POST(request: NextRequest) {
       dueDate: body.dueDate ? new Date(body.dueDate) : undefined,
       status: body.status || 'draft',
       notes: body.notes,
-      createdBy: session.user.id
+      createdBy: 'system'
     };
 
     const invoice = new Invoice(invoiceData);

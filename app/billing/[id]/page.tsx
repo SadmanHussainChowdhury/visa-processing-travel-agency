@@ -104,6 +104,47 @@ export default function InvoiceViewPage() {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
+  const handleDownload = () => {
+    if (!invoice) return;
+    
+    // Create a simple text content for download
+    const content = `
+Invoice Details
+===============
+
+Invoice Number: ${invoice.invoiceNumber}
+Client Name: ${invoice.clientName}
+Client Email: ${invoice.clientEmail}
+Status: ${statusConfig[invoice.status].label}
+Currency: ${invoice.currency}
+Subtotal: ${invoice.currency} ${invoice.subtotal.toFixed(2)}
+Tax Rate: ${invoice.taxRate}%
+Tax Amount: ${invoice.currency} ${invoice.taxAmount.toFixed(2)}
+Total Amount: ${invoice.currency} ${invoice.totalAmount.toFixed(2)}
+Created: ${new Date(invoice.createdAt).toLocaleDateString()}
+
+Items:
+${invoice.items.map((item, index) => 
+  `${index + 1}. ${item.description} - Qty: ${item.quantity} - Price: ${invoice.currency} ${item.unitPrice.toFixed(2)} - Amount: ${invoice.currency} ${item.amount.toFixed(2)}`
+).join('\n')}
+    `;
+    
+    // Create a Blob and download it
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `invoice-${invoice.invoiceNumber}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -181,11 +222,17 @@ export default function InvoiceViewPage() {
                 </h1>
               </div>
               <div className="flex space-x-2">
-                <button className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                <button 
+                  onClick={handlePrint}
+                  className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
                   <Printer className="h-4 w-4 mr-2" />
                   Print
                 </button>
-                <button className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                <button 
+                  onClick={handleDownload}
+                  className="inline-flex items-center px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                >
                   <Download className="h-4 w-4 mr-2" />
                   Download
                 </button>
