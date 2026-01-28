@@ -120,7 +120,7 @@ export default function BillingPage() {
 
   return (
     <ProtectedRoute>
-      <SidebarLayout title="Billing" description="Manage invoices and payments">
+      <SidebarLayout title="Billing">
         <div className="space-y-6">
           {/* Header with Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
