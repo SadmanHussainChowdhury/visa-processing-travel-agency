@@ -39,6 +39,8 @@ interface InvoiceItem {
 export default function NewInvoicePage() {
   const router = useRouter();
   const [visaCases, setVisaCases] = useState<VisaCase[]>([]);
+  const [filteredVisaCases, setFilteredVisaCases] = useState<VisaCase[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCase, setSelectedCase] = useState<VisaCase | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -75,7 +77,8 @@ export default function NewInvoicePage() {
       const response = await fetch('/api/visa-cases');
       if (response.ok) {
         const data = await response.json();
-        setVisaCases(data.visaCases || []);
+        setVisaCases(data);
+        setFilteredVisaCases(data);
       }
     } catch (error) {
       console.error('Error fetching visa cases:', error);
@@ -85,8 +88,22 @@ export default function NewInvoicePage() {
     }
   };
 
+  // Filter visa cases based on search term
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredVisaCases(visaCases);
+    } else {
+      const filtered = visaCases.filter(visaCase =>
+        visaCase.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        visaCase.caseId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        visaCase.visaType.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        visaCase.country.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredVisaCases(filtered);
+    }
+  }, [searchTerm, visaCases]);
   const handleCaseSelect = (caseId: string) => {
-    const selected = visaCases.find(visaCase => visaCase._id === caseId);
+    const selected = filteredVisaCases.find(visaCase => visaCase._id === caseId);
     if (selected) {
       setSelectedCase(selected);
       setFormData(prev => ({
@@ -99,7 +116,6 @@ export default function NewInvoicePage() {
     }
     setError('');
   };
-
   const addItem = () => {
     setFormData(prev => ({
       ...prev,
@@ -246,6 +262,21 @@ export default function NewInvoicePage() {
             <div className="bg-white rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Visa Case Selection</h3>
               <div className="space-y-4">
+                {/* Search Input */}
+                <div>
+                  <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-2">
+                    Search Visa Cases
+                  </label>
+                  <input
+                    type="text"
+                    id="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by client name, case ID, visa type, or country..."
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                </div>
+                
                 <div>
                   <label htmlFor="visaCaseId" className="block text-sm font-medium text-gray-700 mb-2">
                     Select Visa Case *
@@ -258,7 +289,7 @@ export default function NewInvoicePage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Choose a visa case...</option>
-                    {visaCases.map((visaCase) => (
+                    {filteredVisaCases.map((visaCase) => (
                       <option key={visaCase._id} value={visaCase._id}>
                         {visaCase.caseId} - {visaCase.clientName} ({visaCase.visaType} - {visaCase.country})
                       </option>

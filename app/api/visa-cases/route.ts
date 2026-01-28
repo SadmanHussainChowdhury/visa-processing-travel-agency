@@ -10,11 +10,22 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const clientId = searchParams.get('clientId');
+    const search = searchParams.get('search');
     
     let query: any = {};
     
     if (status) query.status = status;
     if (clientId) query.clientId = clientId;
+    
+    // Add search functionality
+    if (search) {
+      query.$or = [
+        { clientName: { $regex: search, $options: 'i' } },
+        { caseId: { $regex: search, $options: 'i' } },
+        { visaType: { $regex: search, $options: 'i' } },
+        { country: { $regex: search, $options: 'i' } }
+      ];
+    }
     
     const visaCases = await VisaCase.find(query).sort({ createdAt: -1 });
     
