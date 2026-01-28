@@ -58,6 +58,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
   const [isNotificationsSubmenuOpen, setIsNotificationsSubmenuOpen] = useState(false);
   const [isClientsSubmenuOpen, setIsClientsSubmenuOpen] = useState(false);
   const [isReportsSubmenuOpen, setIsReportsSubmenuOpen] = useState(false);
+  const [isBillingSubmenuOpen, setIsBillingSubmenuOpen] = useState(false);
   const pathname = usePathname();
   const { data: session } = useSession();
   const { t, translationsLoaded } = useTranslations();
@@ -70,6 +71,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'clients', label: 'Client Management', icon: Users, href: '/clients', hasSubmenu: true },
               { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' },
               { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
+              { id: 'billing', label: 'Billing', icon: Calculator, href: '/billing', hasSubmenu: true },
               { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
               { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: 'Communication', icon: Bell, href: '/notifications', hasSubmenu: true },
@@ -359,7 +361,62 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                   )}
                 </div>
               );
-            } else {
+            } else if (item.id === 'billing' && item.hasSubmenu) {
+                          return (
+                            <div key={item.id}>
+                              <button
+                                className={`
+                                  flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-colors
+                                  \${isActiveRoute(item.href)
+                                    ? 'bg-blue-100 text-blue-700'
+                                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                                  }
+                                `}
+                                onClick={() => {
+                                  setIsBillingSubmenuOpen(!isBillingSubmenuOpen);
+                                  setSidebarOpen(false);
+                                }}
+                              >
+                                <item.icon className="h-5 w-5" />
+                                <span>{item.label}</span>
+                                <ChevronDown className={`h-4 w-4 ml-auto transition-transform \${isBillingSubmenuOpen ? 'rotate-180' : ''}`} />
+                              </button>
+                              
+                              {isBillingSubmenuOpen && (
+                                <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1">
+                                  <Link
+                                    href="/billing"
+                                    className={`
+                                      flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                                      \${isActiveRoute('/billing')
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                      }
+                                    `}
+                                    onClick={() => setSidebarOpen(false)}
+                                  >
+                                    <FileText className="h-4 w-4" />
+                                    <span>All Invoices</span>
+                                  </Link>
+                                  <Link
+                                    href="/billing/new"
+                                    className={`
+                                      flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                                      \${isActiveRoute('/billing/new')
+                                        ? 'bg-blue-100 text-blue-700'
+                                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                                      }
+                                    `}
+                                    onClick={() => setSidebarOpen(false)}
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Create New Invoice</span>
+                                  </Link>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        } else {
               return (
                 <Link
                   key={item.id}
