@@ -40,8 +40,7 @@ export default function BillingPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [totalItems, setTotalItems] = useState(0);
+  const [itemsPerPage] = useState(10); // Show 10 invoices per page
 
   const statusColors = {
     draft: 'bg-gray-100 text-gray-800',
@@ -59,25 +58,15 @@ export default function BillingPage() {
 
   useEffect(() => {
     fetchInvoices();
-  }, [currentPage, statusFilter]);
+  }, []);
 
   const fetchInvoices = async () => {
     setLoading(true);
     try {
-      const queryParams = new URLSearchParams();
-      queryParams.append('page', currentPage.toString());
-      queryParams.append('limit', '10');
-      
-      if (statusFilter !== 'all') {
-        queryParams.append('status', statusFilter);
-      }
-
-      const response = await fetch(`/api/billing/invoices?${queryParams}`);
+      const response = await fetch('/api/billing/invoices');
       if (response.ok) {
         const data = await response.json();
         setInvoices(data.invoices);
-        setTotalPages(data.pagination.totalPages);
-        setTotalItems(data.pagination.totalItems);
       }
     } catch (error) {
       console.error('Error fetching invoices:', error);
@@ -118,17 +107,92 @@ export default function BillingPage() {
     invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Reset to first page when search or filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter]);
+
+  // Pagination logic
+  const indexOfLastInvoice = currentPage * itemsPerPage;
+  const indexOfFirstInvoice = indexOfLastInvoice - itemsPerPage;
+  const currentInvoices = filteredInvoices.slice(indexOfFirstInvoice, indexOfLastInvoice);
+  const totalPages = Math.ceil(filteredInvoices.length / itemsPerPage);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  // Previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    
+    if (totalPages <= 1) {
+      // Always show page 1 when there are results but only one page
+      pageNumbers.push(1);
+    } else {
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        // Show all pages if total is less than max visible
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // Show first page
+        pageNumbers.push(1);
+        
+        if (currentPage > 3) {
+          pageNumbers.push('...');
+        }
+        
+        // Show current page and surrounding pages
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== totalPages) {
+            pageNumbers.push(i);
+          }
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push('...');
+        }
+        
+        // Show last page
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
+
   return (
     <ProtectedRoute>
       <SidebarLayout title="Billing">
         <div className="space-y-6">
           {/* Header with Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div>
+            <div className="flex items-center space-x-4">
               <h1 className="text-2xl font-bold text-gray-900">Billing Management</h1>
-              <p className="text-gray-600 mt-1">
-                Manage invoices, track payments, and generate financial reports
-              </p>
+              {filteredInvoices.length > itemsPerPage && (
+                <span className="text-sm text-gray-600">
+                  Showing {indexOfFirstInvoice + 1}-{Math.min(indexOfLastInvoice, filteredInvoices.length)} of {filteredInvoices.length}
+                </span>
+              )}
             </div>
             <Link
               href="/billing/new"
@@ -148,7 +212,7 @@ export default function BillingPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Total Invoices</p>
-                  <p className="text-2xl font-bold text-gray-900">{totalItems}</p>
+                  <p className="text-2xl font-bold text-gray-900">{filteredInvoices.length}</p>
                 </div>
               </div>
             </div>
@@ -161,7 +225,7 @@ export default function BillingPage() {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Paid Invoices</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {invoices.filter(i => i.status === 'paid').length}
+                    {filteredInvoices.filter(i => i.status === 'paid').length}
                   </p>
                 </div>
               </div>
@@ -175,7 +239,7 @@ export default function BillingPage() {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Overdue</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {invoices.filter(i => 
+                    {filteredInvoices.filter(i => 
                       i.status === 'issued' && 
                       i.dueDate && 
                       new Date(i.dueDate) < new Date()
@@ -193,7 +257,7 @@ export default function BillingPage() {
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-600">Active Clients</p>
                   <p className="text-2xl font-bold text-gray-900">
-                    {new Set(invoices.map(i => i.clientId)).size}
+                    {new Set(filteredInvoices.map(i => i.clientId)).size}
                   </p>
                 </div>
               </div>
@@ -238,7 +302,7 @@ export default function BillingPage() {
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               </div>
-            ) : filteredInvoices.length === 0 ? (
+            ) : currentInvoices.length === 0 ? (
               <div className="text-center py-12">
                 <FileText className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">No invoices found</h3>
@@ -288,7 +352,7 @@ export default function BillingPage() {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {filteredInvoices.map((invoice) => (
+                    {currentInvoices.map((invoice) => (
                       <tr key={invoice._id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
@@ -353,86 +417,65 @@ export default function BillingPage() {
           </div>
 
           {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg shadow">
-              <div className="flex flex-1 justify-between sm:hidden">
-                <button
-                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                  disabled={currentPage === 1}
-                  className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <button
-                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                  disabled={currentPage === totalPages}
-                  className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
-                >
-                  Next
-                </button>
+          {filteredInvoices.length > 0 && (
+            <div className="mt-6 flex items-center justify-between">
+              <div className="text-sm text-gray-700">
+                Showing <span className="font-medium">{indexOfFirstInvoice + 1}</span> to{' '}
+                <span className="font-medium">{Math.min(indexOfLastInvoice, filteredInvoices.length)}</span> of{' '}
+                <span className="font-medium">{filteredInvoices.length}</span> results
               </div>
-              <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                <div>
-                  <p className="text-sm text-gray-700">
-                    Showing page <span className="font-medium">{currentPage}</span> of{' '}
-                    <span className="font-medium">{totalPages}</span>
-                  </p>
-                </div>
-                <div>
-                  <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+              <div className="flex items-center space-x-2">
+                {/* Previous Button */}
+                <button
+                  onClick={prevPage}
+                  disabled={currentPage === 1}
+                  className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                    currentPage === 1
+                      ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                      : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span className="ml-2">Previous</span>
+                </button>
+
+                {/* Page Numbers */}
+                <div className="flex space-x-1">
+                  {getPageNumbers().map((number, index) => (
                     <button
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      disabled={currentPage === 1}
-                      className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
+                      key={index}
+                      onClick={() => typeof number === 'number' && paginate(number)}
+                      className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                        number === currentPage
+                          ? 'z-10 bg-blue-600 text-white border-blue-600'
+                          : typeof number === 'string'
+                          ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                          : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                      }`}
+                      disabled={typeof number === 'string'}
                     >
-                      Previous
+                      {number}
                     </button>
-                    
-                    {[...Array(totalPages)].map((_, index) => {
-                      const pageNum = index + 1;
-                      if (
-                        pageNum === 1 ||
-                        pageNum === totalPages ||
-                        (pageNum >= currentPage - 1 && pageNum <= currentPage + 1)
-                      ) {
-                        return (
-                          <button
-                            key={pageNum}
-                            onClick={() => setCurrentPage(pageNum)}
-                            className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${
-                              currentPage === pageNum
-                                ? 'z-10 bg-blue-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600'
-                                : 'text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0'
-                            }`}
-                          >
-                            {pageNum}
-                          </button>
-                        );
-                      } else if (
-                        (pageNum === currentPage - 2 && currentPage > 3) ||
-                        (pageNum === currentPage + 2 && currentPage < totalPages - 2)
-                      ) {
-                        return (
-                          <span
-                            key={pageNum}
-                            className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-300 focus:outline-offset-0"
-                          >
-                            ...
-                          </span>
-                        );
-                      }
-                      return null;
-                    })}
-                    
-                    <button
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      disabled={currentPage === totalPages}
-                      className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 disabled:opacity-50"
-                    >
-                      Next
-                    </button>
-                  </nav>
+                  ))}
                 </div>
+
+                {/* Next Button */}
+                <button
+                  onClick={nextPage}
+                  disabled={currentPage >= totalPages}
+                  className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                    currentPage >= totalPages
+                      ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                      : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                >
+                  <span className="mr-2">Next</span>
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               </div>
             </div>
           )}
