@@ -28,6 +28,8 @@ export default function CommissionsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState('all');
   const [commissions, setCommissions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Show 10 commissions per page
 
   useEffect(() => {
     const fetchCommissions = async () => {
@@ -52,17 +54,17 @@ export default function CommissionsPage() {
 
   const agents = [
     { value: 'all', label: 'All Agents' },
-    { value: 'Agent 1', label: 'Agent 1' },
-    { value: 'Agent 2', label: 'Agent 2' },
-    { value: 'Agent 3', label: 'Agent 3' },
-    { value: 'Agent 4', label: 'Agent 4' }
+    { value: 'john-doe', label: 'John Doe' },
+    { value: 'jane-smith', label: 'Jane Smith' },
+    { value: 'mike-johnson', label: 'Mike Johnson' }
   ];
 
   const periods = [
     { value: 'all', label: 'All Periods' },
-    { value: 'January 2024', label: 'January 2024' },
-    { value: 'December 2023', label: 'December 2023' },
-    { value: 'November 2023', label: 'November 2023' }
+    { value: 'jan-2024', label: 'January 2024' },
+    { value: 'feb-2024', label: 'February 2024' },
+    { value: 'mar-2024', label: 'March 2024' },
+    { value: 'q1-2024', label: 'Q1 2024' }
   ];
 
   const filteredCommissions = commissions.filter(commission => {
@@ -73,13 +75,80 @@ export default function CommissionsPage() {
     return matchesSearch && matchesAgent && matchesPeriod;
   });
 
-  const handleDeleteCommission = (commissionId: string) => {
-    if (confirm('Are you sure you want to delete this commission record? This action cannot be undone.')) {
-      setCommissions(prev => prev.filter(c => c.id !== commissionId));
+  // Reset to first page when search or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedAgent, selectedPeriod]);
+
+  // Pagination logic
+  const indexOfLastCommission = currentPage * itemsPerPage;
+  const indexOfFirstCommission = indexOfLastCommission - itemsPerPage;
+  const currentCommissions = filteredCommissions.slice(indexOfFirstCommission, indexOfLastCommission);
+  const totalPages = Math.ceil(filteredCommissions.length / itemsPerPage);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  // Previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
     }
   };
 
-  const getTotalCommissionEarned = () => {
+  // Next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    
+    if (totalPages <= 1) {
+      // Always show page 1 when there are results but only one page
+      pageNumbers.push(1);
+    } else {
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        // Show all pages if total is less than max visible
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // Show first page
+        pageNumbers.push(1);
+        
+        if (currentPage > 3) {
+          pageNumbers.push('...');
+        }
+        
+        // Show current page and surrounding pages
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== totalPages) {
+            pageNumbers.push(i);
+          }
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push('...');
+        }
+        
+        // Show last page
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
+
+  const getTotalCommission = () => {
     return filteredCommissions.reduce((sum, c) => sum + c.commissionEarned, 0);
   };
 
@@ -94,7 +163,7 @@ export default function CommissionsPage() {
   if (loading) {
     return (
       <ProtectedRoute>
-        <SidebarLayout title="Commission Management" description="Loading commission data...">
+        <SidebarLayout title="Commission Management" description="Loading commissions...">
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           </div>
@@ -116,25 +185,26 @@ export default function CommissionsPage() {
               {filteredCommissions.length} {filteredCommissions.length === 1 ? 'record' : 'records'}
             </span>
             <div className="flex items-center space-x-4">
-              <span className="text-sm font-medium text-gray-700">
-                Total Commission: <span className="text-blue-600">${getTotalCommissionEarned().toFixed(2)}</span>
+              <span className="text-sm font-medium text-green-600">
+                Total Commission: ${getTotalCommission().toFixed(2)}
               </span>
-              <span className="text-sm font-medium text-gray-700">
-                Total Transactions: <span className="text-green-600">{getTotalTransactions()}</span>
-              </span>
-              <span className="text-sm font-medium text-gray-700">
-                Total Amount: <span className="text-purple-600">${getTotalAmount().toFixed(2)}</span>
+              <span className="text-sm font-medium text-blue-600">
+                Total Transactions: {getTotalTransactions()}
               </span>
             </div>
+            {filteredCommissions.length > itemsPerPage && (
+              <span className="text-sm text-gray-600">
+                Showing {indexOfFirstCommission + 1}-{Math.min(indexOfLastCommission, filteredCommissions.length)} of {filteredCommissions.length}
+              </span>
+            )}
           </div>
-          <div className="flex space-x-3">
-            <button
-              className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              <Download className="h-4 w-4" />
-              <span>Export</span>
-            </button>
-          </div>
+          <button
+            onClick={() => alert('Exporting commission report...')}
+            className="inline-flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            <span>Export Report</span>
+          </button>
         </div>
 
         {/* Search and Filters */}
@@ -219,7 +289,7 @@ export default function CommissionsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredCommissions.map((commission) => (
+                {currentCommissions.map((commission) => (
                   <tr key={commission.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {commission.agent}
@@ -249,22 +319,21 @@ export default function CommissionsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {commission.paymentDate ? new Date(commission.paymentDate).toLocaleDateString() : '-'}
+                      {commission.paymentDate ? new Date(commission.paymentDate).toLocaleDateString() : 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex items-center space-x-2">
                         <button 
                           className="text-blue-600 hover:text-blue-900 hover:underline"
+                          title="View Details"
+                        >
+                          <FileBarChart className="h-4 w-4" />
+                        </button>
+                        <button 
+                          className="text-green-600 hover:text-green-900 hover:underline"
                           title="Edit Commission"
                         >
                           <Edit3 className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteCommission(commission.id)}
-                          className="text-red-600 hover:text-red-900 hover:underline"
-                          title="Delete Commission"
-                        >
-                          <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
@@ -275,47 +344,69 @@ export default function CommissionsPage() {
           </div>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-xl border border-blue-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-blue-600">Total Commission Earned</p>
-                <p className="text-2xl font-bold text-gray-900">${getTotalCommissionEarned().toFixed(2)}</p>
-                <p className="text-xs text-gray-600">Across all records</p>
-              </div>
-              <div className="p-3 bg-blue-500 rounded-lg">
-                <DollarSign className="h-6 w-6 text-white" />
-              </div>
+        {/* Pagination */}
+        {filteredCommissions.length > 0 && (
+          <div className="mt-6 flex items-center justify-between">
+            <div className="text-sm text-gray-700">
+              Showing <span className="font-medium">{indexOfFirstCommission + 1}</span> to{' '}
+              <span className="font-medium">{Math.min(indexOfLastCommission, filteredCommissions.length)}</span> of{' '}
+              <span className="font-medium">{filteredCommissions.length}</span> results
             </div>
-          </div>
+            <div className="flex items-center space-x-2">
+              {/* Previous Button */}
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                  currentPage === 1
+                    ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                }`}
+              >
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="ml-2">Previous</span>
+              </button>
 
-          <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-xl border border-green-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-green-600">Total Transactions</p>
-                <p className="text-2xl font-bold text-gray-900">{getTotalTransactions()}</p>
-                <p className="text-xs text-gray-600">Handled by agents</p>
+              {/* Page Numbers */}
+              <div className="flex space-x-1">
+                {getPageNumbers().map((number, index) => (
+                  <button
+                    key={index}
+                    onClick={() => typeof number === 'number' && paginate(number)}
+                    className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                      number === currentPage
+                        ? 'z-10 bg-blue-600 text-white border-blue-600'
+                        : typeof number === 'string'
+                        ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                        : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                    }`}
+                    disabled={typeof number === 'string'}
+                  >
+                    {number}
+                  </button>
+                ))}
               </div>
-              <div className="p-3 bg-green-500 rounded-lg">
-                <Users className="h-6 w-6 text-white" />
-              </div>
-            </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-6 rounded-xl border border-purple-200">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-purple-600">Total Amount</p>
-                <p className="text-2xl font-bold text-gray-900">${getTotalAmount().toFixed(2)}</p>
-                <p className="text-xs text-gray-600">Generated by agents</p>
-              </div>
-              <div className="p-3 bg-purple-500 rounded-lg">
-                <BarChart3 className="h-6 w-6 text-white" />
-              </div>
+              {/* Next Button */}
+              <button
+                onClick={nextPage}
+                disabled={currentPage >= totalPages}
+                className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                  currentPage >= totalPages
+                    ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                    : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                }`}
+              >
+                <span className="mr-2">Next</span>
+                <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Empty State */}
         {filteredCommissions.length === 0 && (
@@ -325,7 +416,7 @@ export default function CommissionsPage() {
             <p className="mt-1 text-sm text-gray-700">
               {searchTerm || selectedAgent !== 'all' || selectedPeriod !== 'all'
                 ? 'Try adjusting your search or filter criteria.'
-                : 'Get started by calculating commissions for your agents.'
+                : 'Commission records will appear here once transactions are processed.'
               }
             </p>
           </div>

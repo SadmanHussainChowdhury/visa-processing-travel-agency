@@ -1,0 +1,2414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visa Agency System - Complete Documentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html {
+            scroll-behavior: auto;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .code-block {
+            background: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .section-anchor {
+            scroll-margin-top: 80px;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Navigation Sidebar -->
+    <nav class="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-indigo-900 to-purple-900 text-white overflow-y-auto z-40 hidden lg:block">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold mb-8 flex items-center">
+                <i class="fas fa-passport mr-3 text-purple-300"></i>
+                Visa Agency System
+            </h1>
+            <ul class="space-y-2">
+                <li><a href="#overview" class="block px-4 py-2 rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-info-circle mr-3 w-5"></i>Overview</a></li>
+                <li><a href="#installation" class="block px-4 py-2 rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-download mr-3 w-5"></i>Installation</a></li>
+                <li><a href="#prerequisites" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-check-circle mr-3 w-4"></i>Prerequisites</a></li>
+                <li><a href="#quick-install" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-bolt mr-3 w-4"></i>Quick Installation</a></li>
+                <li><a href="#env-setup" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-cog mr-3 w-4"></i>Environment Setup</a></li>
+                <li><a href="#mongodb" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-database mr-3 w-4"></i>MongoDB Setup</a></li>
+                <li><a href="#user-guide" class="block px-4 py-2 rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-book mr-3 w-5"></i>User Documentation</a></li>
+                <li><a href="#clients" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-users mr-3 w-4"></i>Clients Guide</a></li>
+                <li><a href="#visa-cases" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-file-alt mr-3 w-4"></i>Visa Cases Guide</a></li>
+                <li><a href="#appointments" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-calendar-check mr-3 w-4"></i>Appointments Guide</a></li>
+                <li><a href="#billing" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-file-invoice-dollar mr-3 w-4"></i>Billing Guide</a></li>
+                <li><a href="#documents" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-folder mr-3 w-4"></i>Documents Guide</a></li>
+                <li><a href="#accounting" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-calculator mr-3 w-4"></i>Accounting & Finance Guide</a></li>
+                <li><a href="#crm" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-users mr-3 w-4"></i>CRM & Lead Management Guide</a></li>
+                <li><a href="#compliance" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-shield-alt mr-3 w-4"></i>Compliance & Security Guide</a></li>
+                <li><a href="#workflow" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-tasks mr-3 w-4"></i>Workflow & Tracking Guide</a></li>
+                <li><a href="#casecontrol" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-clipboard-check mr-3 w-4"></i>Case Control Guide</a></li>
+                <li><a href="#exportimport" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-exchange-alt mr-3 w-4"></i>Export & Import Guide</a></li>
+                <li><a href="#activity" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-history mr-3 w-4"></i>Activity Guide</a></li>
+                <li><a href="#forms" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-file-alt mr-3 w-4"></i>Forms Guide</a></li>
+                <li><a href="#knowledgehelp" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-book mr-3 w-4"></i>Knowledge & Help System Guide</a></li>
+                <li><a href="#reports" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-chart-bar mr-3 w-4"></i>Reports Guide</a></li>
+                <li><a href="#settings" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-cog mr-3 w-4"></i>Settings Guide</a></li>
+                <li><a href="#notifications" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-bell mr-3 w-4"></i>Notifications Guide</a></li>
+                <li><a href="#profile" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-user mr-3 w-4"></i>Profile Guide</a></li>
+                <li><a href="#smartcaseintelligence" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-brain mr-3 w-4"></i>Smart Case Intelligence Guide</a></li>
+                <li><a href="#verificationcompliance" class="block px-4 py-2 ml-4 text-sm rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-shield-alt mr-3 w-4"></i>Verification & Compliance Guide</a></li>
+                <li><a href="#troubleshooting" class="block px-4 py-2 rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-tools mr-3 w-5"></i>Troubleshooting</a></li>
+                <li><a href="#support" class="block px-4 py-2 rounded hover:bg-indigo-800 transition flex items-center"><i class="fas fa-life-ring mr-3 w-5"></i>Support</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="lg:ml-64">
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-8 shadow-lg">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-4xl font-bold mb-4 flex items-center">
+                    <i class="fas fa-passport mr-4 text-purple-200"></i>
+                    Visa Agency System - Comprehensive Visa Processing Platform
+                </h1>
+                <p class="text-xl text-indigo-100">Complete Visa Management Solution</p>
+                <p class="mt-4 text-indigo-200">Comprehensive User Documentation</p>
+            </div>
+        </header>
+
+        <!-- Content Container -->
+        <div class="max-w-4xl mx-auto p-8 space-y-12">
+                <!-- Overview Section -->
+                <section id="overview" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-info-circle text-4xl text-primary-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Overview</h2>
+                    </div>
+                    <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                        <strong>Visa Agency System</strong> is a comprehensive visa processing platform designed
+                        for travel agencies, immigration consultants, and visa processing centers. Built with
+                        cutting-edge technologies including Next.js 15.5.9, React 19.2.3, TypeScript 5.3.3, and MongoDB 8.20.3.
+                    </p>
+                    <div class="grid md:grid-cols-3 gap-6 mt-8">
+                        <div
+                            class="feature-card bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-100">
+                            <i class="fas fa-rocket text-3xl text-blue-600 mb-3"></i>
+                            <h3 class="font-bold text-lg text-gray-800 mb-2">Efficient Processing</h3>
+                            <p class="text-gray-600">Streamlined workflows for faster visa application processing</p>
+                        </div>
+                        <div
+                            class="feature-card bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-lg border border-green-100">
+                            <i class="fas fa-shield-alt text-3xl text-green-600 mb-3"></i>
+                            <h3 class="font-bold text-lg text-gray-800 mb-2">Secure</h3>
+                            <p class="text-gray-600">Bank-grade encryption and GDPR compliance for sensitive data</p>
+                        </div>
+                        <div
+                            class="feature-card bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-100">
+                            <i class="fas fa-mobile-alt text-3xl text-purple-600 mb-3"></i>
+                            <h3 class="font-bold text-lg text-gray-800 mb-2">Mobile-First</h3>
+                            <p class="text-gray-600">Responsive design across all devices</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Installation Section -->
+                <section id="installation" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-download text-4xl text-primary-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Installation Guide</h2>
+                    </div>
+
+                    <!-- Prerequisites -->
+                    <div id="prerequisites" class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-check-circle text-primary-600 mr-2"></i>
+                            Prerequisites
+                        </h3>
+                        <div class="bg-gray-50 rounded-lg p-6 mb-4">
+                            <p class="text-gray-700 mb-4">Before you begin, ensure you have the following installed:</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                    <span><strong>Node.js</strong> 18.0.0 or higher (20.x recommended) (<a href="https://nodejs.org/"
+                                            class="text-primary-600 hover:underline">Download</a>)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                    <span><strong>npm</strong> 8.0.0 or higher (comes with Node.js)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                    <span><strong>MongoDB</strong> account (MongoDB Atlas recommended) (<a
+                                            href="https://www.mongodb.com/cloud/atlas"
+                                            class="text-primary-600 hover:underline">Sign up</a>)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check text-green-500 mr-2 mt-1"></i>
+                                    <span><strong>Git</strong> (for cloning the repository)</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                            <p class="text-blue-800"><strong>Optional Services:</strong> Cloudinary (document uploads),
+                                Email SMTP (notifications)</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Installation -->
+                    <div id="quick-install" class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-bolt text-primary-600 mr-2"></i>
+                            Quick Installation
+                        </h3>
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-800 mb-3">Step 1: Clone or Download the
+                                    Repository</h4>
+                                <div class="code-block">
+                                    <code class="text-sm">git clone https://github.com/yourusername/visa-agency-system.git</code>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-semibold text-gray-800 mb-3">Step 2: Install Dependencies</h4>
+                                <div class="code-block">
+                                    <code class="text-sm">npm install</code>
+                                </div>
+                                <p class="text-gray-600 mt-2">This will install all required packages listed in
+                                    package.json</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environment Setup -->
+                    <div id="env-setup" class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-cog text-primary-600 mr-2"></i>
+                            Environment Variables Setup
+                        </h3>
+                        <p class="text-gray-700 mb-4">Create a <code
+                                class="bg-gray-200 px-2 py-1 rounded">.env.local</code> file in the root directory:</p>
+                        <div class="code-block">
+                            <code class="text-sm">
+# MongoDB Configuration<br>
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/visa-agency?retryWrites=true&w=majority<br><br>
+# NextAuth Configuration<br>
+NEXTAUTH_URL=http://localhost:3000<br>
+NEXTAUTH_SECRET=your-secret-key-minimum-32-characters-long<br><br>
+# Cloudinary (Optional - for document uploads)<br>
+CLOUDINARY_CLOUD_NAME=your-cloud-name<br>
+CLOUDINARY_API_KEY=your-api-key<br>
+CLOUDINARY_API_SECRET=your-api-secret<br><br>
+# Email Configuration (Optional - for email notifications)<br>
+EMAIL_HOST=smtp.gmail.com<br>
+EMAIL_PORT=587<br>
+EMAIL_USER=your-email@gmail.com<br>
+EMAIL_PASS=your-app-password<br>
+EMAIL_FROM=noreply@visaagency.com<br>
+EMAIL_SECURE=false
+                            </code>
+                        </div>
+                        <div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded mt-4">
+                            <p class="text-yellow-800"><strong>Generate NextAuth Secret:</strong></p>
+                            <div class="code-block mt-2">
+                                <code class="text-sm">
+# On Linux/Mac<br>
+openssl rand -base64 32<br><br>
+# On Windows (PowerShell)<br>
+[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
+                                </code>
+                            </div>
+                            <p class="text-yellow-800 mt-2">Or use an online generator: <a
+                                    href="https://generate-secret.vercel.app/32"
+                                    class="underline">generate-secret.vercel.app/32</a></p>
+                        </div>
+                    </div>
+
+                    <!-- MongoDB Setup -->
+                    <div id="mongodb" class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-database text-primary-600 mr-2"></i>
+                            MongoDB Setup
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded">
+                                <h4 class="font-semibold text-green-800 mb-2">Option A: MongoDB Atlas (Recommended)</h4>
+                                <ol class="list-decimal list-inside space-y-2 text-green-700">
+                                    <li>Go to <a href="https://www.mongodb.com/cloud/atlas" class="underline">MongoDB
+                                            Atlas</a></li>
+                                    <li>Create a free account</li>
+                                    <li>Create a new cluster (free tier available)</li>
+                                    <li>Create a database user</li>
+                                    <li>Whitelist your IP address (or use 0.0.0.0/0 for development)</li>
+                                    <li>Get your connection string</li>
+                                    <li>Replace &lt;password&gt; and &lt;dbname&gt; in the connection string</li>
+                                    <li>Add it to .env.local as MONGODB_URI</li>
+                                </ol>
+                            </div>
+                            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
+                                <h4 class="font-semibold text-blue-800 mb-2">Option B: Local MongoDB</h4>
+                                <ol class="list-decimal list-inside space-y-2 text-blue-700">
+                                    <li>Install MongoDB locally</li>
+                                    <li>Start MongoDB service</li>
+                                    <li>Use connection string: <code
+                                            class="bg-blue-100 px-2 py-1 rounded">mongodb://localhost:27017/visa-agency</code>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Start Development Server -->
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-play-circle text-primary-600 mr-2"></i>
+                            Start Development Server
+                        </h3>
+                        <div class="code-block">
+                            <code class="text-sm">npm run dev</code>
+                        </div>
+                        <p class="text-gray-700 mt-4">The application will be available at: <strong
+                                class="text-primary-600">http://localhost:3000</strong></p>
+                        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded mt-4">
+                            <p class="text-green-800"><strong>Access Points:</strong></p>
+                            <ul class="list-disc list-inside text-green-700 mt-2 space-y-1">
+                                <li>Dashboard: <code
+                                        class="bg-green-100 px-2 py-1 rounded">http://localhost:3000</code></li>
+                                <li>Login: <code
+                                        class="bg-green-100 px-2 py-1 rounded">http://localhost:3000/login</code>
+                                </li>
+                                <li>Admin Dashboard: <code
+                                        class="bg-green-100 px-2 py-1 rounded">http://localhost:3000/admin</code>
+                                    (after login)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- User Documentation Section -->
+                <section id="user-guide" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-book text-4xl text-primary-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">User Documentation</h2>
+                    </div>
+                    <p class="text-gray-600 text-lg mb-8">Complete guides for all user roles in Visa Agency System</p>
+                </section>
+
+                <!-- Clients Guide -->
+                <section id="clients" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-users text-4xl text-blue-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Clients Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">System Overview</h3>
+                            <p class="text-gray-700 mb-4">As a user managing clients, you have access to comprehensive client
+                                information management, visa application tracking, and communication tools.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-user text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Client Profiles:</strong> Store detailed personal information, contact details, and visa history</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-passport text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Document Management:</strong> Upload and store important documents</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-history text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Application History:</strong> Track all visa applications for each client</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Adding New Clients</h3>
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-blue-500 pl-4">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Basic Information</h4>
+                                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                        <li>Navigate to <strong>Clients → Add New Client</strong></li>
+                                        <li>Fill in: Name, Email, Phone, Address</li>
+                                        <li>Upload Passport photo and other identification documents</li>
+                                        <li>Click <strong>Create Client</strong></li>
+                                    </ol>
+                                </div>
+                                <div class="border-l-4 border-green-500 pl-4">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Additional Details</h4>
+                                    <p class="text-gray-700">Add passport number, expiry date, previous travel history, and emergency contacts.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Managing Client Information</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Edit Information</h4>
+                                    <p class="text-gray-700 text-sm">Update personal details, contact information, and passport details</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Document Upload</h4>
+                                    <p class="text-gray-700 text-sm">Add new documents and maintain document history</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Visa History</h4>
+                                    <p class="text-gray-700 text-sm">View all previous visa applications and outcomes</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Communication Log</h4>
+                                    <p class="text-gray-700 text-sm">Track all communications with the client</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Visa Cases Guide -->
+                <section id="visa-cases" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-file-alt text-4xl text-green-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Visa Cases Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-green-50 to-emerald-50 p-6 rounded-lg border-l-4 border-green-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Visa Case Management</h3>
+                            <p class="text-gray-700 mb-4">Track visa applications from submission to approval/rejection with status updates and document management.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-list text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Application Tracking:</strong> Monitor each stage of the visa process</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-upload text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Document Submission:</strong> Upload required documents for each application</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-bell text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Status Updates:</strong> Receive notifications for case progress</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Creating New Visa Cases</h3>
+                            <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                <li>Navigate to <strong>Visa Cases → Create New Case</strong></li>
+                                <li>Select the client from the dropdown</li>
+                                <li>Enter visa type, destination country, and application details</li>
+                                <li>Set the current status and add notes</li>
+                                <li>Upload required documents</li>
+                                <li>Click <strong>Create Case</strong></li>
+                            </ol>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Case Status Tracking</h3>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-yellow-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-hourglass-half text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Pending</h4>
+                                    <p class="text-sm text-gray-600">Application submitted, awaiting processing</p>
+                                </div>
+                                <div class="bg-blue-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-spinner text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Processing</h4>
+                                    <p class="text-sm text-gray-600">Under review by authorities</p>
+                                </div>
+                                <div class="bg-green-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-check-circle text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Approved</h4>
+                                    <p class="text-sm text-gray-600">Visa granted successfully</p>
+                                </div>
+                                <div class="bg-red-50 p-5 rounded-lg text-center col-span-3">
+                                    <div
+                                        class="bg-red-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-times-circle text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Rejected</h4>
+                                    <p class="text-sm text-gray-600">Application denied with reasons</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Appointments Guide -->
+                <section id="appointments" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-calendar-check text-4xl text-yellow-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Appointments Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg border-l-4 border-yellow-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Appointment Scheduling</h3>
+                            <p class="text-gray-700 mb-4">Schedule and manage client appointments with reminder notifications and calendar integration.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-calendar text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Booking System:</strong> Easy scheduling with available time slots</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-bell text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Reminders:</strong> Automated notifications for upcoming appointments</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-video text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Virtual Meetings:</strong> Option for online consultations</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Scheduling Appointments</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Client</h4>
+                                        <p class="text-gray-700 text-sm">Choose the client from your database</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Choose Date & Time</h4>
+                                        <p class="text-gray-700 text-sm">Select from available slots in your calendar</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Add Purpose</h4>
+                                        <p class="text-gray-700 text-sm">Specify the reason for the appointment</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Confirm Booking</h4>
+                                        <p class="text-gray-700 text-sm">Send confirmation and reminders</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Appointment Management</h3>
+                            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg">
+                                <div class="grid md:grid-cols-3 gap-4">
+                                    <div class="text-center">
+                                        <i class="fas fa-sync text-3xl text-indigo-600 mb-2"></i>
+                                        <p class="font-semibold text-gray-800">Rescheduling</p>
+                                        <p class="text-sm text-gray-600">Modify dates and times as needed</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <i class="fas fa-trash text-3xl text-red-600 mb-2"></i>
+                                        <p class="font-semibold text-gray-800">Cancellation</p>
+                                        <p class="text-sm text-gray-600">Cancel appointments with notifications</p>
+                                    </div>
+                                    <div class="text-center">
+                                        <i class="fas fa-history text-3xl text-green-600 mb-2"></i>
+                                        <p class="font-semibold text-gray-800">History</p>
+                                        <p class="text-sm text-gray-600">Track all past appointments</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Billing Guide -->
+                <section id="billing" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-file-invoice-dollar text-4xl text-purple-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Billing Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Billing System</h3>
+                            <p class="text-gray-700 mb-4">Generate invoices, track payments, and manage billing cycles with automatic invoice numbering.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-invoice text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Invoice Generation:</strong> Create professional invoices automatically</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-coins text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Payment Tracking:</strong> Monitor payment status and due dates</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-chart-bar text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Financial Reports:</strong> Generate revenue and expense reports</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Creating Invoices</h3>
+                            <div class="space-y-4">
+                                <div class="bg-blue-50 p-5 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+                                        <i class="fas fa-plus-circle text-blue-600 mr-2"></i>
+                                        Step-by-Step Process
+                                    </h4>
+                                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                                        <li>Navigate to <strong>Billing → Create New Invoice</strong></li>
+                                        <li>Select the client and visa case</li>
+                                        <li>Add invoice items with descriptions, quantities, and prices</li>
+                                        <li>Set due date and payment terms</li>
+                                        <li>Review and confirm the invoice details</li>
+                                        <li>Click <strong>Create Invoice</strong></li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Invoice Statuses</h3>
+                            <div class="grid md:grid-cols-4 gap-4">
+                                <div class="bg-gray-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-gray-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-edit text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Draft</h4>
+                                    <p class="text-sm text-gray-600">Being prepared</p>
+                                </div>
+                                <div class="bg-blue-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-paper-plane text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Sent</h4>
+                                    <p class="text-sm text-gray-600">Delivered to client</p>
+                                </div>
+                                <div class="bg-green-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-check-circle text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Paid</h4>
+                                    <p class="text-sm text-gray-600">Payment received</p>
+                                </div>
+                                <div class="bg-red-50 p-5 rounded-lg text-center">
+                                    <div
+                                        class="bg-red-500 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-times-circle text-2xl"></i>
+                                    </div>
+                                    <h4 class="font-semibold text-gray-800 mb-2">Cancelled</h4>
+                                    <p class="text-sm text-gray-600">Voided invoice</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Documents Guide -->
+                <section id="documents" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-folder text-4xl text-indigo-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Documents Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-indigo-50 to-blue-50 p-6 rounded-lg border-l-4 border-indigo-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Document Management</h3>
+                            <p class="text-gray-700 mb-4">Upload, organize, and track all documents related to visa applications with secure storage and easy retrieval.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-cloud-upload-alt text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Secure Upload:</strong> Multiple file formats supported</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-search text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Quick Search:</strong> Find documents by client or category</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-lock text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Secure Storage:</strong> Encrypted document storage</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Uploading Documents</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Client</h4>
+                                        <p class="text-gray-700 text-sm">Choose the client whose documents you're uploading</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Choose Document Type</h4>
+                                        <p class="text-gray-700 text-sm">Select from passport, visa, financial, etc.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Upload File</h4>
+                                        <p class="text-gray-700 text-sm">Drag and drop or browse for files</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Add Description</h4>
+                                        <p class="text-gray-700 text-sm">Include details and expiration dates</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Supported File Types</h3>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="py-3 px-4 text-left text-gray-700 font-semibold">File Type</th>
+                                            <th class="py-3 px-4 text-left text-gray-700 font-semibold">Extensions</th>
+                                            <th class="py-3 px-4 text-left text-gray-700 font-semibold">Max Size</th>
+                                            <th class="py-3 px-4 text-left text-gray-700 font-semibold">Common Uses</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                                                    PDF
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4 text-gray-700">.pdf</td>
+                                            <td class="py-3 px-4 text-gray-700">25 MB</td>
+                                            <td class="py-3 px-4 text-gray-700">Applications, contracts, official documents</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-file-image text-blue-500 mr-2"></i>
+                                                    Images
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4 text-gray-700">.jpg, .jpeg, .png</td>
+                                            <td class="py-3 px-4 text-gray-700">10 MB</td>
+                                            <td class="py-3 px-4 text-gray-700">Photos, scans, signatures</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="py-3 px-4">
+                                                <div class="flex items-center">
+                                                    <i class="fas fa-file-word text-blue-400 mr-2"></i>
+                                                    Word Docs
+                                                </div>
+                                            </td>
+                                            <td class="py-3 px-4 text-gray-700">.doc, .docx</td>
+                                            <td class="py-3 px-4 text-gray-700">15 MB</td>
+                                            <td class="py-3 px-4 text-gray-700">Applications, letters, forms</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Accounting & Finance Guide -->
+                <section id="accounting" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-calculator text-4xl text-purple-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Accounting & Finance Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Financial Management System</h3>
+                            <p class="text-gray-700 mb-4">Comprehensive financial tracking including revenue, expenses, commissions, and financial reporting capabilities.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-dollar-sign text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Revenue Tracking:</strong> Monitor all income streams and payment sources</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-receipt text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Expense Management:</strong> Track business expenses and cost centers</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-percentage text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Commission Calculations:</strong> Calculate agent and partner commissions</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-chart-bar text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Financial Reporting:</strong> Generate detailed financial reports and analytics</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Financial Overview</h4>
+                                    <p class="text-gray-700 text-sm">Dashboard showing total revenue, expenses, net profit, and profit margin</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Revenue Tracking</h4>
+                                    <p class="text-gray-700 text-sm">Track all incoming payments and revenue sources</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Expense Management</h4>
+                                    <p class="text-gray-700 text-sm">Record and categorize business expenses</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Commission Tracking</h4>
+                                    <p class="text-gray-700 text-sm">Calculate and monitor agent commissions</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Accounting Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Accounting</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Accounting & Finance section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Time Period</h4>
+                                        <p class="text-gray-700 text-sm">Choose date range (Today, This Week, This Month, etc.)</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Add Transactions</h4>
+                                        <p class="text-gray-700 text-sm">Record new revenue or expense transactions</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Generate Reports</h4>
+                                        <p class="text-gray-700 text-sm">Export financial reports as needed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CRM & Lead Management Guide -->
+                <section id="crm" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-users text-4xl text-blue-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">CRM & Lead Management Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Customer Relationship Management</h3>
+                            <p class="text-gray-700 mb-4">Lead management system to track potential clients and convert them to actual customers.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-target text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Lead Capture:</strong> Collect and manage potential client information</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-filter text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Lead Qualification:</strong> Assess lead quality and potential conversion</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-user-check text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Lead Conversion:</strong> Convert qualified leads to actual clients</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-star text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Lead Scoring:</strong> Rate leads based on conversion potential</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Lead Management</h4>
+                                    <p class="text-gray-700 text-sm">Track leads through various stages of qualification</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Lead Scoring</h4>
+                                    <p class="text-gray-700 text-sm">Rate leads based on their potential to convert</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Lead Conversion</h4>
+                                    <p class="text-gray-700 text-sm">Easily convert qualified leads to client records</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Follow-up Tracking</h4>
+                                    <p class="text-gray-700 text-sm">Track follow-up activities and next steps</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the CRM Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to CRM</h4>
+                                        <p class="text-gray-700 text-sm">Go to the CRM & Lead Management section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Add New Lead</h4>
+                                        <p class="text-gray-700 text-sm">Click "Add Lead" to enter new prospect information</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Update Lead Status</h4>
+                                        <p class="text-gray-700 text-sm">Move leads through qualification stages</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Convert to Client</h4>
+                                        <p class="text-gray-700 text-sm">Convert qualified leads to client records when they sign up</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Compliance & Security Guide -->
+                <section id="compliance" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-shield-alt text-4xl text-green-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Compliance & Security Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-lg border-l-4 border-green-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Data Protection & Compliance</h3>
+                            <p class="text-gray-700 mb-4">Ensuring data security, GDPR compliance, and regulatory adherence for visa processing operations.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-lock text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Data Encryption:</strong> AES-256 encryption for all sensitive data</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-user-shield text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>GDPR Compliance:</strong> Adherence to EU data protection regulations</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-clipboard-list text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Audit Logs:</strong> Complete audit trail of all user activities</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-database text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Backup & Recovery:</strong> Regular automated backups with point-in-time recovery</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">GDPR Compliance</h4>
+                                    <p class="text-gray-700 text-sm">Tools to ensure compliance with European data protection laws</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Security Measures</h4>
+                                    <p class="text-gray-700 text-sm">Two-factor authentication and advanced security features</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Audit Logging</h4>
+                                    <p class="text-gray-700 text-sm">Track all user actions and system events</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Backup & Recovery</h4>
+                                    <p class="text-gray-700 text-sm">Automated backups with disaster recovery capabilities</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Compliance Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Compliance</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Compliance & Security section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Review Compliance Status</h4>
+                                        <p class="text-gray-700 text-sm">Check current compliance status and any required actions</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">View Audit Logs</h4>
+                                        <p class="text-gray-700 text-sm">Review all system activities and user actions</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Configure Security Settings</h4>
+                                        <p class="text-gray-700 text-sm">Set up two-factor authentication and other security measures</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Workflow & Tracking Guide -->
+                <section id="workflow" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-tasks text-4xl text-yellow-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Workflow & Tracking Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg border-l-4 border-yellow-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Case Workflow Management</h3>
+                            <p class="text-gray-700 mb-4">Track visa applications through all stages from submission to final decision with detailed timeline tracking.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-timeline text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Case Timeline:</strong> Visual timeline of all case activities</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-map-marked-alt text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Progress Tracking:</strong> Track progress through each stage</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-passport text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Embassy Submission Tracking:</strong> Monitor embassy submission dates</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-clipboard text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Internal Notes:</strong> Maintain internal notes for each case</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Case Overview</h4>
+                                    <p class="text-gray-700 text-sm">Dashboard view of all cases and their statuses</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Timeline Tracking</h4>
+                                    <p class="text-gray-700 text-sm">Visual timeline of all case activities</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Embassy Monitoring</h4>
+                                    <p class="text-gray-700 text-sm">Track embassy submission and decision dates</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Internal Notes</h4>
+                                    <p class="text-gray-700 text-sm">Maintain internal notes and communications</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Workflow Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Workflow</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Workflow & Tracking section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Case</h4>
+                                        <p class="text-gray-700 text-sm">Choose a case to view its detailed timeline</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">View Timeline</h4>
+                                        <p class="text-gray-700 text-sm">See the complete timeline of case activities</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Add Internal Notes</h4>
+                                        <p class="text-gray-700 text-sm">Add notes for internal team members</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Case Control Guide -->
+                <section id="casecontrol" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-clipboard-check text-4xl text-red-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Case Control Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-lg border-l-4 border-red-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Quality Assurance & Case Control</h3>
+                            <p class="text-gray-700 mb-4">Monitor and manage case approvals with quality assurance controls and version history tracking.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-lock text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Case Locking:</strong> Lock cases to prevent unauthorized changes</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Approval Workflow:</strong> Multi-stage approval process for cases</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-history text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Version History:</strong> Track all changes made to cases</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-search text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Quality Assurance:</strong> Quality checks before final approval</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Case Locking</h4>
+                                    <p class="text-gray-700 text-sm">Lock cases to prevent further edits during review</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Approval Tracking</h4>
+                                    <p class="text-gray-700 text-sm">Track approval progress through multiple stages</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Version History</h4>
+                                    <p class="text-gray-700 text-sm">Track all changes made to each case</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Quality Checks</h4>
+                                    <p class="text-gray-700 text-sm">Implement quality assurance measures</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Case Control Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Case Control</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Case Control & Quality Assurance section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Review Cases</h4>
+                                        <p class="text-gray-700 text-sm">Review pending cases requiring approval</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Lock Cases</h4>
+                                        <p class="text-gray-700 text-sm">Lock cases to prevent further changes during review</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Approve Cases</h4>
+                                        <p class="text-gray-700 text-sm">Finalize approvals after quality checks</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Export & Import Guide -->
+                <section id="exportimport" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-exchange-alt text-4xl text-indigo-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Export & Import Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg border-l-4 border-indigo-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Data Import/Export & API Integration</h3>
+                            <p class="text-gray-700 mb-4">Bulk import/export data and integrate with external systems through API endpoints.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-export text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Data Export:</strong> Export clients, applications, and documents in various formats</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-import text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Bulk Import:</strong> Import data from CSV templates in bulk</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-plug text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>API Integration:</strong> Connect with external systems via REST APIs</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-download text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Template Downloads:</strong> Download pre-formatted templates for imports</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Data Export</h4>
+                                    <p class="text-gray-700 text-sm">Export data in Excel, PDF, or JSON formats</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Bulk Import</h4>
+                                    <p class="text-gray-700 text-sm">Import large datasets using CSV templates</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">API Access</h4>
+                                    <p class="text-gray-700 text-sm">RESTful API endpoints for system integration</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Template Management</h4>
+                                    <p class="text-gray-700 text-sm">Download and use standardized import templates</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Export/Import Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Export/Import</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Export & Import section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Data Type</h4>
+                                        <p class="text-gray-700 text-sm">Choose what data you want to export or import</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Choose Format</h4>
+                                        <p class="text-gray-700 text-sm">Select export format or download import template</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Process Data</h4>
+                                        <p class="text-gray-700 text-sm">Execute the export or import operation</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activity Guide -->
+                <section id="activity" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-history text-4xl text-blue-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Activity Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">System Activity Tracking</h3>
+                            <p class="text-gray-700 mb-4">Monitor all user activities, system events, and application changes with comprehensive audit trails.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-history text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Activity Log:</strong> Track all user actions and system events</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-clock text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Timeline View:</strong> See chronological activity history</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-search text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Filter & Search:</strong> Find specific activities by type or date</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-user text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>User Tracking:</strong> Monitor individual user activities</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Activity Dashboard</h4>
+                                    <p class="text-gray-700 text-sm">Overview of recent activities and system events</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Detailed Logs</h4>
+                                    <p class="text-gray-700 text-sm">Comprehensive logs of all system changes</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Filter Options</h4>
+                                    <p class="text-gray-700 text-sm">Filter by activity type, user, or time period</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Export Logs</h4>
+                                    <p class="text-gray-700 text-sm">Export activity logs for analysis</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Activity Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Activity</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Activity section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">View Activity Feed</h4>
+                                        <p class="text-gray-700 text-sm">See chronological list of all system activities</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Filter Activities</h4>
+                                        <p class="text-gray-700 text-sm">Apply filters to narrow down the activity feed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Analyze Trends</h4>
+                                        <p class="text-gray-700 text-sm">Identify patterns and trends in system usage</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Forms Guide -->
+                <section id="forms" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-file-alt text-4xl text-purple-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Forms Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border-l-4 border-purple-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Form Library & Template Management</h3>
+                            <p class="text-gray-700 mb-4">Manage pre-configured visa application forms and create customizable templates for different countries and visa types.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-alt text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Template Library:</strong> Pre-built forms for various visa types</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-edit text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Customizable Forms:</strong> Modify templates to match specific requirements</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-globe text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Multi-Country Support:</strong> Forms for different countries and requirements</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-copy text-purple-600 mr-2 mt-1"></i>
+                                    <span><strong>Template Duplication:</strong> Copy and customize existing templates</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Template Management</h4>
+                                    <p class="text-gray-700 text-sm">Create, edit, and organize form templates</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Country-Specific Forms</h4>
+                                    <p class="text-gray-700 text-sm">Different forms for different countries</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Form Categories</h4>
+                                    <p class="text-gray-700 text-sm">Organize forms by type and purpose</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Export Options</h4>
+                                    <p class="text-gray-700 text-sm">Export forms to PDF or other formats</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Forms Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Forms</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Forms section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Browse Templates</h4>
+                                        <p class="text-gray-700 text-sm">View available form templates by category</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Create/Edit Forms</h4>
+                                        <p class="text-gray-700 text-sm">Create new templates or modify existing ones</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Apply to Cases</h4>
+                                        <p class="text-gray-700 text-sm">Use forms in visa applications as needed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Knowledge & Help System Guide -->
+                <section id="knowledgehelp" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-book text-4xl text-yellow-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Knowledge & Help System Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-yellow-50 to-orange-50 p-6 rounded-lg border-l-4 border-yellow-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Comprehensive Knowledge Base</h3>
+                            <p class="text-gray-700 mb-4">Access visa knowledge, SOPs, guidelines, and rejection prevention tips to improve success rates.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-globe text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Visa Knowledge Base:</strong> Country-specific visa requirements</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-alt text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>SOP Documentation:</strong> Standard operating procedures</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-graduation-cap text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Learning Guidelines:</strong> Training materials for staff</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-yellow-600 mr-2 mt-1"></i>
+                                    <span><strong>Rejection Tips:</strong> Prevention strategies and solutions</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Country Visa Knowledge</h4>
+                                    <p class="text-gray-700 text-sm">Requirements, processing times, and fees by country</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">SOP Documentation</h4>
+                                    <p class="text-gray-700 text-sm">Standard procedures for different processes</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Staff Training Guides</h4>
+                                    <p class="text-gray-700 text-sm">Learning materials for team development</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Rejection Prevention</h4>
+                                    <p class="text-gray-700 text-sm">Tips to avoid common application rejections</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Knowledge & Help System</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Knowledge Base</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Knowledge & Help section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Topic Category</h4>
+                                        <p class="text-gray-700 text-sm">Choose from visa knowledge, SOPs, guidelines, or tips</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Search Information</h4>
+                                        <p class="text-gray-700 text-sm">Find specific information using search or filters</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Apply Learnings</h4>
+                                        <p class="text-gray-700 text-sm">Use knowledge to improve visa application success</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports Guide -->
+                <section id="reports" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-chart-bar text-4xl text-green-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Reports Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-lg border-l-4 border-green-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Analytics & Reporting System</h3>
+                            <p class="text-gray-700 mb-4">Generate comprehensive reports on applications, success rates, revenue, and operational metrics.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-chart-line text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Performance Metrics:</strong> Track key indicators and KPIs</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-invoice-dollar text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Revenue Reports:</strong> Financial performance and billing analytics</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-passport text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Visa Success Rates:</strong> Approval statistics by type and country</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-filter text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Custom Filters:</strong> Generate reports for specific periods</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Overview Dashboard</h4>
+                                    <p class="text-gray-700 text-sm">Key metrics and summary statistics</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Time-Based Reports</h4>
+                                    <p class="text-gray-700 text-sm">Daily, weekly, and monthly analytics</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Visa Type Analysis</h4>
+                                    <p class="text-gray-700 text-sm">Success rates by visa category</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Export Options</h4>
+                                    <p class="text-gray-700 text-sm">Export reports in various formats</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Reports Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Reports</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Reports section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Report Type</h4>
+                                        <p class="text-gray-700 text-sm">Choose from overview, time-based, or visa-type reports</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Apply Filters</h4>
+                                        <p class="text-gray-700 text-sm">Set date ranges and other filtering criteria</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Generate & Export</h4>
+                                        <p class="text-gray-700 text-sm">Create reports and export as needed</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Guide -->
+                <section id="settings" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-cog text-4xl text-gray-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Settings Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-gray-50 to-blue-50 p-6 rounded-lg border-l-4 border-gray-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">System Configuration</h3>
+                            <p class="text-gray-700 mb-4">Configure general settings, appearance, notifications, working hours, and contact information.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-sliders-h text-gray-600 mr-2 mt-1"></i>
+                                    <span><strong>General Settings:</strong> System title, currency, date/time formats</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-palette text-gray-600 mr-2 mt-1"></i>
+                                    <span><strong>Appearance:</strong> Theme, language, and visual preferences</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-bell text-gray-600 mr-2 mt-1"></i>
+                                    <span><strong>Notifications:</strong> Email, SMS, and reminder settings</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-clock text-gray-600 mr-2 mt-1"></i>
+                                    <span><strong>Working Hours:</strong> Business hours and availability settings</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">General Configuration</h4>
+                                    <p class="text-gray-700 text-sm">Set system-wide parameters and preferences</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Visual Customization</h4>
+                                    <p class="text-gray-700 text-sm">Adjust theme and language settings</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Notification Preferences</h4>
+                                    <p class="text-gray-700 text-sm">Configure alerts and communication settings</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Business Hours</h4>
+                                    <p class="text-gray-700 text-sm">Set operational hours and availability</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Settings Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Settings</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Settings section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Category</h4>
+                                        <p class="text-gray-700 text-sm">Choose from general, appearance, notifications, etc.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Adjust Preferences</h4>
+                                        <p class="text-gray-700 text-sm">Modify settings according to your needs</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Save Changes</h4>
+                                        <p class="text-gray-700 text-sm">Apply and save your configuration changes</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Notifications Guide -->
+                <section id="notifications" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-bell text-4xl text-blue-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Notifications Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border-l-4 border-blue-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Notification Management System</h3>
+                            <p class="text-gray-700 mb-4">Manage system notifications, alerts, and communication with clients and team members.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-envelope text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Email Notifications:</strong> Send automated emails to clients and staff</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-comment-dots text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>System Alerts:</strong> Receive important system notifications</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-filter text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Filtering Options:</strong> Filter notifications by type and priority</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-bullhorn text-blue-600 mr-2 mt-1"></i>
+                                    <span><strong>Announcements:</strong> Broadcast important announcements</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Notification Center</h4>
+                                    <p class="text-gray-700 text-sm">Centralized view of all system notifications</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Email Templates</h4>
+                                    <p class="text-gray-700 text-sm">Predefined templates for common notifications</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">SMS Alerts</h4>
+                                    <p class="text-gray-700 text-sm">Text message notifications for urgent matters</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Custom Triggers</h4>
+                                    <p class="text-gray-700 text-sm">Set custom triggers for automatic notifications</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Notifications Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Notifications</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Notifications section in the main menu</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">View Notification List</h4>
+                                        <p class="text-gray-700 text-sm">See all pending and recent notifications</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Configure Settings</h4>
+                                        <p class="text-gray-700 text-sm">Set preferences for different notification types</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Send Communications</h4>
+                                        <p class="text-gray-700 text-sm">Send targeted messages to clients or staff</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Profile Guide -->
+                <section id="profile" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-user text-4xl text-green-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Profile Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-green-50 to-teal-50 p-6 rounded-lg border-l-4 border-green-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">User Profile Management</h3>
+                            <p class="text-gray-700 mb-4">Manage personal account information, security settings, and user preferences.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-user-cog text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Account Information:</strong> Update personal details and contact info</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-lock text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Security Settings:</strong> Change passwords and configure 2FA</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-palette text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Preferences:</strong> Customize interface and notification settings</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-history text-green-600 mr-2 mt-1"></i>
+                                    <span><strong>Activity Log:</strong> Review account activity and login history</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Personal Information</h4>
+                                    <p class="text-gray-700 text-sm">Update name, email, phone, and other details</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Password Security</h4>
+                                    <p class="text-gray-700 text-sm">Change password and enhance account security</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Privacy Settings</h4>
+                                    <p class="text-gray-700 text-sm">Control data sharing and privacy preferences</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Profile Picture</h4>
+                                    <p class="text-gray-700 text-sm">Upload and manage profile image</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Profile Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Access Profile</h4>
+                                        <p class="text-gray-700 text-sm">Click on profile icon in the top-right corner</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Edit Information</h4>
+                                        <p class="text-gray-700 text-sm">Update personal details as needed</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Update Security</h4>
+                                        <p class="text-gray-700 text-sm">Change password and configure security settings</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Save Changes</h4>
+                                        <p class="text-gray-700 text-sm">Confirm and save all profile updates</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Smart Case Intelligence Guide -->
+                <section id="smartcaseintelligence" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-brain text-4xl text-indigo-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Smart Case Intelligence Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg border-l-4 border-indigo-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">AI-Powered Case Analysis</h3>
+                            <p class="text-gray-700 mb-4">AI-driven analysis for visa applications with success probability prediction, risk assessment, and improvement recommendations.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-chart-line text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Success Prediction:</strong> AI estimates probability of approval</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-exclamation-triangle text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Risk Assessment:</strong> Identify potential issues and red flags</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-lightbulb text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Recommendations:</strong> Improvement suggestions for applications</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-search text-indigo-600 mr-2 mt-1"></i>
+                                    <span><strong>Duplicate Detection:</strong> Identify potentially duplicate applications</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Success Probability</h4>
+                                    <p class="text-gray-700 text-sm">AI-driven estimate of approval likelihood</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Risk Analysis</h4>
+                                    <p class="text-gray-700 text-sm">Identify potential issues and red flags</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Improvement Suggestions</h4>
+                                    <p class="text-gray-700 text-sm">Recommendations to strengthen applications</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Duplicate Detection</h4>
+                                    <p class="text-gray-700 text-sm">Identify potentially duplicate applications</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Smart Case Intelligence Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Intelligence</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Smart Case Intelligence section</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Case</h4>
+                                        <p class="text-gray-700 text-sm">Choose a visa case for analysis</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Review Analysis</h4>
+                                        <p class="text-gray-700 text-sm">Examine AI-generated insights and recommendations</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Apply Recommendations</h4>
+                                        <p class="text-gray-700 text-sm">Use insights to improve the application</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Verification & Compliance Guide -->
+                <section id="verificationcompliance" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-shield-alt text-4xl text-red-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Verification & Compliance Guide</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div
+                            class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-lg border-l-4 border-red-500">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Identity Verification & Compliance</h3>
+                            <p class="text-gray-700 mb-4">Comprehensive verification processes for identity, biometric data, document validation, and anti-fraud checks.</p>
+                            <ul class="space-y-2 text-gray-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-user-check text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Identity Verification:</strong> Confirm client identity through various methods</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-fingerprint text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Biometric Data:</strong> Collect and verify biometric information</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-file-contract text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Document Validation:</strong> Verify authenticity of submitted documents</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-shield-alt text-red-600 mr-2 mt-1"></i>
+                                    <span><strong>Anti-Fraud Checks:</strong> Detect and prevent fraudulent activities</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Main Features</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Identity Verification</h4>
+                                    <p class="text-gray-700 text-sm">Multiple methods to verify client identity</p>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Biometric Checks</h4>
+                                    <p class="text-gray-700 text-sm">Capture and verify biometric data</p>
+                                </div>
+                                <div class="bg-yellow-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Document Validation</h4>
+                                    <p class="text-gray-700 text-sm">Verify authenticity of supporting documents</p>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-gray-800 mb-2">Risk Assessment</h4>
+                                    <p class="text-gray-700 text-sm">Evaluate and categorize risk levels</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">Using the Verification & Compliance Module</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start space-x-3 bg-green-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Navigate to Verification</h4>
+                                        <p class="text-gray-700 text-sm">Go to the Verification & Compliance section</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-blue-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        2</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Select Client</h4>
+                                        <p class="text-gray-700 text-sm">Choose a client for verification</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-yellow-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-yellow-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        3</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Choose Verification Type</h4>
+                                        <p class="text-gray-700 text-sm">Select identity, biometric, document, or anti-fraud</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start space-x-3 bg-purple-50 p-4 rounded-lg">
+                                    <div
+                                        class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold">
+                                        4</div>
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800">Complete Process</h4>
+                                        <p class="text-gray-700 text-sm">Execute verification and record results</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Troubleshooting Section -->
+                <section id="troubleshooting" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-tools text-4xl text-red-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Troubleshooting</h2>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-red-500 bg-red-50 p-5 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">MongoDB Connection Failed</h3>
+                            <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                                <li>Verify MongoDB URI is correct</li>
+                                <li>Check IP whitelist in MongoDB Atlas</li>
+                                <li>Ensure network connectivity</li>
+                                <li>Check MongoDB Atlas status</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-yellow-500 bg-yellow-50 p-5 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">NextAuth Errors</h3>
+                            <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                                <li>Verify NEXTAUTH_SECRET is at least 32 characters</li>
+                                <li>Check NEXTAUTH_URL matches your domain</li>
+                                <li>Clear browser cookies</li>
+                                <li>Check console for specific errors</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-blue-500 bg-blue-50 p-5 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Documents Not Uploading</h3>
+                            <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                                <li>Verify Cloudinary credentials (if used)</li>
+                                <li>Check account storage limits</li>
+                                <li>Ensure file size &lt; 10MB</li>
+                                <li>Check supported file formats (JPG, PNG, PDF, DOC, DOCX)</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-green-500 bg-green-50 p-5 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Build Errors</h3>
+                            <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                                <li>Run <code class="bg-green-100 px-2 py-1 rounded">npm install</code> again</li>
+                                <li>Clear .next folder: <code class="bg-green-100 px-2 py-1 rounded">rm -rf .next</code>
+                                </li>
+                                <li>Check Node.js version: <code
+                                        class="bg-green-100 px-2 py-1 rounded">node --version</code> (should be 18+)
+                                </li>
+                                <li>Verify all dependencies are installed</li>
+                            </ul>
+                        </div>
+
+                        <div class="border-l-4 border-purple-500 bg-purple-50 p-5 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-3">Port Already in Use</h3>
+                            <p class="text-gray-700 mb-2"><strong>Solution:</strong></p>
+                            <div class="code-block mt-2">
+                                <code class="text-sm">
+# Windows<br>
+netstat -ano | findstr :3000<br>
+taskkill /PID &lt;PID&gt; /F<br><br>
+# Linux/Mac<br>
+lsof -ti:3000 | xargs kill -9
+                                </code>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Support Section -->
+                <section id="support" class="section-anchor bg-white rounded-lg shadow-md p-8 mb-8">
+                    <div class="flex items-center space-x-3 mb-6">
+                        <i class="fas fa-life-ring text-4xl text-primary-600"></i>
+                        <h2 class="text-3xl font-bold text-gray-800">Support</h2>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-yellow-50 to-orange-50 p-6 rounded-lg">
+                        <i class="fas fa-code text-3xl text-yellow-600 mb-3"></i>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Version Info</h3>
+                        <p class="text-gray-700 mb-2"><strong>Next.js:</strong> 15.5.9</p>
+                        <p class="text-gray-700 mb-2"><strong>React:</strong> 19.2.3</p>
+                        <p class="text-gray-700 mb-2"><strong>TypeScript:</strong> 5.3.3</p>
+                        <p class="text-gray-700"><strong>MongoDB:</strong> 8.20.3</p>
+                    </div>
+                </section>
+
+                <!-- Footer -->
+                <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-lg shadow-lg p-8 mt-8">
+                    <div class="text-center">
+                        <div class="flex items-center justify-center space-x-3 mb-4">
+                            <i class="fas fa-passport text-3xl"></i>
+                            <h3 class="text-2xl font-bold">Visa Agency System</h3>
+                        </div>
+                        <p class="text-gray-300 mb-4">Comprehensive Visa Management Platform</p>
+                        <div class="flex justify-center space-x-6 text-sm">
+                            <span>© 2025 Visa Agency System</span>
+                            <span>•</span>
+                            <span>MIT License</span>
+                            <span>•</span>
+                            <span>Version 1.0.0</span>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </main>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop"
+        class="fixed bottom-8 right-8 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 transition-all opacity-0 invisible"
+        style="transition: opacity 0.3s, visibility 0.3s;">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // Back to top button
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTop.classList.remove('opacity-0', 'invisible');
+                backToTop.classList.add('opacity-100', 'visible');
+            } else {
+                backToTop.classList.add('opacity-0', 'invisible');
+                backToTop.classList.remove('opacity-100', 'visible');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
