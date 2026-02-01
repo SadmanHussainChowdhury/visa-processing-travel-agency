@@ -35,6 +35,10 @@ const VerificationCompliancePage = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'identity' | 'biometric' | 'document' | 'anti-fraud'>('all');
   const [showNewModal, setShowNewModal] = useState(false);
   const [clients, setClients] = useState<Client[]>([]);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Show 10 verifications per page
 
   // Form state
   const [formData, setFormData] = useState({
@@ -49,6 +53,11 @@ const VerificationCompliancePage = () => {
   
   const [editingVerification, setEditingVerification] = useState<Verification | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  
+  // Reset to first page when tab changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
 
   useEffect(() => {
     fetchVerifications();
@@ -83,6 +92,74 @@ const VerificationCompliancePage = () => {
   const filteredVerifications = verifications.filter(v => 
     activeTab === 'all' || v.verificationType === activeTab
   );
+  
+  // Pagination logic
+  const indexOfLastVerification = currentPage * itemsPerPage;
+  const indexOfFirstVerification = indexOfLastVerification - itemsPerPage;
+  const currentVerifications = filteredVerifications.slice(indexOfFirstVerification, indexOfLastVerification);
+  const totalPages = Math.ceil(filteredVerifications.length / itemsPerPage);
+  
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  
+  // Previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  // Next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    
+    if (totalPages <= 1) {
+      // Always show page 1 when there are results but only one page
+      pageNumbers.push(1);
+    } else {
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        // Show all pages if total is less than max visible
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // Show first page
+        pageNumbers.push(1);
+        
+        if (currentPage > 3) {
+          pageNumbers.push('...');
+        }
+        
+        // Show current page and surrounding pages
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== totalPages) {
+            pageNumbers.push(i);
+          }
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push('...');
+        }
+        
+        // Show last page
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -251,8 +328,8 @@ const VerificationCompliancePage = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {filteredVerifications.length > 0 ? (
-              filteredVerifications.map((verification) => (
+            {currentVerifications.length > 0 ? (
+              currentVerifications.map((verification) => (
                 <tr key={verification._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">
@@ -301,7 +378,72 @@ const VerificationCompliancePage = () => {
           </tbody>
         </table>
       </div>
+      
+      {filteredVerifications.length > 0 && (
+        <div className="mt-6 flex items-center justify-between">
+          <div className="text-sm text-gray-700">
+            Showing <span className="font-medium">{indexOfFirstVerification + 1}</span> to{' '}
+            <span className="font-medium">{Math.min(indexOfLastVerification, filteredVerifications.length)}</span> of{' '}
+            <span className="font-medium">{filteredVerifications.length}</span> results
+          </div>
+          <div className="flex items-center space-x-2">
+            {/* Previous Button */}
+            <button
+              onClick={prevPage}
+              disabled={currentPage === 1}
+              className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                currentPage === 1
+                  ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                  : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+              }`}
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              <span className="ml-2">Previous</span>
+            </button>
 
+            {/* Page Numbers */}
+            <div className="flex space-x-1">
+              {getPageNumbers().map((number, index) => (
+                <button
+                  key={index}
+                  onClick={() => typeof number === 'number' && paginate(number)}
+                  className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                    number === currentPage
+                      ? 'z-10 bg-blue-600 text-white border-blue-600'
+                      : typeof number === 'string'
+                      ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                      : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                  }`}
+                  disabled={typeof number === 'string'}
+                >
+                  {number}
+                </button>
+              ))}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={nextPage}
+              disabled={currentPage >= totalPages}
+              className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                currentPage >= totalPages
+                  ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                  : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+              }`}
+            >
+              <span className="mr-2">Next</span>
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+
+      
       {/* New Verification Modal */}
       {showNewModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

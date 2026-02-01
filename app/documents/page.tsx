@@ -60,6 +60,8 @@ export default function DocumentsPage() {
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Show 10 documents per page
 
   const categories = [
     { value: 'all', label: 'All Categories' },
@@ -110,7 +112,78 @@ export default function DocumentsPage() {
     return matchesSearch && matchesCategory && matchesStatus;
   });
 
+  // Reset to first page when search or filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, categoryFilter, statusFilter]);
 
+  // Pagination logic
+  const indexOfLastDocument = currentPage * itemsPerPage;
+  const indexOfFirstDocument = indexOfLastDocument - itemsPerPage;
+  const currentDocuments = filteredDocuments.slice(indexOfFirstDocument, indexOfLastDocument);
+  const totalPages = Math.ceil(filteredDocuments.length / itemsPerPage);
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  // Previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    
+    if (totalPages <= 1) {
+      // Always show page 1 when there are results but only one page
+      pageNumbers.push(1);
+    } else {
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        // Show all pages if total is less than max visible
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // Show first page
+        pageNumbers.push(1);
+        
+        if (currentPage > 3) {
+          pageNumbers.push('...');
+        }
+        
+        // Show current page and surrounding pages
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== totalPages) {
+            pageNumbers.push(i);
+          }
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push('...');
+        }
+        
+        // Show last page
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
 
   const getFileIcon = (mimeType: string) => {
     if (mimeType.startsWith('image/')) {
@@ -207,6 +280,11 @@ export default function DocumentsPage() {
             <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
               {filteredDocuments.length} documents
             </span>
+            {filteredDocuments.length > itemsPerPage && (
+              <span className="text-sm text-gray-600">
+                Showing {indexOfFirstDocument + 1}-{Math.min(indexOfLastDocument, filteredDocuments.length)} of {filteredDocuments.length}
+              </span>
+            )}
           </div>
           <Link
             href="/documents/upload"
@@ -285,7 +363,7 @@ export default function DocumentsPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredDocuments.map((document) => (
+                {currentDocuments.map((document) => (
                   <tr 
                     key={document._id} 
                     className="hover:bg-gray-50 cursor-pointer"
@@ -371,7 +449,7 @@ export default function DocumentsPage() {
               </tbody>
             </table>
             
-            {filteredDocuments.length === 0 && (
+            {filteredDocuments.length === 0 ? (
               <div className="text-center py-12">
                 <FolderOpen className="mx-auto h-12 w-12 text-gray-400" />
                 <h3 className="mt-2 text-sm font-medium text-gray-900">No documents found</h3>
@@ -392,6 +470,67 @@ export default function DocumentsPage() {
                     </Link>
                   </div>
                 )}
+              </div>
+            ) : (
+              <div className="mt-6 flex items-center justify-between">
+                <div className="text-sm text-gray-700">
+                  Showing <span className="font-medium">{indexOfFirstDocument + 1}</span> to{' '}
+                  <span className="font-medium">{Math.min(indexOfLastDocument, filteredDocuments.length)}</span> of{' '}
+                  <span className="font-medium">{filteredDocuments.length}</span> results
+                </div>
+                <div className="flex items-center space-x-2">
+                  {/* Previous Button */}
+                  <button
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                    className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                      currentPage === 1
+                        ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                    }`}
+                  >
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span className="ml-2">Previous</span>
+                  </button>
+
+                  {/* Page Numbers */}
+                  <div className="flex space-x-1">
+                    {getPageNumbers().map((number, index) => (
+                      <button
+                        key={index}
+                        onClick={() => typeof number === 'number' && paginate(number)}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          number === currentPage
+                            ? 'z-10 bg-blue-600 text-white border-blue-600'
+                            : typeof number === 'string'
+                            ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                        disabled={typeof number === 'string'}
+                      >
+                        {number}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Next Button */}
+                  <button
+                    onClick={nextPage}
+                    disabled={currentPage >= totalPages}
+                    className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                      currentPage >= totalPages
+                        ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                        : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                    }`}
+                  >
+                    <span className="mr-2">Next</span>
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             )}
           </div>

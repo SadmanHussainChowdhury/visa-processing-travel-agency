@@ -19,6 +19,13 @@ export default function KnowledgeHelpSystem() {
   const [showTipModal, setShowTipModal] = useState(false);
   const [showSOPViewModal, setShowSOPViewModal] = useState(false);
   const [selectedSOPDoc, setSelectedSOPDoc] = useState<any>(null);
+
+  // Pagination state for each tab
+  const [visaKnowledgeCurrentPage, setVisaKnowledgeCurrentPage] = useState(1);
+  const [sopDocsCurrentPage, setSopDocsCurrentPage] = useState(1);
+  const [learningGuidelinesCurrentPage, setLearningGuidelinesCurrentPage] = useState(1);
+  const [rejectionTipsCurrentPage, setRejectionTipsCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6); // Show 6 items per page for cards layout
   
   // State for form inputs
   const [newVisaKnowledge, setNewVisaKnowledge] = useState({
@@ -82,7 +89,110 @@ export default function KnowledgeHelpSystem() {
     fetchData();
   }, []);
 
+  // Reset pagination when search changes
+  useEffect(() => {
+    setVisaKnowledgeCurrentPage(1);
+    setSopDocsCurrentPage(1);
+    setLearningGuidelinesCurrentPage(1);
+    setRejectionTipsCurrentPage(1);
+  }, [searchQuery]);
+
   // Export functionality
+
+  // Pagination logic for each tab
+  const getVisaKnowledgePagination = (data: any[]) => {
+    const indexOfLastItem = visaKnowledgeCurrentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
+    return { currentItems, totalPages };
+  };
+
+  const getSopDocsPagination = (data: any[]) => {
+    const indexOfLastItem = sopDocsCurrentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
+    return { currentItems, totalPages };
+  };
+
+  const getLearningGuidelinesPagination = (data: any[]) => {
+    const indexOfLastItem = learningGuidelinesCurrentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
+    return { currentItems, totalPages };
+  };
+
+  const getRejectionTipsPagination = (data: any[]) => {
+    const indexOfLastItem = rejectionTipsCurrentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(data.length / itemsPerPage);
+
+    return { currentItems, totalPages };
+  };
+
+  // Pagination helpers
+  const getPageNumbers = (currentPage: number, totalPages: number) => {
+    const pageNumbers = [];
+    
+    if (totalPages <= 1) {
+      pageNumbers.push(1);
+    } else {
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        
+        if (currentPage > 3) {
+          pageNumbers.push('...');
+        }
+        
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== totalPages) {
+            pageNumbers.push(i);
+          }
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push('...');
+        }
+        
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
+
+  const goToPage = (setCurrentPage: React.Dispatch<React.SetStateAction<number>>, pageNumber: number) => {
+    if (typeof pageNumber === 'number') {
+      setCurrentPage(pageNumber);
+    }
+  };
+
+  const prevPage = (currentPage: number, setCurrentPage: React.Dispatch<React.SetStateAction<number>>) => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextPage = (currentPage: number, totalPages: number, setCurrentPage: React.Dispatch<React.SetStateAction<number>>) => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
   // Filter data based on search query
   const filterData = (data: any[], query: string) => {
     if (!query.trim()) return data;
@@ -613,7 +723,7 @@ export default function KnowledgeHelpSystem() {
             {activeTab === 'knowledge-base' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterData(visaKnowledgeBase, searchQuery).map((entry) => (
+                  {getVisaKnowledgePagination(filterData(visaKnowledgeBase, searchQuery)).currentItems.map((entry) => (
                     <div key={entry._id || entry.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                       <div className="p-5">
                         <div className="flex items-start justify-between">
@@ -689,11 +799,68 @@ export default function KnowledgeHelpSystem() {
                   ))}
                 </div>
                 
-                <div className="text-center">
-                  <button className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Load More Countries
-                  </button>
-                </div>
+                {filterData(visaKnowledgeBase, searchQuery).length > 0 && (
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                      Showing <span className="font-medium">{(visaKnowledgeCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                      <span className="font-medium">{Math.min(visaKnowledgeCurrentPage * itemsPerPage, filterData(visaKnowledgeBase, searchQuery).length)}</span> of{' '}
+                      <span className="font-medium">{filterData(visaKnowledgeBase, searchQuery).length}</span> results
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {/* Previous Button */}
+                      <button
+                        onClick={() => prevPage(visaKnowledgeCurrentPage, setVisaKnowledgeCurrentPage)}
+                        disabled={visaKnowledgeCurrentPage === 1}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          visaKnowledgeCurrentPage === 1
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="ml-2">Previous</span>
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex space-x-1">
+                        {getPageNumbers(visaKnowledgeCurrentPage, getVisaKnowledgePagination(filterData(visaKnowledgeBase, searchQuery)).totalPages).map((number, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToPage(setVisaKnowledgeCurrentPage, number as number)}
+                            className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                              number === visaKnowledgeCurrentPage
+                                ? 'z-10 bg-blue-600 text-white border-blue-600'
+                                : typeof number === 'string'
+                                ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                            }`}
+                            disabled={typeof number === 'string'}
+                          >
+                            {number}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Next Button */}
+                      <button
+                        onClick={() => nextPage(visaKnowledgeCurrentPage, getVisaKnowledgePagination(filterData(visaKnowledgeBase, searchQuery)).totalPages, setVisaKnowledgeCurrentPage)}
+                        disabled={visaKnowledgeCurrentPage >= getVisaKnowledgePagination(filterData(visaKnowledgeBase, searchQuery)).totalPages}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          visaKnowledgeCurrentPage >= getVisaKnowledgePagination(filterData(visaKnowledgeBase, searchQuery)).totalPages
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <span className="mr-2">Next</span>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -715,7 +882,7 @@ export default function KnowledgeHelpSystem() {
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {filterData(sopDocuments, searchQuery).map((doc) => (
+                        {getSopDocsPagination(filterData(sopDocuments, searchQuery)).currentItems.map((doc) => (
                           <tr key={doc._id || doc.id} className="hover:bg-gray-50">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
@@ -754,6 +921,69 @@ export default function KnowledgeHelpSystem() {
                     </table>
                   </div>
                 </div>
+                
+                {filterData(sopDocuments, searchQuery).length > 0 && (
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                      Showing <span className="font-medium">{(sopDocsCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                      <span className="font-medium">{Math.min(sopDocsCurrentPage * itemsPerPage, filterData(sopDocuments, searchQuery).length)}</span> of{' '}
+                      <span className="font-medium">{filterData(sopDocuments, searchQuery).length}</span> results
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {/* Previous Button */}
+                      <button
+                        onClick={() => prevPage(sopDocsCurrentPage, setSopDocsCurrentPage)}
+                        disabled={sopDocsCurrentPage === 1}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          sopDocsCurrentPage === 1
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="ml-2">Previous</span>
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex space-x-1">
+                        {getPageNumbers(sopDocsCurrentPage, getSopDocsPagination(filterData(sopDocuments, searchQuery)).totalPages).map((number, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToPage(setSopDocsCurrentPage, number as number)}
+                            className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                              number === sopDocsCurrentPage
+                                ? 'z-10 bg-blue-600 text-white border-blue-600'
+                                : typeof number === 'string'
+                                ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                            }`}
+                            disabled={typeof number === 'string'}
+                          >
+                            {number}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Next Button */}
+                      <button
+                        onClick={() => nextPage(sopDocsCurrentPage, getSopDocsPagination(filterData(sopDocuments, searchQuery)).totalPages, setSopDocsCurrentPage)}
+                        disabled={sopDocsCurrentPage >= getSopDocsPagination(filterData(sopDocuments, searchQuery)).totalPages}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          sopDocsCurrentPage >= getSopDocsPagination(filterData(sopDocuments, searchQuery)).totalPages
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <span className="mr-2">Next</span>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -761,7 +991,7 @@ export default function KnowledgeHelpSystem() {
             {activeTab === 'learning-guidelines' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filterData(learningGuidelines, searchQuery).map((guideline) => (
+                  {getLearningGuidelinesPagination(filterData(learningGuidelines, searchQuery)).currentItems.map((guideline) => (
                     <div key={guideline._id || guideline.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
                       <div className="p-5">
                         <div className="flex items-start justify-between">
@@ -833,6 +1063,69 @@ export default function KnowledgeHelpSystem() {
                     </div>
                   ))}
                 </div>
+                
+                {filterData(learningGuidelines, searchQuery).length > 0 && (
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                      Showing <span className="font-medium">{(learningGuidelinesCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                      <span className="font-medium">{Math.min(learningGuidelinesCurrentPage * itemsPerPage, filterData(learningGuidelines, searchQuery).length)}</span> of{' '}
+                      <span className="font-medium">{filterData(learningGuidelines, searchQuery).length}</span> results
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {/* Previous Button */}
+                      <button
+                        onClick={() => prevPage(learningGuidelinesCurrentPage, setLearningGuidelinesCurrentPage)}
+                        disabled={learningGuidelinesCurrentPage === 1}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          learningGuidelinesCurrentPage === 1
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="ml-2">Previous</span>
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex space-x-1">
+                        {getPageNumbers(learningGuidelinesCurrentPage, getLearningGuidelinesPagination(filterData(learningGuidelines, searchQuery)).totalPages).map((number, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToPage(setLearningGuidelinesCurrentPage, number as number)}
+                            className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                              number === learningGuidelinesCurrentPage
+                                ? 'z-10 bg-blue-600 text-white border-blue-600'
+                                : typeof number === 'string'
+                                ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                            }`}
+                            disabled={typeof number === 'string'}
+                          >
+                            {number}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Next Button */}
+                      <button
+                        onClick={() => nextPage(learningGuidelinesCurrentPage, getLearningGuidelinesPagination(filterData(learningGuidelines, searchQuery)).totalPages, setLearningGuidelinesCurrentPage)}
+                        disabled={learningGuidelinesCurrentPage >= getLearningGuidelinesPagination(filterData(learningGuidelines, searchQuery)).totalPages}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          learningGuidelinesCurrentPage >= getLearningGuidelinesPagination(filterData(learningGuidelines, searchQuery)).totalPages
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <span className="mr-2">Next</span>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -840,7 +1133,7 @@ export default function KnowledgeHelpSystem() {
             {activeTab === 'rejection-tips' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {filterData(rejectionTips, searchQuery).map((tip) => (
+                  {getRejectionTipsPagination(filterData(rejectionTips, searchQuery)).currentItems.map((tip) => (
                     <div key={tip._id || tip.id} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
                       <div className="p-5 border-b border-gray-200">
                         <div className="flex items-start justify-between">
@@ -900,6 +1193,69 @@ export default function KnowledgeHelpSystem() {
                     </div>
                   ))}
                 </div>
+                
+                {filterData(rejectionTips, searchQuery).length > 0 && (
+                  <div className="mt-6 flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                      Showing <span className="font-medium">{(rejectionTipsCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                      <span className="font-medium">{Math.min(rejectionTipsCurrentPage * itemsPerPage, filterData(rejectionTips, searchQuery).length)}</span> of{' '}
+                      <span className="font-medium">{filterData(rejectionTips, searchQuery).length}</span> results
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      {/* Previous Button */}
+                      <button
+                        onClick={() => prevPage(rejectionTipsCurrentPage, setRejectionTipsCurrentPage)}
+                        disabled={rejectionTipsCurrentPage === 1}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          rejectionTipsCurrentPage === 1
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                        </svg>
+                        <span className="ml-2">Previous</span>
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex space-x-1">
+                        {getPageNumbers(rejectionTipsCurrentPage, getRejectionTipsPagination(filterData(rejectionTips, searchQuery)).totalPages).map((number, index) => (
+                          <button
+                            key={index}
+                            onClick={() => goToPage(setRejectionTipsCurrentPage, number as number)}
+                            className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                              number === rejectionTipsCurrentPage
+                                ? 'z-10 bg-blue-600 text-white border-blue-600'
+                                : typeof number === 'string'
+                                ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                                : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                            }`}
+                            disabled={typeof number === 'string'}
+                          >
+                            {number}
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Next Button */}
+                      <button
+                        onClick={() => nextPage(rejectionTipsCurrentPage, getRejectionTipsPagination(filterData(rejectionTips, searchQuery)).totalPages, setRejectionTipsCurrentPage)}
+                        disabled={rejectionTipsCurrentPage >= getRejectionTipsPagination(filterData(rejectionTips, searchQuery)).totalPages}
+                        className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                          rejectionTipsCurrentPage >= getRejectionTipsPagination(filterData(rejectionTips, searchQuery)).totalPages
+                            ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                            : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                        }`}
+                      >
+                        <span className="mr-2">Next</span>
+                        <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

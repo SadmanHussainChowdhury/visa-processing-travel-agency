@@ -35,13 +35,17 @@ export default function ActivityPage() {
   const [activities, setActivities] = useState<RecentActivity[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10); // Show 10 activities per page
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   // Fetch all activities
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('/api/activity');
+        const response = await fetch(`/api/activity?limit=${itemsPerPage}&skip=${(currentPage - 1) * itemsPerPage}`);
 
         if (!response.ok) {
           throw new Error('Failed to fetch activities');
@@ -78,6 +82,8 @@ export default function ActivityPage() {
         });
 
         setActivities(transformedActivities);
+        setTotalItems(data.total || transformedActivities.length);
+        setTotalPages(Math.ceil(data.total / itemsPerPage) || 1);
         setError(null);
       } catch (err) {
         console.error('Error fetching activities:', err);
@@ -91,7 +97,7 @@ export default function ActivityPage() {
     if (translationsLoaded) {
       fetchActivities();
     }
-  }, [translationsLoaded]);
+  }, [translationsLoaded, currentPage, itemsPerPage]);
 
   // Show loading while checking authentication
   if (status === 'loading' || !translationsLoaded) {
@@ -110,6 +116,68 @@ export default function ActivityPage() {
     router.push('/login');
     return null;
   }
+
+  // Previous page
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Next page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    
+    if (totalPages <= 1) {
+      // Always show page 1 when there are results but only one page
+      pageNumbers.push(1);
+    } else {
+      const maxVisiblePages = 5;
+      
+      if (totalPages <= maxVisiblePages) {
+        // Show all pages if total is less than max visible
+        for (let i = 1; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        // Show first page
+        pageNumbers.push(1);
+        
+        if (currentPage > 3) {
+          pageNumbers.push('...');
+        }
+        
+        // Show current page and surrounding pages
+        const start = Math.max(2, currentPage - 1);
+        const end = Math.min(totalPages - 1, currentPage + 1);
+        
+        for (let i = start; i <= end; i++) {
+          if (i !== 1 && i !== totalPages) {
+            pageNumbers.push(i);
+          }
+        }
+        
+        if (currentPage < totalPages - 2) {
+          pageNumbers.push('...');
+        }
+        
+        // Show last page
+        pageNumbers.push(totalPages);
+      }
+    }
+    
+    return pageNumbers;
+  };
+
+  // Change page
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <ProtectedRoute>
@@ -213,6 +281,70 @@ export default function ActivityPage() {
                 <div className="text-center py-12">
                   <Activity className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-500">{t('activity.noActivities') || 'No activities found'}</p>
+                </div>
+              )}
+              
+              {/* Pagination */}
+              {activities.length > 0 && totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="text-sm text-gray-700">
+                    Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
+                    <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}
+                    <span className="font-medium">{totalItems}</span> results
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    {/* Previous Button */}
+                    <button
+                      onClick={prevPage}
+                      disabled={currentPage === 1}
+                      className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                        currentPage === 1
+                          ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                          : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                      }`}
+                    >
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                      <span className="ml-2">Previous</span>
+                    </button>
+
+                    {/* Page Numbers */}
+                    <div className="flex space-x-1">
+                      {getPageNumbers().map((number, index) => (
+                        <button
+                          key={index}
+                          onClick={() => typeof number === 'number' && paginate(number)}
+                          className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                            number === currentPage
+                              ? 'z-10 bg-blue-600 text-white border-blue-600'
+                              : typeof number === 'string'
+                              ? 'text-gray-400 bg-white border-gray-300 cursor-default'
+                              : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                          }`}
+                          disabled={typeof number === 'string'}
+                        >
+                          {number}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={nextPage}
+                      disabled={currentPage >= totalPages}
+                      className={`relative inline-flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                        currentPage >= totalPages
+                          ? 'text-gray-300 bg-gray-100 cursor-not-allowed'
+                          : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-700'
+                      }`}
+                    >
+                      <span className="mr-2">Next</span>
+                      <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
