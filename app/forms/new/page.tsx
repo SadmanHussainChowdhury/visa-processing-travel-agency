@@ -94,7 +94,7 @@ export default function NewFormTemplatePage() {
     { value: 'work', label: 'Work Visa' },
     { value: 'transit', label: 'Transit Visa' },
     { value: 'family', label: 'Family/Spouse Visa' },
-    { value: 'medical', label: 'Medical Visa' },
+    { value: 'health-clearance', label: 'Health Clearance Requirements' },
     { value: 'diplomatic', label: 'Diplomatic Visa' },
   ];
 

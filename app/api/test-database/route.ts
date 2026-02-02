@@ -32,10 +32,10 @@ export async function GET() {
 
     // Test creating a sample appointment
     const testAppointment = new Appointment({
-      patientName: 'Test Client',
-      patientEmail: 'test@example.com',
-      patientPhone: '+1-555-123-4567',
-      doctorName: 'Visa Consultant',
+      clientName: 'Test Client',
+      clientEmail: 'test@example.com',
+      clientPhone: '+1-555-123-4567',
+      consultantName: 'Visa Consultant',
       appointmentDate: new Date(),
       appointmentTime: '10:00',
       appointmentType: 'consultation',

@@ -21,14 +21,13 @@ export async function POST(request: NextRequest) {
     await dbConnect();
     const body = await request.json();
     
-    // Map visa-specific field names to medical field names expected by the model
+    // Map client-related field names to appointment model fields
     const mappedData = {
-      // Client/Visa fields -> Patient/Doctor fields
-      patientName: body.clientName || body.patientName,
-      patientEmail: body.clientEmail || body.patientEmail,
-      patientPhone: body.clientPhone || body.patientPhone,
-      doctorName: body.consultantName || body.doctorName || 'Visa Consultant',
-      doctorEmail: body.consultantEmail || body.doctorEmail,
+      clientName: body.clientName || body.patientName,
+      clientEmail: body.clientEmail || body.patientEmail,
+      clientPhone: body.clientPhone || body.patientPhone,
+      consultantName: body.consultantName || body.doctorName || 'Visa Consultant',
+      consultantEmail: body.consultantEmail || body.doctorEmail,
       
       // Appointment fields (keep as is)
       appointmentDate: body.appointmentDate,
@@ -37,10 +36,10 @@ export async function POST(request: NextRequest) {
       status: body.status || 'scheduled',
       reason: body.purpose || body.reason, // Map purpose to reason
       notes: body.notes,
-      symptoms: body.symptoms,
-      diagnosis: body.diagnosis,
-      treatment: body.treatment,
-      patientId: body.clientId || body.patientId // Ensure patientId is mapped properly (only once)
+      requirements: body.requirements || body.symptoms,
+      consultationNotes: body.consultationNotes || body.diagnosis,
+      recommendations: body.recommendations || body.treatment,
+      clientId: body.clientId || body.patientId // Ensure clientId is mapped properly (only once)
     };
 
     const appointment = new Appointment(mappedData);

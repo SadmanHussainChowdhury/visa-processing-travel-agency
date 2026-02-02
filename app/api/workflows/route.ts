@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const patientId = searchParams.get('patientId');
+    const clientId = searchParams.get('clientId');
     const status = searchParams.get('status');
     
     const client = new MongoClient(process.env.MONGODB_URI!);
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     const workflowsCollection = db.collection('workflows');
     
     let query: any = {};
-    if (patientId) query.patientId = patientId;
+    if (clientId) query.clientId = clientId;
     if (status) query.status = status;
     
     const workflows = await workflowsCollection

@@ -110,33 +110,33 @@
     "profileSettings": "Configuración del Perfil",
     "logout": "Cerrar sesión"
   },
-  "patients": {
-    "title": "Pacientes",
-    "description": "Administra los registros e información de tus pacientes",
-    "addNewPatient": "Agregar nuevo paciente",
-    "searchPatients": "Buscar pacientes por nombre o correo...",
-    "allPatients": "Todos los pacientes",
-    "patient": "Paciente",
+  "clients": {
+    "title": "Clientes",
+    "description": "Administra los registros e información de tus clientes",
+    "addNewPatient": "Agregar nuevo cliente",
+    "searchPatients": "Buscar clientes por nombre o correo...",
+    "allPatients": "Todos los clientes",
+    "patient": "Cliente",
     "contact": "Contacto",
     "status": "Estado",
     "registrationDate": "Fecha de registro",
-    "assignedDoctor": "Doctor asignado",
+    "assignedDoctor": "Asesor asignado",
     "actions": "Acciones",
     "viewDetails": "Ver detalles",
-    "editPatient": "Editar paciente",
-    "deletePatient": "Eliminar paciente",
+    "editPatient": "Editar cliente",
+    "deletePatient": "Eliminar cliente",
     "cases": "Casos",
-    "noPatientsFound": "No se encontraron pacientes",
+    "noPatientsFound": "No se encontraron clientes",
     "tryAdjustingSearch": "Intenta ajustar tus criterios de búsqueda.",
-    "getStartedAdding": "Comienza agregando tu primer paciente.",
-    "patientsCount": "{count} pacientes",
+    "getStartedAdding": "Comienza agregando tu primer cliente.",
+    "patientsCount": "{count} clientes",
     "newPatient": {
-      "title": "Agregar Nuevo Paciente",
-      "description": "Registra un nuevo paciente en el sistema",
-      "backToPatients": "Volver a Pacientes",
+      "title": "Agregar Nuevo Cliente",
+      "description": "Registra un nuevo cliente en el sistema",
+      "backToPatients": "Volver a Clientes",
       "sections": {
         "personal": "Información Personal",
-        "medical": "Información Médica",
+        "medical": "Información para visa",
         "emergency": "Contacto de Emergencia"
       },
       "fields": {
@@ -172,11 +172,11 @@
         },
         "allergies": "Alergias",
         "currentMedications": "Medicamentos Actuales",
-        "medicalHistory": "Historial Médico",
-        "familyHistory": "Historial Médico Familiar",
+        "medicalHistory": "Historial de solicitudes de visa",
+        "familyHistory": "Información familiar",
         "emergencyName": "Nombre del Contacto de Emergencia",
         "emergencyPhone": "Teléfono del Contacto de Emergencia",
-        "emergencyRelationship": "Relación con el Paciente"
+        "emergencyRelationship": "Relación con el Cliente"
       },
       "placeholders": {
         "allergies": "ej., Penicilina, Cacahuetes",
@@ -187,26 +187,26 @@
       },
       "buttons": {
         "cancel": "Cancelar",
-        "savePatient": "Guardar Paciente",
+        "savePatient": "Guardar Cliente",
         "saving": "Guardando..."
       },
       "validation": {
         "requiredFields": "Por favor complete todos los campos obligatorios"
       },
       "success": {
-        "patientAdded": "¡Paciente agregado exitosamente!"
+        "patientAdded": "¡Cliente agregado exitosamente!"
       },
       "errors": {
-        "addPatientError": "Error al agregar paciente: {error}",
-        "genericError": "Error al agregar paciente. Por favor inténtelo de nuevo."
+        "addPatientError": "Error al agregar cliente: {error}",
+        "genericError": "Error al agregar cliente. Por favor inténtelo de nuevo."
       }
     }
   },
   "appointments": {
     "title": "Citas",
-    "description": "Administra y programa las citas de los pacientes",
+    "description": "Administra y programa las citas de los clientes",
     "addNew": "Agregar nueva cita",
-    "searchPlaceholder": "Buscar citas por paciente o doctor...",
+    "searchPlaceholder": "Buscar citas por cliente o asesor...",
     "allStatus": "Todos los estados",
     "upcoming": "Próximas",
     "completed": "Completadas",
@@ -218,7 +218,7 @@
     "loading": "Cargando citas...",
     "noAppointments": "No se encontraron citas",
     "noAppointmentsDesc": "Comienza creando tu primera cita",
-    "patientDoctor": "Paciente y Doctor",
+    "patientDoctor": "Cliente y Asesor",
     "dateTime": "Fecha y Hora",
     "type": "Tipo",
     "status": "Estado",
@@ -231,14 +231,14 @@
     "cancelAppointment": "Cancelar cita",
     "appointmentDetails": "Detalles de la cita",
     "newAppointment": "Nueva cita",
-    "newAppointmentDesc": "Crea una nueva cita para un paciente",
-    "patientInformation": "Información del paciente",
+    "newAppointmentDesc": "Crea una nueva cita para un cliente",
+    "patientInformation": "Información del cliente",
     "appointmentDetails": "Detalles de la cita",
     "additionalInformation": "Información adicional",
-    "patientName": "Nombre del paciente",
-    "patientEmail": "Correo electrónico del paciente",
-    "patientPhone": "Teléfono del paciente",
-    "doctorName": "Nombre del doctor",
+    "patientName": "Nombre del cliente",
+    "patientEmail": "Correo electrónico del cliente",
+    "patientPhone": "Teléfono del cliente",
+    "doctorName": "Nombre del asesor",
     "appointmentType": "Tipo de cita",
     "appointmentDate": "Fecha de la cita",
     "appointmentTime": "Hora de la cita",

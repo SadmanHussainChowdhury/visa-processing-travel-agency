@@ -48,9 +48,9 @@ export default function AppointmentsPage() {
   }, []);
 
   const filteredAppointments = appointments.filter(appointment => {
-    const matchesSearch = appointment.patientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.doctorName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         appointment.patientId?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = appointment.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         appointment.consultantName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         appointment.clientId?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = filterStatus === 'all' || appointment.status?.toLowerCase() === filterStatus.toLowerCase();
     const matchesDate = filterDate === 'all' || appointment.appointmentDate === filterDate;
     return matchesSearch && matchesStatus && matchesDate;
@@ -174,7 +174,7 @@ export default function AppointmentsPage() {
   };
 
   const handleCancelAppointment = async (appointment: any) => {
-    if (confirm(`Are you sure you want to cancel the appointment for ${appointment.patientName}?`)) {
+    if (confirm(`Are you sure you want to cancel the appointment for ${appointment.clientName}?`)) {
       try {
         const response = await fetch(`/api/appointments/${appointment._id}`, {
           method: 'PUT',
@@ -196,7 +196,7 @@ export default function AppointmentsPage() {
                 : apt
             )
           );
-          alert(`Appointment for ${appointment.patientName} cancelled successfully`);
+          alert(`Appointment for ${appointment.clientName} cancelled successfully`)
         } else {
           alert('Failed to cancel appointment. Please try again.');
         }
@@ -208,7 +208,7 @@ export default function AppointmentsPage() {
   };
 
   const handleDeleteAppointment = async (appointment: any) => {
-    if (confirm(`Are you sure you want to permanently delete the appointment for ${appointment.patientName}? This action cannot be undone.`)) {
+    if (confirm(`Are you sure you want to permanently delete the appointment for ${appointment.clientName}? This action cannot be undone.`)) {
       try {
         const response = await fetch(`/api/appointments/${appointment._id}`, {
           method: 'DELETE',
@@ -217,7 +217,7 @@ export default function AppointmentsPage() {
         if (response.ok) {
           // Remove from local state
           setAppointments(prev => prev.filter(apt => apt._id !== appointment._id));
-          alert(`Appointment for ${appointment.patientName} deleted successfully`);
+          alert(`Appointment for ${appointment.clientName} deleted successfully`)
         } else {
           alert('Failed to delete appointment. Please try again.');
         }
@@ -375,9 +375,9 @@ export default function AppointmentsPage() {
                           <Users className="h-5 w-5 text-blue-600" />
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900">{appointment.patientName}</div>
-                          <div className="text-sm text-gray-500">ID: {appointment.patientId || 'N/A'}</div>
-                          <div className="text-sm text-gray-700">Consultant: {appointment.doctorName}</div>
+                          <div className="text-sm font-medium text-gray-900">{appointment.clientName}</div>
+                          <div className="text-sm text-gray-500">ID: {appointment.clientId || 'N/A'}</div>
+                          <div className="text-sm text-gray-700">Consultant: {appointment.consultantName}</div>
                         </div>
                       </div>
                     </td>

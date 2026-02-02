@@ -40,7 +40,7 @@ interface Document {
   clientName?: string;
   visaCaseId?: string;
   tags: string[];
-  category: 'passport' | 'visa' | 'insurance' | 'photo' | 'application' | 'financial' | 'medical' | 'other';
+  category: 'passport' | 'visa' | 'insurance' | 'photo' | 'application' | 'financial' | 'health-clearance' | 'other';
   status: 'pending' | 'approved' | 'rejected' | 'expired';
   uploadedBy: string;
   uploadedAt: string;
@@ -71,7 +71,7 @@ export default function DocumentsPage() {
     { value: 'photo', label: 'Photos' },
     { value: 'application', label: 'Applications' },
     { value: 'financial', label: 'Financial' },
-    { value: 'medical', label: 'Medical' },
+    { value: 'health-clearance', label: 'Health Clearance' },
     { value: 'other', label: 'Other' }
   ];
 
@@ -215,7 +215,7 @@ export default function DocumentsPage() {
       photo: 'bg-pink-100 text-pink-800',
       application: 'bg-indigo-100 text-indigo-800',
       financial: 'bg-yellow-100 text-yellow-800',
-      medical: 'bg-red-100 text-red-800',
+      healthClearance: 'bg-red-100 text-red-800',
       other: 'bg-gray-100 text-gray-800'
     };
     return colors[category] || colors.other;

@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
       Appointment.find()
         .sort({ createdAt: -1 })
         .limit(20)
-        .select('_id patientName doctorName appointmentDate appointmentTime status createdAt'),
+        .select('_id clientName consultantName appointmentDate appointmentTime status createdAt'),
 
       // Recent clients (get more to ensure we have enough for top 10)
       Client.find()
@@ -117,8 +117,8 @@ export async function GET(request: NextRequest) {
       recentActivities.push({
         id: appointment._id.toString(),
         type: 'appointment',
-        title: `Appointment scheduled: ${appointment.patientName}`,
-        description: `${appointment.doctorName} - ${appointment.appointmentTime}`,
+        title: `Appointment scheduled: ${appointment.clientName}`,
+        description: `${appointment.consultantName} - ${appointment.appointmentTime}`,
         time: formatTimeAgo(appointment.createdAt),
         createdAt: appointment.createdAt,
         status: appointment.status
@@ -158,13 +158,13 @@ export async function GET(request: NextRequest) {
     })
     .sort({ appointmentDate: 1, appointmentTime: 1 })
     .limit(4)
-    .select('_id patientName appointmentTime appointmentType status appointmentDate');
+    .select('_id clientName appointmentTime appointmentType status appointmentDate');
     
     console.log('Upcoming appointments found:', upcomingAppointments.length);
 
     const formattedUpcomingAppointments = upcomingAppointments.map(appointment => ({
       id: appointment._id.toString(),
-      client: appointment.patientName || 'Unknown Client',
+      client: appointment.clientName || 'Unknown Client',
       time: appointment.appointmentTime || 'N/A',
       type: appointment.appointmentType || 'consultation',
       status: appointment.status === 'confirmed' ? 'confirmed' : 'pending'

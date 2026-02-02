@@ -56,7 +56,7 @@ export default function UploadDocumentPage() {
     { value: 'photo', label: 'Photos', icon: Image },
     { value: 'application', label: 'Applications', icon: FileText },
     { value: 'financial', label: 'Financial Documents', icon: FileText },
-    { value: 'medical', label: 'Medical Records', icon: FileText },
+    { value: 'health-clearance', label: 'Health Clearance', icon: FileText },
     { value: 'other', label: 'Other Documents', icon: FileText }
   ];
 

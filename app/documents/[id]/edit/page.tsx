@@ -68,7 +68,7 @@ export default function EditDocumentPage({ params }: { params: { id: string } })
     { value: 'photo', label: 'Photos' },
     { value: 'application', label: 'Applications' },
     { value: 'financial', label: 'Financial Documents' },
-    { value: 'medical', label: 'Medical Records' },
+    { value: 'health-clearance', label: 'Health Clearance' },
     { value: 'other', label: 'Other Documents' }
   ];
 

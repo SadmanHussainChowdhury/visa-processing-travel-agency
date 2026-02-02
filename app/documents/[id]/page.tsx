@@ -172,7 +172,7 @@ export default function DocumentDetailViewPage({ params }: { params: { id: strin
       photo: 'bg-pink-100 text-pink-800',
       application: 'bg-indigo-100 text-indigo-800',
       financial: 'bg-yellow-100 text-yellow-800',
-      medical: 'bg-red-100 text-red-800',
+      healthClearance: 'bg-red-100 text-red-800',
       other: 'bg-gray-100 text-gray-800'
     };
     return colors[category] || colors.other;

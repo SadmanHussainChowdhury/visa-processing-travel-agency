@@ -61,7 +61,7 @@ export default function ActivityPage() {
               icon = Calendar;
               color = 'green';
               break;
-            case 'patient':
+            case 'client':
               icon = Users;
               color = 'blue';
               break;
@@ -238,7 +238,7 @@ export default function ActivityPage() {
                   {activities.map((activity) => {
                     // Define navigation links for each activity type
                     let href = '#';
-                    if (activity.type === 'patient') {
+                    if (activity.type === 'client') {
                       href = '/clients';
                     } else if (activity.type === 'appointment') {
                       href = `/appointments/${activity.id}`;

@@ -116,7 +116,7 @@ export default function AppointmentReschedulePage() {
               Back to Appointment
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Reschedule Appointment: {appointment?.patientName}
+              Reschedule Appointment: {appointment?.clientName}
             </h1>
           </div>
           

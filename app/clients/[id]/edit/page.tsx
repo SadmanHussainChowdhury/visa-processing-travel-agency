@@ -56,7 +56,7 @@ export default function ClientEditPage() {
   });
 
   useEffect(() => {
-    const fetchPatient = async () => {
+    const fetchClient = async () => {
       try {
         const response = await fetch(`/api/clients/${params.id}`);
         if (response.ok) {
@@ -100,7 +100,7 @@ export default function ClientEditPage() {
     };
 
     if (params.id) {
-      fetchPatient();
+      fetchClient();
     }
   }, [params.id]);
 

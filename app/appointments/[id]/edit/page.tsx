@@ -27,11 +27,11 @@ export default function AppointmentEditPage() {
   const [success, setSuccess] = useState('');
 
   const [formData, setFormData] = useState({
-    patientName: '',
-    patientEmail: '',
-    patientPhone: '',
-    doctorName: '',
-    doctorEmail: '',
+    clientName: '',
+    clientEmail: '',
+    clientPhone: '',
+    consultantName: '',
+    consultantEmail: '',
     appointmentDate: '',
     appointmentTime: '',
     appointmentType: '',
@@ -48,11 +48,11 @@ export default function AppointmentEditPage() {
           const data = await response.json();
           setAppointment(data);
           setFormData({
-            patientName: data.patientName || '',
-            patientEmail: data.patientEmail || '',
-            patientPhone: data.patientPhone || '',
-            doctorName: data.doctorName || '',
-            doctorEmail: data.doctorEmail || '',
+            clientName: data.clientName || '',
+            clientEmail: data.clientEmail || '',
+            clientPhone: data.clientPhone || '',
+            consultantName: data.consultantName || '',
+            consultantEmail: data.consultantEmail || '',
             appointmentDate: data.appointmentDate ? data.appointmentDate.split('T')[0] : '',
             appointmentTime: data.appointmentTime || '',
             appointmentType: data.appointmentType || '',
@@ -142,7 +142,7 @@ export default function AppointmentEditPage() {
               Back to Appointment
             </Link>
             <h1 className="text-2xl font-bold text-gray-900 mt-4">
-              Edit Appointment: {appointment?.patientName}
+              Edit Appointment: {appointment?.clientName}
             </h1>
           </div>
           
@@ -172,14 +172,14 @@ export default function AppointmentEditPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Client Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="patientName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">
                     Client Name *
                   </label>
                   <input
                     type="text"
-                    id="patientName"
-                    name="patientName"
-                    value={formData.patientName}
+                    id="clientName"
+                    name="clientName"
+                    value={formData.clientName}
                     onChange={handleInputChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -187,14 +187,14 @@ export default function AppointmentEditPage() {
                 </div>
                 
                 <div>
-                  <label htmlFor="patientEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="clientEmail" className="block text-sm font-medium text-gray-700 mb-2">
                     Client Email *
                   </label>
                   <input
                     type="email"
-                    id="patientEmail"
-                    name="patientEmail"
-                    value={formData.patientEmail}
+                    id="clientEmail"
+                    name="clientEmail"
+                    value={formData.clientEmail}
                     onChange={handleInputChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -202,14 +202,14 @@ export default function AppointmentEditPage() {
                 </div>
                 
                 <div>
-                  <label htmlFor="patientPhone" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="clientPhone" className="block text-sm font-medium text-gray-700 mb-2">
                     Client Phone *
                   </label>
                   <input
                     type="tel"
-                    id="patientPhone"
-                    name="patientPhone"
-                    value={formData.patientPhone}
+                    id="clientPhone"
+                    name="clientPhone"
+                    value={formData.clientPhone}
                     onChange={handleInputChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -223,14 +223,14 @@ export default function AppointmentEditPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Consultant Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="doctorName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="consultantName" className="block text-sm font-medium text-gray-700 mb-2">
                     Consultant Name *
                   </label>
                   <input
                     type="text"
-                    id="doctorName"
-                    name="doctorName"
-                    value={formData.doctorName}
+                    id="consultantName"
+                    name="consultantName"
+                    value={formData.consultantName}
                     onChange={handleInputChange}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -238,14 +238,14 @@ export default function AppointmentEditPage() {
                 </div>
                 
                 <div>
-                  <label htmlFor="doctorEmail" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="consultantEmail" className="block text-sm font-medium text-gray-700 mb-2">
                     Consultant Email
                   </label>
                   <input
                     type="email"
-                    id="doctorEmail"
-                    name="doctorEmail"
-                    value={formData.doctorEmail}
+                    id="consultantEmail"
+                    name="consultantEmail"
+                    value={formData.consultantEmail}
                     onChange={handleInputChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
@@ -300,11 +300,12 @@ export default function AppointmentEditPage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Select appointment type</option>
-                    <option value="consultation">Consultation</option>
+                    <option value="visa-consultation">Visa Consultation</option>
+                    <option value="document-review">Document Review</option>
+                    <option value="interview-preparation">Interview Preparation</option>
+                    <option value="application-submission">Application Submission</option>
+                    <option value="status-update">Status Update</option>
                     <option value="follow-up">Follow-up</option>
-                    <option value="examination">Examination</option>
-                    <option value="procedure">Procedure</option>
-                    <option value="emergency">Emergency</option>
                   </select>
                 </div>
                 

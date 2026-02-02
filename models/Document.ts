@@ -14,7 +14,7 @@ export interface IDocument {
   clientName?: string;
   visaCaseId?: string;
   tags: string[];
-  category: 'passport' | 'visa' | 'insurance' | 'photo' | 'application' | 'financial' | 'medical' | 'other';
+  category: 'passport' | 'visa' | 'insurance' | 'photo' | 'application' | 'financial' | 'health-clearance' | 'other';
   status: 'pending' | 'approved' | 'rejected' | 'expired';
   uploadedBy: string;
   uploadedAt: Date;
@@ -94,7 +94,7 @@ const documentSchema = new mongoose.Schema<IDocument>({
   }],
   category: {
     type: String,
-    enum: ['passport', 'visa', 'insurance', 'photo', 'application', 'financial', 'medical', 'other'],
+    enum: ['passport', 'visa', 'insurance', 'photo', 'application', 'financial', 'health-clearance', 'other'],
     default: 'other'
   },
   status: {

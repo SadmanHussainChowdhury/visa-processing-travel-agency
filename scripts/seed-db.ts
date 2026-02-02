@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import User from '../models/User';
-import Patient from '../models/Patient';
+import Client from '../models/Client';
 import Appointment from '../models/Appointment';
 import dbConnect from '../lib/mongodb';
 
@@ -11,136 +11,151 @@ async function seedDatabase() {
 
     // Clear existing data
     await User.deleteMany({});
-    await Patient.deleteMany({});
+    
     await Appointment.deleteMany({});
 
     console.log('Cleared existing data');
 
     // Create demo user
-    const existingUser = await User.findOne({ email: 'doctor@aidoc.com' });
+    const existingUser = await User.findOne({ email: 'admin@visaagency.com' });
     if (!existingUser) {
       const user = new User({
-      email: 'doctor@aidoc.com',
-      name: 'Dr. Demo User',
-      role: 'doctor',
+      email: 'admin@visaagency.com',
+      name: 'Admin Demo User',
+      role: 'admin',
       });
       await user.save();
       console.log('Created demo user');
     }
 
-    // Create sample patients
-    const patients = [
+    // Create sample clients
+    const clients = [
       {
-        name: 'Sarah Johnson',
+        firstName: 'Sarah',
+        lastName: 'Johnson',
         email: 'sarah.johnson@email.com',
         phone: '+1-555-0101',
         dateOfBirth: new Date('1985-03-15'),
-        gender: 'female' as const,
-        address: '123 Main St, Anytown, USA',
+        gender: 'female',
+        address: '123 Main St',
+        city: 'Anytown',
+        state: 'NY',
+        zipCode: '12345',
+        passportNumber: 'P12345678',
+        passportCountry: 'USA',
+        visaType: 'Tourist',
+        visaApplicationDate: new Date(),
+        specialRequirements: ['Vegetarian meals'],
+        currentApplications: ['Tourist visa to Canada'],
+        travelHistory: ['USA, Mexico, Canada'],
         emergencyContact: {
           name: 'John Johnson',
           phone: '+1-555-0102',
           relationship: 'Spouse'
         },
-        medicalHistory: ['Hypertension', 'Diabetes Type 2'],
-        allergies: ['Penicillin', 'Peanuts'],
-        currentMedications: ['Metformin', 'Lisinopril'],
-        bloodType: 'A+' as const,
-        insuranceProvider: 'Blue Cross Blue Shield',
-        insuranceNumber: 'BCBS123456',
-        assignedDoctor: 'Dr. Demo User'
+        assignedOfficer: 'Visa Consultant'
       },
       {
-        name: 'Michael Chen',
+        firstName: 'Michael',
+        lastName: 'Chen',
         email: 'michael.chen@email.com',
         phone: '+1-555-0201',
         dateOfBirth: new Date('1990-07-22'),
-        gender: 'male' as const,
-        address: '456 Oak Ave, Somewhere, USA',
+        gender: 'male',
+        address: '456 Oak Ave',
+        city: 'Somewhere',
+        state: 'CA',
+        zipCode: '90210',
+        passportNumber: 'P87654321',
+        passportCountry: 'Canada',
+        visaType: 'Business',
+        visaApplicationDate: new Date(),
+        specialRequirements: [],
+        currentApplications: ['Business visa to USA'],
+        travelHistory: ['Canada, USA, UK'],
         emergencyContact: {
           name: 'Lisa Chen',
           phone: '+1-555-0202',
           relationship: 'Sister'
         },
-        medicalHistory: ['Asthma'],
-        allergies: ['Dust', 'Pollen'],
-        currentMedications: ['Albuterol'],
-        bloodType: 'O+' as const,
-        insuranceProvider: 'Aetna',
-        insuranceNumber: 'AET789012',
-        assignedDoctor: 'Dr. Demo User'
+        assignedOfficer: 'Visa Consultant'
       },
       {
-        name: 'Emily Davis',
+        firstName: 'Emily',
+        lastName: 'Davis',
         email: 'emily.davis@email.com',
         phone: '+1-555-0301',
         dateOfBirth: new Date('1988-11-08'),
-        gender: 'female' as const,
-        address: '789 Pine Rd, Elsewhere, USA',
+        gender: 'female',
+        address: '789 Pine Rd',
+        city: 'Elsewhere',
+        state: 'TX',
+        zipCode: '75001',
+        passportNumber: 'P11223344',
+        passportCountry: 'UK',
+        visaType: 'Student',
+        visaApplicationDate: new Date(),
+        specialRequirements: ['Disability accommodation'],
+        currentApplications: ['Student visa to USA'],
+        travelHistory: ['UK, France, Germany, USA'],
         emergencyContact: {
           name: 'Robert Davis',
           phone: '+1-555-0302',
           relationship: 'Father'
         },
-        medicalHistory: ['Migraine', 'Anxiety'],
-        allergies: ['Sulfa drugs'],
-        currentMedications: ['Sumatriptan', 'Sertraline'],
-        bloodType: 'B-' as const,
-        insuranceProvider: 'Cigna',
-        insuranceNumber: 'CIG345678',
-        assignedDoctor: 'Dr. Demo User'
+        assignedOfficer: 'Visa Consultant'
       }
     ];
 
-    const createdPatients = await Patient.insertMany(patients);
-    console.log(`Created ${createdPatients.length} patients`);
+    const createdClients = await Client.insertMany(clients);
+    console.log(`Created ${createdClients.length} clients`);
 
     // Create sample appointments
     const appointments = [
       {
-        patientName: 'Sarah Johnson',
-        patientEmail: 'sarah.johnson@email.com',
-        patientPhone: '+1-555-0101',
-        doctorName: 'Dr. Demo User',
-        doctorEmail: 'doctor@aidoc.com',
+        clientName: 'Sarah Johnson',
+        clientEmail: 'sarah.johnson@email.com',
+        clientPhone: '+1-555-0101',
+        consultantName: 'Visa Consultant',
+        consultantEmail: 'admin@visaagency.com',
         appointmentDate: new Date(),
         appointmentTime: '09:00 AM',
-        appointmentType: 'consultation' as const,
-        status: 'confirmed' as const,
-        notes: 'Follow-up for diabetes management',
-        symptoms: ['Fatigue', 'Increased thirst'],
-        diagnosis: 'Diabetes Type 2',
-        treatment: 'Continue Metformin, monitor blood sugar'
+        appointmentType: 'visa-consultation',
+        status: 'confirmed',
+        notes: 'Visa consultation for tourist trip to Canada',
+        symptoms: [],
+        diagnosis: '',
+        treatment: ''
       },
       {
-        patientName: 'Michael Chen',
-        patientEmail: 'michael.chen@email.com',
-        patientPhone: '+1-555-0201',
-        doctorName: 'Dr. Demo User',
-        doctorEmail: 'doctor@aidoc.com',
+        clientName: 'Michael Chen',
+        clientEmail: 'michael.chen@email.com',
+        clientPhone: '+1-555-0201',
+        consultantName: 'Visa Consultant',
+        consultantEmail: 'admin@visaagency.com',
         appointmentDate: new Date(),
         appointmentTime: '10:30 AM',
-        appointmentType: 'follow-up' as const,
-        status: 'confirmed' as const,
-        notes: 'Asthma control check',
-        symptoms: ['Wheezing', 'Shortness of breath'],
-        diagnosis: 'Asthma',
-        treatment: 'Continue Albuterol, avoid triggers'
+        appointmentType: 'document-review',
+        status: 'confirmed',
+        notes: 'Document review for business visa application',
+        requirements: [],
+        consultationNotes: '',
+        recommendations: ''
       },
       {
-        patientName: 'Emily Davis',
-        patientEmail: 'emily.davis@email.com',
-        patientPhone: '+1-555-0301',
-        doctorName: 'Dr. Demo User',
-        doctorEmail: 'doctor@aidoc.com',
+        clientName: 'Emily Davis',
+        clientEmail: 'emily.davis@email.com',
+        clientPhone: '+1-555-0301',
+        consultantName: 'Visa Consultant',
+        consultantEmail: 'admin@visaagency.com',
         appointmentDate: new Date(),
         appointmentTime: '02:00 PM',
-        appointmentType: 'consultation' as const,
-        status: 'pending' as const,
-        notes: 'New patient consultation',
-        symptoms: ['Headaches', 'Nausea'],
-        diagnosis: 'Migraine',
-        treatment: 'Prescribe Sumatriptan, lifestyle modifications'
+        appointmentType: 'application-submission',
+        status: 'pending',
+        notes: 'New student visa application submission',
+        requirements: [],
+        consultationNotes: '',
+        recommendations: ''
       }
     ];
 

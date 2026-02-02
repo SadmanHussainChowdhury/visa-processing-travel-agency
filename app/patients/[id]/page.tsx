@@ -9,8 +9,8 @@ export default function PatientDetailRedirectPage() {
 
   useEffect(() => {
     // Redirect from patients to clients for visa processing travel agency
-    const patientId = params.id;
-    router.replace(`/clients/${patientId}`);
+    const clientId = params.id;
+    router.replace(`/clients/${clientId}`);
   }, [router, params]);
 
   return (

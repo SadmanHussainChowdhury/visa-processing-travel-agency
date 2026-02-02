@@ -110,33 +110,33 @@
     "profileSettings": "Paramètres du profil",
     "logout": "Déconnexion"
   },
-  "patients": {
-    "title": "Patients",
-    "description": "Gérez les dossiers et informations de vos patients",
-    "addNewPatient": "Ajouter un nouveau patient",
-    "searchPatients": "Rechercher des patients par nom ou email...",
-    "allPatients": "Tous les patients",
-    "patient": "Patient",
+  "clients": {
+    "title": "Clients",
+    "description": "Gérez les dossiers et informations de vos clients",
+    "addNewPatient": "Ajouter un nouveau client",
+    "searchPatients": "Rechercher des clients par nom ou email...",
+    "allPatients": "Tous les clients",
+    "patient": "Client",
     "contact": "Contact",
     "status": "Statut",
     "registrationDate": "Date d'inscription",
-    "assignedDoctor": "Médecin assigné",
+    "assignedDoctor": "Conseiller assigné",
     "actions": "Actions",
     "viewDetails": "Voir les détails",
-    "editPatient": "Modifier le patient",
-    "deletePatient": "Supprimer le patient",
+    "editPatient": "Modifier le client",
+    "deletePatient": "Supprimer le client",
     "cases": "Cas",
-    "noPatientsFound": "Aucun patient trouvé",
+    "noPatientsFound": "Aucun client trouvé",
     "tryAdjustingSearch": "Essayez de modifier vos critères de recherche.",
-    "getStartedAdding": "Commencez par ajouter votre premier patient.",
-    "patientsCount": "{count} patients",
+    "getStartedAdding": "Commencez par ajouter votre premier client.",
+    "patientsCount": "{count} clients",
     "newPatient": {
-      "title": "Ajouter un Nouveau Patient",
-      "description": "Enregistrer un nouveau patient dans le système",
-      "backToPatients": "Retour aux Patients",
+      "title": "Ajouter un Nouveau Client",
+      "description": "Enregistrer un nouveau client dans le système",
+      "backToPatients": "Retour aux Clients",
       "sections": {
         "personal": "Informations Personnelles",
-        "medical": "Informations Médicales",
+        "medical": "Informations pour le visa",
         "emergency": "Contact d'Urgence"
       },
       "fields": {
@@ -172,41 +172,41 @@
         },
         "allergies": "Allergies",
         "currentMedications": "Médicaments Actuels",
-        "medicalHistory": "Antécédents Médicaux",
-        "familyHistory": "Antécédents Médicaux Familiaux",
+        "medicalHistory": "Historique des demandes de visa",
+        "familyHistory": "Informations sur la famille",
         "emergencyName": "Nom du Contact d'Urgence",
         "emergencyPhone": "Téléphone du Contact d'Urgence",
-        "emergencyRelationship": "Relation avec le Patient"
+        "emergencyRelationship": "Relation avec le Client"
       },
       "placeholders": {
         "allergies": "ex., Pénicilline, Arachides",
         "medications": "Liste des médicaments actuels, dosages et fréquence",
-        "medicalHistory": "Chirurgies précédentes, conditions chroniques, maladies graves",
-        "familyHistory": "Conditions médicales familiales pertinentes",
+        "medicalHistory": "Historique des demandes de visa, types de visas, résultats",
+        "familyHistory": "Informations sur la famille pertinentes pour la demande de visa",
         "emergencyRelationship": "ex., Conjoint, Parent, Enfant"
       },
       "buttons": {
         "cancel": "Annuler",
-        "savePatient": "Enregistrer le Patient",
+        "savePatient": "Enregistrer le Client",
         "saving": "Enregistrement..."
       },
       "validation": {
         "requiredFields": "Veuillez remplir tous les champs obligatoires"
       },
       "success": {
-        "patientAdded": "Patient ajouté avec succès !"
+        "patientAdded": "Client ajouté avec succès !"
       },
       "errors": {
-        "addPatientError": "Erreur lors de l'ajout du patient : {error}",
-        "genericError": "Erreur lors de l'ajout du patient. Veuillez réessayer."
+        "addPatientError": "Erreur lors de l'ajout du client : {error}",
+        "genericError": "Erreur lors de l'ajout du client. Veuillez réessayer."
       }
     }
   },
   "appointments": {
     "title": "Rendez-vous",
-    "description": "Gérez et planifiez les rendez-vous des patients",
+    "description": "Gérez et planifiez les rendez-vous des clients",
     "addNew": "Ajouter un nouveau rendez-vous",
-    "searchPlaceholder": "Rechercher des rendez-vous par patient ou médecin...",
+    "searchPlaceholder": "Rechercher des rendez-vous par client ou conseiller...",
     "allStatus": "Tous les statuts",
     "upcoming": "À venir",
     "completed": "Terminé",
@@ -218,7 +218,7 @@
     "loading": "Chargement des rendez-vous...",
     "noAppointments": "Aucun rendez-vous trouvé",
     "noAppointmentsDesc": "Commencez par créer votre premier rendez-vous",
-    "patientDoctor": "Patient & Médecin",
+    "patientDoctor": "Client & Conseiller",
     "dateTime": "Date & Heure",
     "type": "Type",
     "status": "Statut",
@@ -231,13 +231,13 @@
     "cancelAppointment": "Annuler le rendez-vous",
     "appointmentDetails": "Détails du rendez-vous",
     "newAppointment": "Nouveau rendez-vous",
-    "newAppointmentDesc": "Créer un nouveau rendez-vous pour un patient",
-    "patientInformation": "Informations du patient",
+    "newAppointmentDesc": "Créer un nouveau rendez-vous pour un client",
+    "patientInformation": "Informations du client",
     "additionalInformation": "Informations supplémentaires",
-    "patientName": "Nom du patient",
-    "patientEmail": "Email du patient",
-    "patientPhone": "Téléphone du patient",
-    "doctorName": "Nom du médecin",
+    "patientName": "Nom du client",
+    "patientEmail": "Email du client",
+    "patientPhone": "Téléphone du client",
+    "doctorName": "Nom du conseiller",
     "appointmentType": "Type de rendez-vous",
     "appointmentDate": "Date du rendez-vous",
     "appointmentTime": "Heure du rendez-vous",
@@ -261,23 +261,23 @@
       "cancelled": "Annulé"
     },
     "placeholders": {
-      "patientName": "Entrez le nom complet du patient",
-      "patientEmail": "Entrez l'adresse e-mail du patient",
-      "patientPhone": "Entrez le numéro de téléphone du patient",
-      "doctorName": "Entrez le nom du médecin",
+      "patientName": "Entrez le nom complet du client",
+      "patientEmail": "Entrez l'adresse e-mail du client",
+      "patientPhone": "Entrez le numéro de téléphone du client",
+      "doctorName": "Entrez le nom du conseiller",
       "reason": "Décrivez le motif du rendez-vous",
       "notes": "Ajoutez des notes ou commentaires supplémentaires",
-      "selectPatient": "Rechercher et sélectionner un patient..."
+      "selectPatient": "Rechercher et sélectionner un client..."
     },
-    "selectPatient": "Sélectionner un patient",
+    "selectPatient": "Sélectionner un client",
     "manualEntry": "Saisie manuelle",
     "or": "ou",
     "validation": {
-      "patientNameRequired": "Le nom du patient est obligatoire",
-      "patientEmailRequired": "L'e-mail du patient est obligatoire",
+      "patientNameRequired": "Le nom du client est obligatoire",
+      "patientEmailRequired": "L'e-mail du client est obligatoire",
       "patientEmailInvalid": "Veuillez entrer une adresse e-mail valide",
-      "patientPhoneRequired": "Le numéro de téléphone du patient est obligatoire",
-      "doctorNameRequired": "Le nom du médecin est obligatoire",
+      "patientPhoneRequired": "Le numéro de téléphone du client est obligatoire",
+      "doctorNameRequired": "Le nom du conseiller est obligatoire",
       "appointmentDateRequired": "La date du rendez-vous est obligatoire",
       "appointmentDatePast": "La date du rendez-vous ne peut pas être dans le passé",
       "appointmentTimeRequired": "L'heure du rendez-vous est obligatoire",

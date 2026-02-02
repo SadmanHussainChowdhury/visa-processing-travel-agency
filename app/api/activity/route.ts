@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       // Recent appointments
       Appointment.find()
         .sort({ createdAt: -1 })
-        .select('_id patientName doctorName appointmentDate appointmentTime status createdAt'),
+        .select('_id clientName consultantName appointmentDate appointmentTime status createdAt'),
 
       // Recent clients
       Client.find()
@@ -44,8 +44,8 @@ export async function GET(request: NextRequest) {
       recentActivities.push({
         id: appointment._id.toString(),
         type: 'appointment',
-        title: `Appointment scheduled: ${appointment.patientName}`,
-        description: `${appointment.doctorName} - ${appointment.appointmentTime}`,
+        title: `Appointment scheduled: ${appointment.clientName}`,
+        description: `${appointment.consultantName} - ${appointment.appointmentTime}`,
         time: formatTimeAgo(appointment.createdAt),
         createdAt: appointment.createdAt,
         status: appointment.status

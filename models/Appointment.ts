@@ -2,54 +2,54 @@ import mongoose from 'mongoose';
 
 export interface IAppointment {
   _id: string;
-  patientId?: string;
-  patientName: string;
-  patientEmail: string;
-  patientPhone: string;
-  doctorName: string;
-  doctorEmail?: string;
+  clientId?: string;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  consultantName: string;
+  consultantEmail?: string;
   appointmentDate: Date;
   appointmentTime: string;
-  appointmentType: 'consultation' | 'follow-up' | 'followUp' | 'checkup' | 'emergency' | 'surgery' | 'therapy' | 'visa-consultation' | 'document-review' | 'interview-preparation' | 'application-submission' | 'status-update';
+  appointmentType: 'visa-consultation' | 'document-review' | 'interview-preparation' | 'application-submission' | 'status-update' | 'follow-up' | 'compliance-check' | 'case-review';
   status: 'scheduled' | 'confirmed' | 'in-progress' | 'inProgress' | 'completed' | 'cancelled';
   reason?: string;
   notes?: string;
-  symptoms?: string[];
-  diagnosis?: string;
-  treatment?: string;
+  requirements?: string[];
+  consultationNotes?: string;
+  recommendations?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const appointmentSchema = new mongoose.Schema<IAppointment>(
   {
-    patientId: {
+    clientId: {
       type: String,
       required: false,
       trim: true,
     },
-    patientName: {
+    clientName: {
       type: String,
       required: true,
       trim: true,
     },
-    patientEmail: {
+    clientEmail: {
       type: String,
       required: true,
       trim: true,
       lowercase: true,
     },
-    patientPhone: {
+    clientPhone: {
       type: String,
       required: true,
       trim: true,
     },
-    doctorName: {
+    consultantName: {
       type: String,
       required: true,
       trim: true,
     },
-    doctorEmail: {
+    consultantEmail: {
       type: String,
       required: false,
       trim: true,
@@ -65,8 +65,8 @@ const appointmentSchema = new mongoose.Schema<IAppointment>(
     },
     appointmentType: {
       type: String,
-      enum: ['consultation', 'follow-up', 'followUp', 'checkup', 'emergency', 'surgery', 'therapy', 'visa-consultation', 'document-review', 'interview-preparation', 'application-submission', 'status-update'],
-      default: 'consultation',
+      enum: ['visa-consultation', 'document-review', 'interview-preparation', 'application-submission', 'status-update', 'follow-up', 'compliance-check', 'case-review'],
+      default: 'visa-consultation',
     },
     status: {
       type: String,
@@ -81,15 +81,15 @@ const appointmentSchema = new mongoose.Schema<IAppointment>(
       type: String,
       trim: true,
     },
-    symptoms: [{
+    requirements: [{
       type: String,
       trim: true,
     }],
-    diagnosis: {
+    consultationNotes: {
       type: String,
       trim: true,
     },
-    treatment: {
+    recommendations: {
       type: String,
       trim: true,
     },

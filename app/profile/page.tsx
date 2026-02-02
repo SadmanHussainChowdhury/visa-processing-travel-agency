@@ -344,7 +344,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">{t('profile.role')}</label>
-                <p className="mt-1 text-sm text-gray-900 capitalize">{session?.user?.role || t('auth.doctor')}</p>
+                <p className="mt-1 text-sm text-gray-900 capitalize">{session?.user?.role || t('auth.consultant')}</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">{t('profile.accountStatus')}</label>

@@ -109,7 +109,7 @@ export default function AppointmentViewPage() {
             </Link>
             <div className="flex justify-between items-center">
               <h1 className="text-2xl font-bold text-gray-900">
-                Appointment: {appointment.patientName}
+                Appointment: {appointment.clientName}
               </h1>
               <div className="flex space-x-3">
                 <Link
@@ -142,7 +142,7 @@ export default function AppointmentViewPage() {
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
                       <p className="text-sm font-medium text-gray-500">Client Name</p>
-                      <p className="text-sm text-gray-900">{appointment.patientName}</p>
+                      <p className="text-sm text-gray-900">{appointment.clientName}</p>
                     </div>
                   </div>
                   
@@ -150,7 +150,7 @@ export default function AppointmentViewPage() {
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
                       <p className="text-sm font-medium text-gray-500">Client ID</p>
-                      <p className="text-sm text-gray-900 font-mono">{appointment.patientId || 'N/A'}</p>
+                      <p className="text-sm text-gray-900 font-mono">{appointment.clientId || 'N/A'}</p>
                     </div>
                   </div>
                   
@@ -158,7 +158,7 @@ export default function AppointmentViewPage() {
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
                       <p className="text-sm font-medium text-gray-500">Consultant</p>
-                      <p className="text-sm text-gray-900">{appointment.doctorName}</p>
+                      <p className="text-sm text-gray-900">{appointment.consultantName}</p>
                     </div>
                   </div>
                   
@@ -217,7 +217,7 @@ export default function AppointmentViewPage() {
             </div>
           </div>
 
-          {/* Patient Information */}
+          {/* Client Information */}
           <div className="mt-6 bg-white rounded-lg shadow overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900">Client Information</h2>
@@ -226,21 +226,21 @@ export default function AppointmentViewPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <p className="text-sm font-medium text-gray-500">Email</p>
-                  <p className="text-sm text-gray-900">{appointment.patientEmail}</p>
+                  <p className="text-sm text-gray-900">{appointment.clientEmail}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Phone</p>
-                  <p className="text-sm text-gray-900">{appointment.patientPhone}</p>
+                  <p className="text-sm text-gray-900">{appointment.clientPhone}</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Symptoms and Diagnosis */}
+          {/* Requirements and Issues */}
           {appointment.symptoms && appointment.symptoms.length > 0 && (
             <div className="mt-6 bg-white rounded-lg shadow overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Symptoms</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Requirements/Issues</h2>
               </div>
               <div className="p-6">
                 <div className="flex flex-wrap gap-2">
@@ -258,16 +258,16 @@ export default function AppointmentViewPage() {
           {appointment.diagnosis && (
             <div className="mt-6 bg-white rounded-lg shadow overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">Diagnosis & Treatment</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Consultation & Recommendations</h2>
               </div>
               <div className="p-6 space-y-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Diagnosis</p>
+                  <p className="text-sm font-medium text-gray-500">Consultation Notes</p>
                   <p className="text-sm text-gray-900">{appointment.diagnosis}</p>
                 </div>
                 {appointment.treatment && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Treatment</p>
+                    <p className="text-sm font-medium text-gray-500">Recommendations</p>
                     <p className="text-sm text-gray-900">{appointment.treatment}</p>
                   </div>
                 )}

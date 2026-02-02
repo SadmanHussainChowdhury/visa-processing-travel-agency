@@ -496,9 +496,9 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               </div>
               <div className="flex-1 min-w-0 text-left">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {session?.user?.name || t('auth.doctor')}
+                  {session?.user?.name || t('auth.consultant')}
                 </p>
-                <p className="text-xs text-gray-700">{session?.user?.role || t('auth.doctor')}</p>
+                <p className="text-xs text-gray-700">{session?.user?.role || t('auth.consultant')}</p>
               </div>
               <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -564,8 +564,8 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                     <div className="py-1">
                       <div className="px-4 py-2 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-900">{session?.user?.name || t('auth.doctor')}</p>
-                        <p className="text-xs text-gray-600">{session?.user?.email || 'doctor@aidoc.com'}</p>
+                        <p className="text-sm font-medium text-gray-900">{session?.user?.name || t('auth.consultant')}</p>
+                        <p className="text-xs text-gray-600">{session?.user?.email || 'admin@visaagency.com'}</p>
                       </div>
                       <Link
                         href="/profile"
