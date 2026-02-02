@@ -138,20 +138,22 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0
+        fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out
+        md:w-72
+        lg:translate-x-0 lg:static lg:inset-0 lg:w-64
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 sm:px-6">
+          <div className="flex items-center space-x-2 sm:space-x-3 min-w-0">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
               <Shield className="h-5 w-5 text-white" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-bold text-gray-900 truncate sm:text-xl">
                 {settings?.systemTitle || 'Visa Processing Travel Agency'}
               </h1>
-              <p className="text-xs text-gray-700">
+              <p className="text-xs text-gray-700 truncate hidden sm:block">
                 {settings?.systemDescription || 'Visa Processing & Management System'}
               </p>
             </div>
@@ -166,14 +168,14 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
 
         {/* Navigation Menu */}
-        <nav className="px-3 py-4 space-y-1">
+        <nav className="px-2 py-4 space-y-1 sm:px-3">
           {navigation.map((item) => {
             if (item.id === 'notifications' && item.hasSubmenu) {
               return (
                 <div key={item.id}>
                   <button
                     className={`
-                      flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-colors
+                      flex items-center space-x-2 px-2 py-2 rounded-lg text-sm font-medium w-full transition-colors sm:space-x-3 sm:px-3 sm:py-2
                       ${isActiveRoute(item.href)
                         ? 'bg-blue-100 text-blue-700'
                         : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
@@ -190,11 +192,11 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                   </button>
                   
                   {isNotificationsSubmenuOpen && (
-                    <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1">
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-2 py-1 sm:ml-6">
                       <Link
                         href="/notifications/new"
                         className={`
-                          flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
+                          flex items-center space-x-2 px-2 py-2 rounded-lg text-sm font-medium transition-colors sm:space-x-3 sm:px-3 sm:py-2
                           ${isActiveRoute('/notifications/new')
                             ? 'bg-blue-100 text-blue-700'
                             : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
@@ -533,13 +535,13 @@ export default function SidebarLayout({ children, title, description }: SidebarL
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col lg:ml-0">
+      <div className="flex-1 flex flex-col">
         {/* Top Header */}
         <header className="bg-white shadow-sm border-b border-gray-200 lg:hidden">
           <div className="flex items-center justify-between h-16 px-4">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 text-gray-400 hover:text-gray-600"
+              className="p-2 text-gray-400 hover:text-gray-600 touch-target"
             >
               <Menu className="h-6 w-6" />
             </button>
@@ -551,7 +553,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               <div className="relative" ref={mobileProfileMenuRef}>
                 <button
                   onClick={() => setMobileProfileMenuOpen(!mobileProfileMenuOpen)}
-                  className="flex items-center space-x-2 p-2 text-gray-400 hover:text-gray-600"
+                  className="flex items-center space-x-2 p-2 text-gray-400 hover:text-gray-600 touch-target"
                 >
                   <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold text-sm">
                     {session?.user?.name?.charAt(0) || 'D'}
