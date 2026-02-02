@@ -43,7 +43,33 @@
     "settings": "Settings",
     "profile": "Profile",
     "workflowTracking": "Workflow & Tracking",
-    "smartCaseIntelligence": "Smart Case Intelligence"
+    "smartCaseIntelligence": "Smart Case Intelligence",
+    "visaCases": "Visa Cases",
+    "billing": "Billing",
+    "accountingFinance": "Accounting & Finance",
+    "documentHandling": "Document Handling",
+    "communication": "Communication",
+    "crmLeadManagement": "CRM & Lead Management",
+    "reports": "Reports",
+    "caseControlQualityAssurance": "Case Control & Quality Assurance",
+    "complianceSecurity": "Compliance & Security",
+    "helpSystem": "Help System",
+    "verificationCompliance": "Verification & Compliance",
+    "quickActions": "Quick Actions",
+    "newClient": "New Client",
+    "newAppointment": "New Appointment",
+    "submenu": {
+      "newNotification": "New Notification",
+      "messageTemplates": "Message Templates",
+      "formLibrary": "Form Library & Templates",
+      "clients": "Clients",
+      "addNewClient": "Add New Client",
+      "exportImport": "Export & Import",
+      "analytics": "Analytics",
+      "workflowTracking": "Workflow & Tracking",
+      "allInvoices": "All Invoices",
+      "createNewInvoice": "Create New Invoice"
+    }
   },
   "dashboard": {
     "welcome": {
@@ -54,6 +80,7 @@
       "totalClients": "Total Clients",
       "appointmentsToday": "Appointments Today",
       "aiInsights": "AI Insights",
+      "reportsGenerated": "Reports Generated",
       "changeFromLastMonth": "from last month"
     },
     "recentActivity": {
@@ -211,6 +238,8 @@
     "searchPlaceholder": "Search appointments by client or consultant...",
     "allStatus": "All Status",
     "upcoming": "Upcoming",
+    "confirmed": "Confirmed",
+    "pending": "Pending",
     "completed": "Completed",
     "cancelled": "Cancelled",
     "allDates": "All Dates",

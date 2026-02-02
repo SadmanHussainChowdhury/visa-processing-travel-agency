@@ -68,20 +68,20 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
               const navigation = [
               { id: 'dashboard', label: t('navigation.dashboard'), icon: Home, href: '/' },
-              { id: 'clients', label: 'Client Management', icon: Users, href: '/clients', hasSubmenu: true },
-              { id: 'appointments', label: t('Appointments  '), icon: Calendar, href: '/appointments' },
-              { id: 'visa-cases', label: 'Visa Cases', icon: FileText, href: '/visa-cases' },
-              { id: 'billing', label: 'Billing', icon: Calculator, href: '/billing', hasSubmenu: true },
-              { id: 'accounting', label: 'Accounting & Finance', icon: DollarSign, href: '/accounting' },
-              { id: 'documents', label: 'Document Handling', icon: FolderOpen, href: '/documents' },
-              { id: 'notifications', label: 'Communication', icon: Bell, href: '/notifications', hasSubmenu: true },
+              { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients', hasSubmenu: true },
+              { id: 'appointments', label: t('navigation.appointments'), icon: Calendar, href: '/appointments' },
+              { id: 'visa-cases', label: t('navigation.visaCases'), icon: FileText, href: '/visa-cases' },
+              { id: 'billing', label: t('navigation.billing'), icon: Calculator, href: '/billing', hasSubmenu: true },
+              { id: 'accounting', label: t('navigation.accountingFinance'), icon: DollarSign, href: '/accounting' },
+              { id: 'documents', label: t('navigation.documentHandling'), icon: FolderOpen, href: '/documents' },
+              { id: 'notifications', label: t('navigation.communication'), icon: Bell, href: '/notifications', hasSubmenu: true },
               { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
-              { id: 'crm', label: 'CRM & Lead Management', icon: Users, href: '/crm' },
-              { id: 'reports', label: 'Reports', icon: BarChart3, href: '/reports', hasSubmenu: true },
-              { id: 'case-control', label: 'Case Control & Quality Assurance', icon: Shield, href: '/case-control' },
-              { id: 'compliance', label: 'Compliance & Security', icon: Shield, href: '/compliance' },
-              { id: 'knowledge-help', label: 'Help System', icon: BookOpen, href: '/knowledge-help' },
-              { id: 'verification-compliance', label: 'Verification & Compliance', icon: CheckCircle, href: '/verification-compliance' }
+              { id: 'crm', label: t('navigation.crmLeadManagement'), icon: Users, href: '/crm' },
+              { id: 'reports', label: t('navigation.reports'), icon: BarChart3, href: '/reports', hasSubmenu: true },
+              { id: 'case-control', label: t('navigation.caseControlQualityAssurance'), icon: Shield, href: '/case-control' },
+              { id: 'compliance', label: t('navigation.complianceSecurity'), icon: Shield, href: '/compliance' },
+              { id: 'knowledge-help', label: t('navigation.helpSystem'), icon: BookOpen, href: '/knowledge-help' },
+              { id: 'verification-compliance', label: t('navigation.verificationCompliance'), icon: CheckCircle, href: '/verification-compliance' }
             ];
 
   const handleLogout = () => {
@@ -205,7 +205,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <Send className="h-4 w-4" />
-                        <span>New Notification</span>
+                        <span>{t('navigation.submenu.newNotification')}</span>
                       </Link>
                       <Link
                         href="/notifications/templates"
@@ -219,7 +219,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <FileText className="h-4 w-4" />
-                        <span>Message Templates</span>
+                        <span>{t('navigation.submenu.messageTemplates')}</span>
                       </Link>
                       <Link
                         href="/forms"
@@ -233,7 +233,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <FileText className="h-4 w-4" />
-                        <span>Form Library & Templates</span>
+                        <span>{t('navigation.submenu.formLibrary')}</span>
                       </Link>
                     </div>
                   )}
@@ -274,7 +274,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <Users className="h-4 w-4" />
-                        <span>Clients</span>
+                        <span>{t('navigation.submenu.clients')}</span>
                       </Link>
                       <Link
                         href="/clients/new"
@@ -288,7 +288,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <Plus className="h-4 w-4" />
-                        <span>Add New Client</span>
+                        <span>{t('navigation.submenu.addNewClient')}</span>
                       </Link>
                       <Link
                         href="/export-import"
@@ -302,7 +302,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <Upload className="h-4 w-4" />
-                        <span>Export & Import</span>
+                        <span>{t('navigation.submenu.exportImport')}</span>
                       </Link>
                     </div>
                   )}
@@ -343,7 +343,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <LineChart className="h-4 w-4" />
-                        <span>Analytics</span>
+                        <span>{t('navigation.submenu.analytics')}</span>
                       </Link>
                       <Link
                         href="/workflow-tracking"
@@ -357,7 +357,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                         onClick={() => setSidebarOpen(false)}
                       >
                         <FileBarChart className="h-4 w-4" />
-                        <span>Workflow & Tracking</span>
+                        <span>{t('navigation.submenu.workflowTracking')}</span>
                       </Link>
                     </div>
                   )}
@@ -398,7 +398,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                                     onClick={() => setSidebarOpen(false)}
                                   >
                                     <FileText className="h-4 w-4" />
-                                    <span>All Invoices</span>
+                                    <span>{t('navigation.submenu.allInvoices')}</span>
                                   </Link>
                                   <Link
                                     href="/billing/new"
@@ -412,7 +412,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                                     onClick={() => setSidebarOpen(false)}
                                   >
                                     <Plus className="h-4 w-4" />
-                                    <span>Create New Invoice</span>
+                                    <span>{t('navigation.submenu.createNewInvoice')}</span>
                                   </Link>
                                 </div>
                               )}
@@ -457,7 +457,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
         {/* Quick Actions */}
         <div className="px-3 py-4 border-t border-gray-200">
           <h3 className="text-xs font-semibold text-gray-700 uppercase tracking-wider mb-3 px-3">
-            Quick Actions
+            {t('navigation.quickActions')}
           </h3>
           <div className="space-y-1">
             <Link
@@ -466,7 +466,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               onClick={() => setSidebarOpen(false)}
             >
               <Plus className="h-4 w-4 text-blue-600" />
-              <span>New Client</span>
+              <span>{t('navigation.newClient')}</span>
             </Link>
             <Link
               href="/appointments/new"
@@ -474,7 +474,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               onClick={() => setSidebarOpen(false)}
             >
               <Plus className="h-4 w-4 text-green-600" />
-              <span>New Appointment</span>
+              <span>{t('navigation.newAppointment')}</span>
             </Link>
           </div>
         </div>

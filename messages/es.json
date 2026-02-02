@@ -41,7 +41,35 @@
     "clients": "Clientes",
     "appointments": "Citas",
     "settings": "Ajustes",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "workflowTracking": "Seguimiento de Procesos",
+    "smartCaseIntelligence": "Inteligencia de Casos",
+    "visaCases": "Casos de Visa",
+    "billing": "Facturación",
+    "accountingFinance": "Contabilidad & Finanzas",
+    "documentHandling": "Manejo de Documentos",
+    "communication": "Comunicación",
+    "crmLeadManagement": "CRM & Gestión de Leads",
+    "reports": "Reportes",
+    "caseControlQualityAssurance": "Control de Casos & Garantía de Calidad",
+    "complianceSecurity": "Cumplimiento & Seguridad",
+    "helpSystem": "Sistema de Ayuda",
+    "verificationCompliance": "Verificación & Cumplimiento",
+    "quickActions": "Acciones Rápidas",
+    "newClient": "Nuevo Cliente",
+    "newAppointment": "Nueva Cita",
+    "submenu": {
+      "newNotification": "Nueva Notificación",
+      "messageTemplates": "Plantillas de Mensajes",
+      "formLibrary": "Biblioteca de Formularios & Plantillas",
+      "clients": "Clientes",
+      "addNewClient": "Agregar Nuevo Cliente",
+      "exportImport": "Exportar & Importar",
+      "analytics": "Análisis",
+      "workflowTracking": "Seguimiento de Procesos",
+      "allInvoices": "Todas las Facturas",
+      "createNewInvoice": "Crear Nueva Factura"
+    }
   },
   "dashboard": {
     "welcome": {
@@ -52,6 +80,7 @@
       "totalClients": "Clientes Totales",
       "appointmentsToday": "Citas de Hoy",
       "aiInsights": "Información IA",
+      "reportsGenerated": "Reportes Generados",
       "changeFromLastMonth": "del mes pasado"
     },
     "recentActivity": {
@@ -60,6 +89,7 @@
       "clientRegistered": "Nuevo cliente registrado",
       "aiRecommendation": "Recomendación IA",
       "noActivities": "No hay actividades recientes",
+      "viewAll": "Ver Todo",
       "timeAgo": {
         "hours": "hace {count} horas",
         "minutes": "hace {count} minutos"
@@ -77,6 +107,47 @@
       "title": "Acciones Rápidas",
       "addNewClient": "Agregar Nuevo Cliente",
       "scheduleAppointment": "Programar Cita"
+    }
+  },
+  "activity": {
+    "title": "Toda la Actividad",
+    "description": "Ver todas las actividades recientes de tu práctica",
+    "allActivities": "Todas las Actividades",
+    "totalActivities": "actividades totales",
+    "noActivities": "No se encontraron actividades",
+    "backToDashboard": "Volver al Tablero",
+    "refresh": "Actualizar"
+  },
+  "clients": {
+    "title": "Clientes",
+    "description": "Administra los registros e información de tus clientes",
+    "addNewClient": "Agregar Nuevo Cliente",
+    "searchClients": "Buscar clientes por nombre o email...",
+    "allClients": "Todos los clientes",
+    "client": "Cliente",
+    "contact": "Contacto",
+    "status": "Estado",
+    "registrationDate": "Fecha de Registro",
+    "assignedOfficer": "Agente Asignado",
+    "actions": "Acciones",
+    "viewDetails": "Ver Detalles",
+    "editClient": "Editar Cliente",
+    "deleteClient": "Eliminar Cliente",
+    "cases": "Casos",
+    "noClientsFound": "No se encontraron clientes",
+    "tryAdjustingSearch": "Intenta ajustar tus criterios de búsqueda.",
+    "getStartedAdding": "Comienza agregando tu primer cliente.",
+    "clientsCount": "{count} clientes",
+    "newClient": {
+      "title": "Agregar Nuevo Cliente",
+      "description": "Registrar un nuevo cliente en el sistema",
+      "backToClients": "Volver a Clientes",
+      "sections": {
+        "personal": "Información Personal",
+        "contact": "Información de Contacto",
+        "visa": "Información del Visa",
+        "emergency": "Contacto de Emergencia"
+      }
     }
   },
   "profile": {
@@ -113,27 +184,27 @@
   "clients": {
     "title": "Clientes",
     "description": "Administra los registros e información de tus clientes",
-    "addNewPatient": "Agregar nuevo cliente",
-    "searchPatients": "Buscar clientes por nombre o correo...",
-    "allPatients": "Todos los clientes",
-    "patient": "Cliente",
+    "addNewClient": "Agregar nuevo cliente",
+    "searchClients": "Buscar clientes por nombre o correo...",
+    "allClients": "Todos los clientes",
+    "client": "Cliente",
     "contact": "Contacto",
     "status": "Estado",
     "registrationDate": "Fecha de registro",
-    "assignedDoctor": "Asesor asignado",
+    "assignedOfficer": "Asesor asignado",
     "actions": "Acciones",
     "viewDetails": "Ver detalles",
-    "editPatient": "Editar cliente",
-    "deletePatient": "Eliminar cliente",
+    "editClient": "Editar cliente",
+    "deleteClient": "Eliminar cliente",
     "cases": "Casos",
-    "noPatientsFound": "No se encontraron clientes",
+    "noClientsFound": "No se encontraron clientes",
     "tryAdjustingSearch": "Intenta ajustar tus criterios de búsqueda.",
     "getStartedAdding": "Comienza agregando tu primer cliente.",
-    "patientsCount": "{count} clientes",
-    "newPatient": {
+    "clientsCount": "{count} clientes",
+    "newClient": {
       "title": "Agregar Nuevo Cliente",
       "description": "Registra un nuevo cliente en el sistema",
-      "backToPatients": "Volver a Clientes",
+      "backToClients": "Volver a Clientes",
       "sections": {
         "personal": "Información Personal",
         "medical": "Información para visa",
@@ -209,6 +280,8 @@
     "searchPlaceholder": "Buscar citas por cliente o asesor...",
     "allStatus": "Todos los estados",
     "upcoming": "Próximas",
+    "confirmed": "Confirmada",
+    "pending": "Pendiente",
     "completed": "Completadas",
     "cancelled": "Canceladas",
     "allDates": "Todas las fechas",
@@ -876,6 +949,7 @@
       "noAIModelAvailable": "No hay modelo IA disponible",
       "microphonePermissionRequiredTitle": "Permiso de micrófono requerido",
       "clickToStartRecording": "Haz clic para iniciar grabación",
+      "createReport": "Crear informe",
       "aiProcessingVoiceRecording": "La IA está procesando tu grabación...",
       "recordingYourVoice": "Grabando tu voz... Haz clic nuevamente para detener.",
       "configureAIModelFirst": "Configura un modelo IA en Ajustes primero.",
@@ -944,6 +1018,7 @@
       "aiPredictions": "Predicciones IA",
       "optimization": "Optimización",
       "totalPatients": "Total de Pacientes",
+      "totalClients": "Total de Clientes",
       "twelvePercentIncrease": "12% aumento",
       "activeAppointments": "Citas Activas",
       "todaysSchedule": "Horario de hoy",
@@ -961,6 +1036,7 @@
       "predictiveMaintenance": "Mantenimiento Predictivo",
       "predictiveMaintenanceDesc": "Identificación temprana de necesidades de mantenimiento de equipos",
       "quickActions": "Acciones Rápidas",
+      "exportReport": "Exportar Informe",
       "updateData": "Actualizar Datos",
       "viewDetails": "Ver Detalles",
       "noActiveAIModel": "Sin Modelo IA Activo",

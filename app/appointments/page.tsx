@@ -313,8 +313,8 @@ export default function AppointmentsPage() {
                   className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="all">{t('appointments.allStatus')}</option>
-                  <option value="confirmed">{t('appointments.upcoming')}</option>
-                  <option value="pending">{t('appointments.upcoming')}</option>
+                  <option value="confirmed">{t('appointments.confirmed')}</option>
+                  <option value="pending">{t('appointments.pending')}</option>
                   <option value="cancelled">{t('appointments.cancelled')}</option>
                 </select>
               </div>
