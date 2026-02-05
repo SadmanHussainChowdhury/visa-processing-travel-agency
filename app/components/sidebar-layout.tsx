@@ -67,18 +67,18 @@ export default function SidebarLayout({ children, title, description }: SidebarL
 
               const navigation = [
               { id: 'dashboard', label: t('navigation.dashboard'), icon: Home, href: '/' },
+              { id: 'crm', label: 'Leads', icon: Users, href: '/crm' },
               { id: 'clients', label: t('navigation.clients'), icon: Users, href: '/clients', hasSubmenu: true },
               { id: 'appointments', label: t('navigation.appointments'), icon: Calendar, href: '/appointments' },
               { id: 'visa-cases', label: t('navigation.visaCases'), icon: FileText, href: '/visa-cases' },
-              { id: 'billing', label: t('navigation.billing'), icon: Calculator, href: '/billing', hasSubmenu: true },
-              { id: 'accounting', label: t('navigation.accountingFinance'), icon: DollarSign, href: '/accounting' },
               { id: 'documents', label: t('navigation.documentHandling'), icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: t('navigation.communication'), icon: Bell, href: '/notifications', hasSubmenu: true },
-              { id: 'crm', label: 'Leads', icon: Users, href: '/crm' },
-              { id: 'reports', label: t('navigation.reports'), icon: BarChart3, href: '/reports', hasSubmenu: true },
+              { id: 'billing', label: t('navigation.billing'), icon: Calculator, href: '/billing', hasSubmenu: true },
+              { id: 'accounting', label: t('navigation.accountingFinance'), icon: DollarSign, href: '/accounting' },
+              { id: 'verification-compliance', label: t('navigation.verificationCompliance'), icon: CheckCircle, href: '/verification-compliance' },
               { id: 'compliance', label: t('navigation.complianceSecurity'), icon: Shield, href: '/compliance' },
-              { id: 'knowledge-help', label: t('navigation.helpSystem'), icon: BookOpen, href: '/knowledge-help' },
-              { id: 'verification-compliance', label: t('navigation.verificationCompliance'), icon: CheckCircle, href: '/verification-compliance' }
+              { id: 'reports', label: t('navigation.reports'), icon: BarChart3, href: '/reports', hasSubmenu: true },
+              { id: 'knowledge-help', label: t('navigation.helpSystem'), icon: BookOpen, href: '/knowledge-help' }
             ];
 
   const handleLogout = () => {
