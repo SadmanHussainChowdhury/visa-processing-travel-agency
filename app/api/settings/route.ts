@@ -20,8 +20,8 @@ export async function GET() {
     if (!settings) {
       // Create default settings if none exist
       settings = new Settings({
-        systemTitle: 'Visa Processing Travel Agency',
-        systemDescription: 'Visa Processing Management System',
+        systemTitle: 'VisaPilot - Visa & Travel Agency / Student Consultancy',
+        systemDescription: 'Operations & CRM Platform',
         currency: 'USD',
         timezone: 'UTC',
         dateFormat: 'MM/DD/YYYY',

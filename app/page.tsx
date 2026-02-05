@@ -231,7 +231,7 @@ export default function DashboardPage() {
           {/* Welcome Section */}
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-6 text-white">
             <h1 className="text-2xl font-bold mb-2">
-              {t('dashboard.welcome.title', { name: session?.user?.name || 'Doctor' })}
+              {t('dashboard.welcome.title', { name: session?.user?.name || 'Consultant' })}
             </h1>
             <p className="text-blue-100">
               {t('dashboard.welcome.subtitle')}
@@ -440,14 +440,20 @@ export default function DashboardPage() {
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('dashboard.quickActions.title')}</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+              <Link
+                href="/clients/new"
+                className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 <Users className="h-5 w-5 text-blue-600" />
                 <span className="text-sm font-medium text-gray-900">{t('dashboard.quickActions.addNewClient')}</span>
-              </button>
-              <button className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+              </Link>
+              <Link
+                href="/appointments/new"
+                className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
                 <Calendar className="h-5 w-5 text-green-600" />
                 <span className="text-sm font-medium text-gray-900">{t('dashboard.quickActions.scheduleAppointment')}</span>
-              </button>
+              </Link>
             </div>
           </div>
         </div>

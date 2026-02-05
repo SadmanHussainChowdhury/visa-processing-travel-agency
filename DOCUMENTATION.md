@@ -132,7 +132,7 @@ import { agencyFramework } from '@/lib/agency-framework';
 
 // Initialize agency
 const config = agencyFramework.initialize('visa', {
-  name: 'My Visa Agency',
+  name: 'My VisaPilot Agency',
   // Custom configuration options
 });
 
@@ -146,7 +146,7 @@ const clientTerm = agencyFramework.getTerminology('client');
 ```
 
 ### Available Agency Types
-- **visa**: Visa Processing Agency
+- **visa**: Visa & Travel Agency / Student Consultancy
 - **immigration**: Immigration Services
 - **travel**: Travel Agency
 - **legal**: Legal Services

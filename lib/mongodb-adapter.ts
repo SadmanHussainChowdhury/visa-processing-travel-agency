@@ -4,7 +4,7 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/visa-processing-travel-agency';
+const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/visapilot-visa-travel-agency-student-consultancy';
 const options = {};
 
 let client: MongoClient;

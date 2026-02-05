@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const showLockedCases = searchParams.get('showLockedCases') === 'true';
 
     const db = await dbConnect();
-    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visa-processing-travel-agency');
+    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visapilot-visa-travel-agency-student-consultancy');
     const database = dbConnection.db();
     
     // Build query based on filters
@@ -105,7 +105,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const db = await dbConnect();
-    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visa-processing-travel-agency');
+    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visapilot-visa-travel-agency-student-consultancy');
     const database = dbConnection.db();
 
     // Update the case
@@ -188,7 +188,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const db = await dbConnect();
-    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visa-processing-travel-agency');
+    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visapilot-visa-travel-agency-student-consultancy');
     const database = dbConnection.db();
 
     // Delete the case
@@ -240,7 +240,7 @@ export async function POST(req: NextRequest) {
       }
 
       const db = await dbConnect();
-      const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visa-processing-travel-agency');
+      const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visapilot-visa-travel-agency-student-consultancy');
       const database = dbConnection.db();
       
       const newCase = {
@@ -301,7 +301,7 @@ export async function POST(req: NextRequest) {
     const { action, caseId, stepId, notes } = body;
 
     const db = await dbConnect();
-    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visa-processing-travel-agency');
+    const dbConnection = await MongoClient.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/visapilot-visa-travel-agency-student-consultancy');
     const database = dbConnection.db();
 
     if (action === 'lock') {

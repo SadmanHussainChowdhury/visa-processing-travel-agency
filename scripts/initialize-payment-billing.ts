@@ -67,7 +67,7 @@ async function initializePaymentBilling() {
           status: 'paid',
           items: [
             {
-              description: 'Tourist Visa Processing',
+              description: 'Tourist Visa & Travel Services',
               quantity: 1,
               unitPrice: 160,
               total: 160
@@ -92,7 +92,7 @@ async function initializePaymentBilling() {
           status: 'sent',
           items: [
             {
-              description: 'Business Visa Processing',
+              description: 'Business Visa & Travel Services',
               quantity: 1,
               unitPrice: 190,
               total: 190
@@ -117,7 +117,7 @@ async function initializePaymentBilling() {
           status: 'draft',
           items: [
             {
-              description: 'Student Visa Processing',
+              description: 'Student Visa & Consultancy Services',
               quantity: 1,
               unitPrice: 180,
               total: 180

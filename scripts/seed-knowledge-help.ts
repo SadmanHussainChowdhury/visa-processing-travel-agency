@@ -23,10 +23,10 @@ async function seedKnowledgeHelp() {
         version: '2.1',
         content: 'This SOP outlines the complete process for handling standard tourist visa applications. It includes document verification, interview preparation, and client communication protocols.',
         lastUpdated: new Date(),
-        author: 'Visa Processing Team'
+        author: 'VisaPilot Team'
       },
       {
-        title: 'Business Visa Processing Guidelines',
+        title: 'Business Visa & Travel Guidelines',
         type: 'Internal Guidelines',
         country: 'Canada',
         version: '1.8',
@@ -44,7 +44,7 @@ async function seedKnowledgeHelp() {
         author: 'Education Visa Team'
       },
       {
-        title: 'Work Permit Visa Processing',
+        title: 'Work Permit Visa & Travel',
         type: 'Standard Operating Procedure',
         country: 'Australia',
         version: '2.5',

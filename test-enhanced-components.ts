@@ -10,7 +10,7 @@ console.log('==============================');
 // Test Agency Framework
 console.log('\n1. Testing Agency Framework:');
 try {
-  const visaConfig = agencyFramework.initialize('visa', { name: 'Test Visa Agency' });
+  const visaConfig = agencyFramework.initialize('visa', { name: 'VisaPilot - Visa & Travel Agency' });
   console.log('✅ Agency Framework: Visa agency initialized successfully');
   console.log('   Agency Name:', visaConfig.name);
   console.log('   Modules:', visaConfig.modules.join(', '));

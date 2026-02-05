@@ -151,10 +151,10 @@ export default function SidebarLayout({ children, title, description }: SidebarL
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-lg font-bold text-gray-900 truncate sm:text-xl">
-                {settings?.systemTitle || 'Visa Processing Travel Agency'}
+                {settings?.systemTitle || 'VisaPilot - Visa & Travel Agency / Student Consultancy'}
               </h1>
               <p className="text-xs text-gray-700 truncate hidden sm:block">
-                {settings?.systemDescription || 'Visa Processing & Management System'}
+                {settings?.systemDescription || 'Operations & CRM Platform'}
               </p>
             </div>
           </div>
@@ -369,7 +369,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                               <button
                                 className={`
                                   flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-colors
-                                  \${isActiveRoute(item.href)
+                                  ${isActiveRoute(item.href)
                                     ? 'bg-blue-100 text-blue-700'
                                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
                                   }
@@ -381,7 +381,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                               >
                                 <item.icon className="h-5 w-5" />
                                 <span>{item.label}</span>
-                                <ChevronDown className={`h-4 w-4 ml-auto transition-transform \${isBillingSubmenuOpen ? 'rotate-180' : ''}`} />
+                                <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${isBillingSubmenuOpen ? 'rotate-180' : ''}`} />
                               </button>
                               
                               {isBillingSubmenuOpen && (
@@ -390,7 +390,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                                     href="/billing"
                                     className={`
                                       flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                                      \${isActiveRoute('/billing')
+                                      ${isActiveRoute('/billing')
                                         ? 'bg-blue-100 text-blue-700'
                                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                       }
@@ -404,7 +404,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
                                     href="/billing/new"
                                     className={`
                                       flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors
-                                      \${isActiveRoute('/billing/new')
+                                      ${isActiveRoute('/billing/new')
                                         ? 'bg-blue-100 text-blue-700'
                                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                                       }

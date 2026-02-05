@@ -13,9 +13,9 @@ export default function AgencySetup({ onComplete }: AgencySetupProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const agencyTypes = [
-    { id: 'visa', name: 'Visa Processing Agency', icon: '🛂' },
+    { id: 'visa', name: 'Visa & Travel Agency', icon: '🛂' },
     { id: 'immigration', name: 'Immigration Services', icon: '🏠' },
-    { id: 'travel', name: 'Travel Agency', icon: '✈️' },
+    { id: 'travel', name: 'Student Consultancy', icon: '🎓' },
     { id: 'legal', name: 'Legal Services', icon: '⚖️' },
     { id: 'real_estate', name: 'Real Estate Agency', icon: '🏢' },
     { id: 'consulting', name: 'Business Consulting', icon: '💼' }

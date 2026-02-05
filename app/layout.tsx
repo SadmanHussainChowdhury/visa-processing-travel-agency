@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "AI Travel Assistant - Visa Processing & Travel Agency System",
+  title: "VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform",
   description: "Comprehensive AI-powered visa processing travel agency software for travel professionals",
 };
 

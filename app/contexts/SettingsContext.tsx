@@ -60,8 +60,8 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  systemTitle: 'Visa Processing Travel Agency',
-  systemDescription: 'Visa Processing & Management System',
+  systemTitle: 'VisaPilot - Visa & Travel Agency / Student Consultancy',
+  systemDescription: 'Operations & CRM Platform',
   currency: 'USD',
   timezone: 'UTC',
   dateFormat: 'MM/DD/YYYY',
