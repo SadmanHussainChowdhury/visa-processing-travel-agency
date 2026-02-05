@@ -411,7 +411,7 @@ export default function ClientsPage() {
 
         {/* Pagination */}
         {filteredClients.length > 0 && (
-          <div className="mt-6 flex items-center justify-between">
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="text-sm text-gray-700">
               Showing <span className="font-medium">{indexOfFirstClient + 1}</span> to{' '}
               <span className="font-medium">{Math.min(indexOfLastClient, filteredClients.length)}</span> of{' '}

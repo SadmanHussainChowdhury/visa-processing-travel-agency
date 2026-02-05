@@ -800,7 +800,7 @@ export default function KnowledgeHelpSystem() {
                 </div>
                 
                 {filterData(visaKnowledgeBase, searchQuery).length > 0 && (
-                  <div className="mt-6 flex items-center justify-between">
+                  <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="text-sm text-gray-700">
                       Showing <span className="font-medium">{(visaKnowledgeCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
                       <span className="font-medium">{Math.min(visaKnowledgeCurrentPage * itemsPerPage, filterData(visaKnowledgeBase, searchQuery).length)}</span> of{' '}
@@ -923,7 +923,7 @@ export default function KnowledgeHelpSystem() {
                 </div>
                 
                 {filterData(sopDocuments, searchQuery).length > 0 && (
-                  <div className="mt-6 flex items-center justify-between">
+                  <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="text-sm text-gray-700">
                       Showing <span className="font-medium">{(sopDocsCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
                       <span className="font-medium">{Math.min(sopDocsCurrentPage * itemsPerPage, filterData(sopDocuments, searchQuery).length)}</span> of{' '}
@@ -1065,7 +1065,7 @@ export default function KnowledgeHelpSystem() {
                 </div>
                 
                 {filterData(learningGuidelines, searchQuery).length > 0 && (
-                  <div className="mt-6 flex items-center justify-between">
+                  <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="text-sm text-gray-700">
                       Showing <span className="font-medium">{(learningGuidelinesCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
                       <span className="font-medium">{Math.min(learningGuidelinesCurrentPage * itemsPerPage, filterData(learningGuidelines, searchQuery).length)}</span> of{' '}
@@ -1195,7 +1195,7 @@ export default function KnowledgeHelpSystem() {
                 </div>
                 
                 {filterData(rejectionTips, searchQuery).length > 0 && (
-                  <div className="mt-6 flex items-center justify-between">
+                  <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="text-sm text-gray-700">
                       Showing <span className="font-medium">{(rejectionTipsCurrentPage - 1) * itemsPerPage + 1}</span> to{' '}
                       <span className="font-medium">{Math.min(rejectionTipsCurrentPage * itemsPerPage, filterData(rejectionTips, searchQuery).length)}</span> of{' '}

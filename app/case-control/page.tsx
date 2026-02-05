@@ -599,7 +599,7 @@ const CaseControlPage = () => {
                 </p>
               </div>
             ) : (
-              <div className="mt-6 flex items-center justify-between">
+              <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div className="text-sm text-gray-700">
                   Showing <span className="font-medium">{indexOfFirstCase + 1}</span> to{' '}
                   <span className="font-medium">{Math.min(indexOfLastCase, filteredCases.length)}</span> of{' '}

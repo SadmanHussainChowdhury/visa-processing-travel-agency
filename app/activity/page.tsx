@@ -286,7 +286,7 @@ export default function ActivityPage() {
               
               {/* Pagination */}
               {activities.length > 0 && totalPages > 1 && (
-                <div className="mt-6 flex items-center justify-between">
+                <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <div className="text-sm text-gray-700">
                     Showing <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span> to{' '}
                     <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalItems)}</span> of{' '}

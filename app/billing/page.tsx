@@ -418,7 +418,7 @@ export default function BillingPage() {
 
           {/* Pagination */}
           {filteredInvoices.length > 0 && (
-            <div className="mt-6 flex items-center justify-between">
+            <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <div className="text-sm text-gray-700">
                 Showing <span className="font-medium">{indexOfFirstInvoice + 1}</span> to{' '}
                 <span className="font-medium">{Math.min(indexOfLastInvoice, filteredInvoices.length)}</span> of{' '}
