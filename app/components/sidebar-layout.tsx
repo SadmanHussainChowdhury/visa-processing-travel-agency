@@ -74,7 +74,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'accounting', label: t('navigation.accountingFinance'), icon: DollarSign, href: '/accounting' },
               { id: 'documents', label: t('navigation.documentHandling'), icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: t('navigation.communication'), icon: Bell, href: '/notifications', hasSubmenu: true },
-              { id: 'crm', label: t('navigation.crmLeadManagement'), icon: Users, href: '/crm' },
+              { id: 'crm', label: 'Leads', icon: Users, href: '/crm' },
               { id: 'reports', label: t('navigation.reports'), icon: BarChart3, href: '/reports', hasSubmenu: true },
               { id: 'compliance', label: t('navigation.complianceSecurity'), icon: Shield, href: '/compliance' },
               { id: 'knowledge-help', label: t('navigation.helpSystem'), icon: BookOpen, href: '/knowledge-help' },
