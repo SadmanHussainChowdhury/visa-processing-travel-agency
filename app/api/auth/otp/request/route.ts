@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
+import Compliance from '@/models/Compliance';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
@@ -14,14 +15,35 @@ export async function POST(request: NextRequest) {
 
     // Demo account handling
     if (email === 'admin@visaagency.com' && password === 'password123') {
+      const latestSecurityCheck = await Compliance.findOne({ type: 'SECURITY' }).sort({ createdAt: -1 });
+      const twoFactorEnabled = latestSecurityCheck ? latestSecurityCheck.details?.twoFactorEnabled ?? true : true;
+      if (!twoFactorEnabled) {
+        return NextResponse.json({
+          success: true,
+          twoFactorRequired: false,
+          message: 'Two-factor authentication is disabled.'
+        });
+      }
       return NextResponse.json({
         success: true,
         demo: true,
+        twoFactorRequired: true,
         message: 'Use OTP 000000 for the demo account.'
       });
     }
 
     await dbConnect();
+
+    const latestSecurityCheck = await Compliance.findOne({ type: 'SECURITY' }).sort({ createdAt: -1 });
+    const twoFactorEnabled = latestSecurityCheck ? latestSecurityCheck.details?.twoFactorEnabled ?? true : true;
+
+    if (!twoFactorEnabled) {
+      return NextResponse.json({
+        success: true,
+        twoFactorRequired: false,
+        message: 'Two-factor authentication is disabled.'
+      });
+    }
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
     if (!user) {

@@ -110,6 +110,22 @@ export default function LoginPage() {
           return;
         }
 
+        if (otpData.twoFactorRequired === false) {
+          const directResult = await signIn('credentials', {
+            email: formData.email,
+            password: formData.password,
+            redirect: false,
+          });
+
+          if (directResult?.error) {
+            setError('Invalid email or password');
+          } else {
+            setSuccess('Login successful! Redirecting to dashboard...');
+            router.push('/');
+          }
+          return;
+        }
+
         setOtpStep(true);
         setOtpHint(otpData.message || 'OTP sent. Check your phone.');
         setSuccess('OTP sent. Enter the code to continue.');
@@ -262,6 +278,10 @@ export default function LoginPage() {
                       const otpData = await otpResponse.json();
                       if (!otpResponse.ok) {
                         setError(otpData.error || 'Failed to resend OTP');
+                        return;
+                      }
+                      if (otpData.twoFactorRequired === false) {
+                        setSuccess('Two-factor authentication is disabled.');
                         return;
                       }
                       setOtpHint(otpData.message || 'OTP sent. Check your phone.');

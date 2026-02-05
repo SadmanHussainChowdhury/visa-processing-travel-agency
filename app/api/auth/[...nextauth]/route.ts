@@ -4,6 +4,7 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import clientPromise from '../../../../lib/mongodb-adapter';
 import dbConnect from '../../../../lib/mongodb';
 import User from '../../../../models/User';
+import Compliance from '../../../../models/Compliance';
 import bcrypt from 'bcryptjs';
 
 export const authOptions: AuthOptions = {
@@ -29,6 +30,18 @@ export const authOptions: AuthOptions = {
           if (!user) {
             // For demo purposes, allow the demo account without database
             if (credentials.email === 'admin@visaagency.com' && credentials.password === 'password123') {
+              const latestSecurityCheck = await Compliance.findOne({ type: 'SECURITY' }).sort({ createdAt: -1 });
+              const twoFactorEnabled = latestSecurityCheck ? latestSecurityCheck.details?.twoFactorEnabled ?? true : true;
+              if (!twoFactorEnabled) {
+                return {
+                  id: 'demo-user',
+                  email: 'admin@visaagency.com',
+                  name: 'Admin Demo User',
+                  role: 'admin',
+                  image: null,
+                };
+              }
+
               const demoOtp = credentials.otp?.toString().trim();
               if (demoOtp !== '000000') {
                 return null;
@@ -47,24 +60,29 @@ export const authOptions: AuthOptions = {
           // In a real app, you would hash passwords and compare them
           // For now, we'll use a simple comparison for demo purposes
           if (credentials.password === 'password123') {
-            const otp = credentials.otp?.toString().trim();
-            if (!otp || !user.smsOtpHash || !user.smsOtpExpiresAt) {
-              return null;
-            }
+            const latestSecurityCheck = await Compliance.findOne({ type: 'SECURITY' }).sort({ createdAt: -1 });
+            const twoFactorEnabled = latestSecurityCheck ? latestSecurityCheck.details?.twoFactorEnabled ?? true : true;
 
-            if (user.smsOtpExpiresAt.getTime() < Date.now()) {
-              return null;
-            }
+            if (twoFactorEnabled) {
+              const otp = credentials.otp?.toString().trim();
+              if (!otp || !user.smsOtpHash || !user.smsOtpExpiresAt) {
+                return null;
+              }
 
-            const otpValid = await bcrypt.compare(otp, user.smsOtpHash);
-            if (!otpValid) {
-              return null;
-            }
+              if (user.smsOtpExpiresAt.getTime() < Date.now()) {
+                return null;
+              }
 
-            user.smsOtpHash = undefined;
-            user.smsOtpExpiresAt = undefined;
-            user.smsOtpRequestedAt = undefined;
-            await user.save();
+              const otpValid = await bcrypt.compare(otp, user.smsOtpHash);
+              if (!otpValid) {
+                return null;
+              }
+
+              user.smsOtpHash = undefined;
+              user.smsOtpExpiresAt = undefined;
+              user.smsOtpRequestedAt = undefined;
+              await user.save();
+            }
 
             return {
               id: user._id.toString(),
