@@ -29,6 +29,7 @@ export default function CrmPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'leads'>('leads');
   const [leads, setLeads] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [loading, setLoading] = useState(true);
   
@@ -58,6 +59,18 @@ export default function CrmPage() {
       console.error('Error fetching leads:', error);
     }
   };
+
+  const filteredLeads = leads.filter((lead) => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    return (
+      String(lead.name || '').toLowerCase().includes(term) ||
+      String(lead.email || '').toLowerCase().includes(term) ||
+      String(lead.phone || '').toLowerCase().includes(term) ||
+      String(lead.countryInterest || '').toLowerCase().includes(term) ||
+      String(lead.visaType || '').toLowerCase().includes(term)
+    );
+  });
   
 
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
@@ -119,6 +132,10 @@ export default function CrmPage() {
   };
 
   const handleConvertToClient = async (lead: any) => {
+    if (lead?.status === 'converted') {
+      alert('This lead has already been converted.');
+      return;
+    }
     const leadId = lead?._id || lead?.id;
     if (!leadId) {
       alert('Lead ID is missing. Please refresh and try again.');
@@ -258,6 +275,8 @@ export default function CrmPage() {
                       type="text"
                       className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Search leads..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
                   </div>
                 </div>
@@ -275,83 +294,102 @@ export default function CrmPage() {
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {leads.map((lead) => (
-                    <div key={lead._id || lead.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
-                          <p className="text-gray-600">{lead.email}</p>
-                        </div>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
-                          lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
-                          lead.status === 'qualified' ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {lead.status}
-                        </span>
-                      </div>
-                      
-                      <div className="mt-4 space-y-2">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Phone className="h-4 w-4 mr-2" />
-                          {lead.phone}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <MapPin className="h-4 w-4 mr-2" />
-                          Interested in {lead.countryInterest} {lead.visaType}
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Star className="h-4 w-4 mr-2" />
-                          Lead Score: {lead.leadScore}/100
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <Calendar className="h-4 w-4 mr-2" />
-                          Next follow-up: {lead.nextFollowUp || 'Not scheduled'}
-                        </div>
-                      </div>
-                      
-                      <div className="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
-                        <button 
-                          onClick={() => handleConvertToClient(lead)}
-                          className="flex-1 text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
-                        >
-                          Convert to Client
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleViewLead(lead);
-                          }}
-                          className="p-1 text-gray-500 hover:text-gray-700"
-                          title="View Lead Details"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditLead(lead);
-                          }}
-                          className="p-1 text-gray-500 hover:text-gray-700"
-                          title="Edit Lead"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteLead(lead._id || lead.id);
-                          }}
-                          className="p-1 text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </div>
+                <>
+                  {filteredLeads.length === 0 ? (
+                    <div className="text-center py-12">
+                      <Target className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-2 text-sm font-medium text-gray-900">No leads found</h3>
+                      <p className="mt-1 text-sm text-gray-700">
+                        {searchTerm ? 'Try a different search term.' : 'Get started by adding a new lead.'}
+                      </p>
                     </div>
-                  ))}
-                </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {filteredLeads.map((lead) => (
+                        <div key={lead._id || lead.id} className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900">{lead.name}</h3>
+                              <p className="text-gray-600">{lead.email}</p>
+                            </div>
+                            <span className={`px-2 py-1 text-xs rounded-full ${
+                              lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                              lead.status === 'contacted' ? 'bg-yellow-100 text-yellow-800' :
+                              lead.status === 'qualified' ? 'bg-green-100 text-green-800' :
+                              lead.status === 'converted' ? 'bg-purple-100 text-purple-800' :
+                              lead.status === 'lost' ? 'bg-red-100 text-red-800' :
+                              'bg-gray-100 text-gray-800'
+                            }`}>
+                              {lead.status}
+                            </span>
+                          </div>
+
+                          <div className="mt-4 space-y-2">
+                            <div className="flex items-center text-sm text-gray-600">
+                              <Phone className="h-4 w-4 mr-2" />
+                              {lead.phone}
+                            </div>
+                            <div className="flex items-center text-sm text-gray-600">
+                              <MapPin className="h-4 w-4 mr-2" />
+                              Interested in {lead.countryInterest || 'N/A'} {lead.visaType || ''}
+                            </div>
+                            <div className="flex items-center text-sm text-gray-600">
+                              <Star className="h-4 w-4 mr-2" />
+                              Lead Score: {lead.leadScore}/100
+                            </div>
+                            <div className="flex items-center text-sm text-gray-600">
+                              <Calendar className="h-4 w-4 mr-2" />
+                              Next follow-up: {lead.nextFollowUp || 'Not scheduled'}
+                            </div>
+                          </div>
+
+                          <div className="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
+                            <button 
+                              onClick={() => handleConvertToClient(lead)}
+                              className={`flex-1 text-xs px-3 py-1 rounded transition-colors ${
+                                lead.status === 'converted'
+                                  ? 'bg-gray-200 text-gray-600 cursor-not-allowed'
+                                  : 'bg-green-600 text-white hover:bg-green-700'
+                              }`}
+                              disabled={lead.status === 'converted'}
+                            >
+                              {lead.status === 'converted' ? 'Converted' : 'Convert to Client'}
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleViewLead(lead);
+                              }}
+                              className="p-1 text-gray-500 hover:text-gray-700"
+                              title="View Lead Details"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditLead(lead);
+                              }}
+                              className="p-1 text-gray-500 hover:text-gray-700"
+                              title="Edit Lead"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </button>
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteLead(lead._id || lead.id);
+                              }}
+                              className="p-1 text-red-500 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </div>
           )}
