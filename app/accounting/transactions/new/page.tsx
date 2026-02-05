@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   DollarSign, 
@@ -8,7 +8,6 @@ import {
   AlertCircle, 
   CheckCircle,
   Calendar,
-  User,
   FileText,
   Tag
 } from 'lucide-react';
@@ -18,12 +17,10 @@ import SidebarLayout from '../../../components/sidebar-layout';
 interface Transaction {
   id: string;
   date: string;
-  type: 'revenue' | 'expense';
+  type: 'expense';
   description: string;
   amount: number;
   category: string;
-  clientId?: string;
-  clientName?: string;
   notes?: string;
 }
 
@@ -35,24 +32,14 @@ export default function NewTransactionPage() {
   const [formData, setFormData] = useState<Transaction>({
     id: '',
     date: new Date().toISOString().split('T')[0],
-    type: 'revenue',
+    type: 'expense',
     description: '',
     amount: 0,
     category: '',
-    clientId: '',
-    clientName: '',
     notes: ''
   });
 
-  const transactionTypes = [
-    { value: 'revenue', label: 'Revenue' },
-    { value: 'expense', label: 'Expense' }
-  ];
-
   const categories = [
-    { value: 'Service Fees', label: 'Service Fees' },
-    { value: 'Premium Services', label: 'Premium Services' },
-    { value: 'Consultation', label: 'Consultation' },
     { value: 'Office Expenses', label: 'Office Expenses' },
     { value: 'Software', label: 'Software' },
     { value: 'Travel', label: 'Travel' },
@@ -61,29 +48,6 @@ export default function NewTransactionPage() {
     { value: 'Salaries', label: 'Salaries' },
     { value: 'Equipment', label: 'Equipment' }
   ];
-
-  const [clients, setClients] = useState<{ id: string; name: string }[]>([]);
-
-  useEffect(() => {
-    const fetchClients = async () => {
-      try {
-        const response = await fetch('/api/clients');
-        if (response.ok) {
-          const data = await response.json();
-          // Transform client data to match expected format
-          const clientList = data.map((client: any) => ({
-            id: client._id || client.id,
-            name: `${client.firstName} ${client.lastName}`
-          }));
-          setClients(clientList);
-        }
-      } catch (error) {
-        console.error('Error fetching clients:', error);
-      }
-    };
-    
-    fetchClients();
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -116,10 +80,6 @@ export default function NewTransactionPage() {
       newErrors.category = 'Category is required';
     }
 
-    if (formData.type === 'revenue' && !formData.clientName) {
-      newErrors.clientName = 'Client is required for revenue transactions';
-    }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -139,11 +99,11 @@ export default function NewTransactionPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, type: 'expense' }),
       });
 
       if (response.ok) {
-        alert('Transaction created successfully!');
+        alert('Expense created successfully!');
         // Trigger a refresh event to update the accounting overview
         window.dispatchEvent(new CustomEvent('transactionCreated'));
         router.push('/accounting/transactions');
@@ -167,8 +127,8 @@ export default function NewTransactionPage() {
   return (
     <ProtectedRoute>
       <SidebarLayout 
-        title="Create New Transaction" 
-        description="Add a new revenue or expense transaction"
+        title="Create New Expense" 
+        description="Add a new expense transaction"
       >
         <div className="max-w-3xl mx-auto">
           {/* Back Button */}
@@ -178,42 +138,15 @@ export default function NewTransactionPage() {
               className="flex items-center text-gray-600 hover:text-gray-900 mb-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Transactions
+              Back to Expenses
             </button>
+            <h1 className="text-2xl font-bold text-gray-900">New Expense</h1>
+            <p className="text-sm text-gray-600">Expenses will be recorded under Accounting & Finance.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Transaction Type */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Transaction Type *
-                  </label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {transactionTypes.map(type => (
-                      <label 
-                        key={type.value}
-                        className={`flex items-center justify-center p-3 border rounded-lg cursor-pointer ${
-                          formData.type === type.value
-                            ? 'border-blue-500 bg-blue-50 text-blue-700'
-                            : 'border-gray-300 hover:bg-gray-50'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="type"
-                          value={type.value}
-                          checked={formData.type === type.value}
-                          onChange={handleInputChange}
-                          className="sr-only"
-                        />
-                        <span className="font-medium">{type.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Date */}
                 <div>
                   <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-2">
@@ -320,40 +253,6 @@ export default function NewTransactionPage() {
                   )}
                 </div>
 
-                {/* Client (for revenue) */}
-                {formData.type === 'revenue' && (
-                  <div className="md:col-span-2">
-                    <label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">
-                      Client *
-                    </label>
-                    <div className="relative">
-                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                      <select
-                        id="clientName"
-                        name="clientName"
-                        value={formData.clientName}
-                        onChange={handleInputChange}
-                        className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-                          errors.clientName ? 'border-red-300' : 'border-gray-300'
-                        }`}
-                      >
-                        <option value="">Select a client</option>
-                        {clients.map(client => (
-                          <option key={client.id} value={client.name}>
-                            {client.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    {errors.clientName && (
-                      <p className="mt-1 text-sm text-red-600 flex items-center">
-                        <AlertCircle className="w-4 h-4 mr-1" />
-                        {errors.clientName}
-                      </p>
-                    )}
-                  </div>
-                )}
-
                 {/* Notes */}
                 <div className="md:col-span-2">
                   <label htmlFor="notes" className="block text-sm font-medium text-gray-700 mb-2">
@@ -390,12 +289,12 @@ export default function NewTransactionPage() {
                 {isSubmitting ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Creating Transaction...
+                    Creating Expense...
                   </>
                 ) : (
                   <>
                     <CheckCircle className="w-4 h-4 mr-2" />
-                    Create Transaction
+                    Create Expense
                   </>
                 )}
               </button>

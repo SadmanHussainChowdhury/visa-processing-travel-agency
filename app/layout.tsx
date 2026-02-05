@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform",
-  description: "Comprehensive AI-powered visa processing travel agency software for travel professionals",
+  description: "Comprehensive visa processing travel agency software for travel professionals",
 };
 
 export default function RootLayout({

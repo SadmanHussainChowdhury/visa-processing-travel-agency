@@ -229,7 +229,7 @@ export default function TransactionsPage() {
             className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             <Plus className="h-4 w-4" />
-            <span>New Transaction</span>
+            <span>New Expense</span>
           </Link>
         </div>
 
@@ -321,7 +321,7 @@ export default function TransactionsPage() {
                       {transaction.description}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {transaction.client?.name || '-'}
+                      {typeof transaction.client === 'string' ? transaction.client : transaction.client?.name || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <span className={`px-2 py-1 text-xs rounded-full ${
@@ -348,11 +348,11 @@ export default function TransactionsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
-                        transaction.status === 'completed' 
+                        (transaction.status || 'completed') === 'completed' 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-yellow-100 text-yellow-800'
                       }`}>
-                        {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                        {(transaction.status || 'completed').charAt(0).toUpperCase() + (transaction.status || 'completed').slice(1)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -461,7 +461,7 @@ export default function TransactionsPage() {
                   className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   <Plus className="h-4 w-4" />
-                  <span>Create New Transaction</span>
+                  <span>Create New Expense</span>
                 </Link>
               </div>
             )}
