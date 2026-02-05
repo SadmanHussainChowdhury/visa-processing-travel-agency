@@ -40,7 +40,6 @@ import {
   Fingerprint,
   CheckCircle,
   AlertCircle,
-  Target,
   Send,
   BookOpen
 } from 'lucide-react';
@@ -75,10 +74,8 @@ export default function SidebarLayout({ children, title, description }: SidebarL
               { id: 'accounting', label: t('navigation.accountingFinance'), icon: DollarSign, href: '/accounting' },
               { id: 'documents', label: t('navigation.documentHandling'), icon: FolderOpen, href: '/documents' },
               { id: 'notifications', label: t('navigation.communication'), icon: Bell, href: '/notifications', hasSubmenu: true },
-              { id: 'smart-case-intelligence', label: t('navigation.smartCaseIntelligence'), icon: Target, href: '/smart-case-intelligence' },
               { id: 'crm', label: t('navigation.crmLeadManagement'), icon: Users, href: '/crm' },
               { id: 'reports', label: t('navigation.reports'), icon: BarChart3, href: '/reports', hasSubmenu: true },
-              { id: 'case-control', label: t('navigation.caseControlQualityAssurance'), icon: Shield, href: '/case-control' },
               { id: 'compliance', label: t('navigation.complianceSecurity'), icon: Shield, href: '/compliance' },
               { id: 'knowledge-help', label: t('navigation.helpSystem'), icon: BookOpen, href: '/knowledge-help' },
               { id: 'verification-compliance', label: t('navigation.verificationCompliance'), icon: CheckCircle, href: '/verification-compliance' }

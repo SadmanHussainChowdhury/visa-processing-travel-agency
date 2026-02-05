@@ -39,7 +39,7 @@ This is a comprehensive, generic agency management system built with Next.js 15,
 
 ### Project Structure
 ```
-visa-agency/
+VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform/
 ├── app/                    # Next.js app directory
 │   ├── [locale]/          # Internationalized routes
 │   ├── api/              # API routes
@@ -70,7 +70,7 @@ visa-agency/
 1. **Clone the repository**
 ```bash
 git clone <repository-url>
-cd visa-agency
+cd "VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform"
 ```
 
 2. **Install dependencies**
@@ -132,7 +132,7 @@ import { agencyFramework } from '@/lib/agency-framework';
 
 // Initialize agency
 const config = agencyFramework.initialize('visa', {
-  name: 'My VisaPilot Agency',
+  name: 'VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform',
   // Custom configuration options
 });
 
