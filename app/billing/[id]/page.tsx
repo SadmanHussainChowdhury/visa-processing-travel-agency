@@ -38,6 +38,8 @@ interface Invoice {
   taxRate: number;
   taxAmount: number;
   totalAmount: number;
+  depositAmount?: number;
+  dueAmount?: number;
   currency: string;
   dueDate?: string;
   issuedDate?: string;
@@ -255,9 +257,17 @@ export default function InvoiceViewPage() {
               <span>Tax (${invoice.taxRate}%):</span>
               <span>${invoice.currency} ${invoice.taxAmount.toFixed(2)}</span>
             </div>
+            <div class="summary-row">
+              <span>Deposit:</span>
+              <span>${invoice.currency} ${(invoice.depositAmount || 0).toFixed(2)}</span>
+            </div>
             <div class="summary-row total-row">
               <span>Total:</span>
               <span>${invoice.currency} ${invoice.totalAmount.toFixed(2)}</span>
+            </div>
+            <div class="summary-row">
+              <span>Due:</span>
+              <span>${invoice.currency} ${(invoice.dueAmount ?? (invoice.totalAmount - (invoice.depositAmount || 0))).toFixed(2)}</span>
             </div>
           </div>
           
@@ -360,12 +370,19 @@ export default function InvoiceViewPage() {
     
     doc.text(`Tax (${invoice.taxRate}%):`, 130, summaryStart + 7);
     doc.text(`${invoice.currency} ${invoice.taxAmount.toFixed(2)}`, 160, summaryStart + 7);
+
+    doc.setFont('helvetica', 'normal');
+    doc.text('Deposit:', 130, summaryStart + 14);
+    doc.text(`${invoice.currency} ${(invoice.depositAmount || 0).toFixed(2)}`, 160, summaryStart + 14);
     
     doc.setFont('helvetica', 'bold');
     doc.setLineWidth(0.3);
-    doc.line(130, summaryStart + 12, 190, summaryStart + 12);
-    doc.text('TOTAL:', 130, summaryStart + 19);
-    doc.text(`${invoice.currency} ${invoice.totalAmount.toFixed(2)}`, 160, summaryStart + 19);
+    doc.line(130, summaryStart + 18, 190, summaryStart + 18);
+    doc.text('TOTAL:', 130, summaryStart + 25);
+    doc.text(`${invoice.currency} ${invoice.totalAmount.toFixed(2)}`, 160, summaryStart + 25);
+    doc.setFont('helvetica', 'normal');
+    doc.text('DUE:', 130, summaryStart + 32);
+    doc.text(`${invoice.currency} ${(invoice.dueAmount ?? (invoice.totalAmount - (invoice.depositAmount || 0))).toFixed(2)}`, 160, summaryStart + 32);
     
     // Notes section
     if (invoice.notes) {
@@ -654,10 +671,22 @@ export default function InvoiceViewPage() {
                       {invoice.currency} {invoice.taxAmount.toFixed(2)}
                     </span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Deposit:</span>
+                    <span className="font-medium">
+                      {invoice.currency} {(invoice.depositAmount || 0).toFixed(2)}
+                    </span>
+                  </div>
                   <div className="flex justify-between pt-3 border-t border-gray-200">
                     <span className="text-lg font-semibold text-gray-900">Total:</span>
                     <span className="text-lg font-semibold text-gray-900">
                       {invoice.currency} {invoice.totalAmount.toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Due:</span>
+                    <span className="font-medium">
+                      {invoice.currency} {(invoice.dueAmount ?? (invoice.totalAmount - (invoice.depositAmount || 0))).toFixed(2)}
                     </span>
                   </div>
                 </div>

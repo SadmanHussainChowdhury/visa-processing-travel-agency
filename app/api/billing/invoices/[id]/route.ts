@@ -63,17 +63,30 @@ export async function PUT(
     if (body.items && Array.isArray(body.items)) {
       let subtotal = 0;
       body.items.forEach((item: any) => {
-        item.amount = item.quantity * item.unitPrice;
+        const quantity = Number(item.quantity) || 0;
+        const unitPrice = Number(item.unitPrice) || 0;
+        item.amount = quantity * unitPrice;
         subtotal += item.amount;
       });
       
-      const taxRate = body.taxRate !== undefined ? body.taxRate : existingInvoice.taxRate;
-      const taxAmount = subtotal * taxRate;
+      const taxRate = body.taxRate !== undefined ? Number(body.taxRate) || 0 : existingInvoice.taxRate;
+      const taxAmount = subtotal * (taxRate / 100);
       const totalAmount = subtotal + taxAmount;
+      const depositAmount = body.depositAmount !== undefined ? Math.max(0, Number(body.depositAmount) || 0) : (existingInvoice.depositAmount || 0);
+      const dueAmount = Math.max(0, totalAmount - depositAmount);
       
       updateData.subtotal = subtotal;
       updateData.taxAmount = taxAmount;
       updateData.totalAmount = totalAmount;
+      updateData.depositAmount = depositAmount;
+      updateData.dueAmount = dueAmount;
+    }
+
+    if (!body.items && body.depositAmount !== undefined) {
+      const totalAmount = existingInvoice.totalAmount || 0;
+      const depositAmount = Math.max(0, Number(body.depositAmount) || 0);
+      updateData.depositAmount = depositAmount;
+      updateData.dueAmount = Math.max(0, totalAmount - depositAmount);
     }
 
     // Handle status transitions

@@ -52,6 +52,7 @@ export default function NewInvoicePage() {
     clientEmail: '',
     items: [] as InvoiceItem[],
     taxRate: 0,
+    depositAmount: 0,
     notes: '',
     dueDate: '',
     status: 'draft' as 'draft' | 'issued' | 'paid' | 'cancelled',
@@ -95,6 +96,15 @@ export default function NewInvoicePage() {
         clientName: selected.clientName,
         clientEmail: selected.clientEmail
       }));
+    } else {
+      setSelectedCase(null);
+      setFormData(prev => ({
+        ...prev,
+        visaCaseId: '',
+        clientId: '',
+        clientName: '',
+        clientEmail: ''
+      }));
     }
     setError('');
   };
@@ -136,7 +146,9 @@ export default function NewInvoicePage() {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.amount || 0), 0);
     const taxAmount = subtotal * (formData.taxRate / 100);
     const totalAmount = subtotal + taxAmount;
-    return { subtotal, taxAmount, totalAmount };
+    const depositAmount = Math.max(0, Number(formData.depositAmount) || 0);
+    const dueAmount = Math.max(0, totalAmount - depositAmount);
+    return { subtotal, taxAmount, totalAmount, depositAmount, dueAmount };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -161,6 +173,13 @@ export default function NewInvoicePage() {
     const emptyItems = formData.items.some(item => !item.description.trim() || (item.amount || 0) <= 0);
     if (emptyItems) {
       setError('Please fill in all item details and ensure amounts are greater than zero');
+      setSaving(false);
+      return;
+    }
+
+    const totalsCheck = calculateTotals();
+    if (totalsCheck.depositAmount > totalsCheck.totalAmount) {
+      setError('Deposit amount cannot be greater than the total amount');
       setSaving(false);
       return;
     }
@@ -253,6 +272,7 @@ export default function NewInvoicePage() {
                     value={formData.visaCaseId}
                     onChange={(e) => handleCaseSelect(e.target.value)}
                     required
+                    disabled={visaCases.length === 0}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Choose a visa case...</option>
@@ -263,6 +283,15 @@ export default function NewInvoicePage() {
                     ))}
                   </select>
                 </div>
+
+                {visaCases.length === 0 && (
+                  <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 text-sm text-yellow-800">
+                    No visa cases found. Create a visa case before creating an invoice.
+                    <Link href="/visa-cases/new" className="ml-2 text-blue-700 underline">
+                      Create Visa Case
+                    </Link>
+                  </div>
+                )}
 
                 {selectedCase && (
                   <div className="bg-blue-50 p-4 rounded-lg">
@@ -428,19 +457,18 @@ export default function NewInvoicePage() {
                 </div>
                 
                 <div>
-                  <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-2">
-                    Currency
+                  <label htmlFor="depositAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                    Deposit Amount
                   </label>
-                  <select
-                    id="currency"
-                    value={formData.currency}
-                    onChange={(e) => setFormData(prev => ({ ...prev, currency: e.target.value }))}
+                  <input
+                    type="number"
+                    id="depositAmount"
+                    min="0"
+                    step="0.01"
+                    value={formData.depositAmount}
+                    onChange={(e) => setFormData(prev => ({ ...prev, depositAmount: parseFloat(e.target.value) || 0 }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="GBP">GBP (£)</option>
-                  </select>
+                  />
                 </div>
                 
                 <div>
@@ -499,17 +527,25 @@ export default function NewInvoicePage() {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-gray-600">Subtotal:</span>
-                    <span className="font-medium">{formData.currency} {totals.subtotal.toFixed(2)}</span>
+                    <span className="font-medium">{totals.subtotal.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Tax ({formData.taxRate}%):</span>
-                    <span className="font-medium">{formData.currency} {totals.taxAmount.toFixed(2)}</span>
+                    <span className="font-medium">{totals.taxAmount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Deposit:</span>
+                    <span className="font-medium">{totals.depositAmount.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
                     <span className="text-lg font-semibold text-gray-900">Total:</span>
                     <span className="text-lg font-semibold text-gray-900">
-                      {formData.currency} {totals.totalAmount.toFixed(2)}
+                      {totals.totalAmount.toFixed(2)}
                     </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Due:</span>
+                    <span className="font-medium">{totals.dueAmount.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

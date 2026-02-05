@@ -12,6 +12,8 @@ export interface IInvoice {
   taxRate: number;
   taxAmount: number;
   totalAmount: number;
+  depositAmount?: number;
+  dueAmount?: number;
   currency: string;
   dueDate?: Date;
   issuedDate?: Date;
@@ -94,6 +96,16 @@ const invoiceSchema = new mongoose.Schema<IInvoice>({
   totalAmount: {
     type: Number,
     required: true,
+    default: 0,
+    min: 0
+  },
+  depositAmount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  dueAmount: {
+    type: Number,
     default: 0,
     min: 0
   },

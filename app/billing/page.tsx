@@ -8,11 +8,9 @@ import SidebarLayout from '../components/sidebar-layout';
 import { 
   Plus, 
   Search, 
-  Filter, 
   Eye, 
   Edit, 
   Trash2, 
-  Download,
   Calendar,
   DollarSign,
   User,
@@ -102,10 +100,13 @@ export default function BillingPage() {
     }
   };
 
-  const filteredInvoices = invoices.filter(invoice =>
-    invoice.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    invoice.invoiceNumber.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredInvoices = invoices.filter((invoice) => {
+    const matchesSearch =
+      invoice.clientName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      invoice.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === 'all' || invoice.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   // Reset to first page when search or filter changes
   useEffect(() => {
@@ -187,7 +188,6 @@ export default function BillingPage() {
           {/* Header with Actions */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-gray-900">Billing Management</h1>
               {filteredInvoices.length > itemsPerPage && (
                 <span className="text-sm text-gray-600">
                   Showing {indexOfFirstInvoice + 1}-{Math.min(indexOfLastInvoice, filteredInvoices.length)} of {filteredInvoices.length}

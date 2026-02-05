@@ -35,6 +35,8 @@ interface Invoice {
   taxRate: number;
   taxAmount: number;
   totalAmount: number;
+  depositAmount?: number;
+  dueAmount?: number;
   currency: string;
   dueDate?: string;
   issuedDate?: string;
@@ -67,6 +69,7 @@ export default function EditInvoicePage() {
   const [formData, setFormData] = useState({
     items: [] as InvoiceItem[],
     taxRate: 0,
+    depositAmount: 0,
     notes: '',
     dueDate: '',
     status: 'draft' as 'draft' | 'issued' | 'paid' | 'cancelled',
@@ -103,6 +106,7 @@ export default function EditInvoicePage() {
         setFormData({
           items: data.items || [],
           taxRate: data.taxRate || 0,
+          depositAmount: data.depositAmount || 0,
           notes: data.notes || '',
           dueDate: data.dueDate ? data.dueDate.split('T')[0] : '',
           status: data.status,
@@ -158,7 +162,9 @@ export default function EditInvoicePage() {
     const subtotal = formData.items.reduce((sum, item) => sum + (item.amount || 0), 0);
     const taxAmount = subtotal * (formData.taxRate / 100);
     const totalAmount = subtotal + taxAmount;
-    return { subtotal, taxAmount, totalAmount };
+    const depositAmount = Math.max(0, Number(formData.depositAmount) || 0);
+    const dueAmount = Math.max(0, totalAmount - depositAmount);
+    return { subtotal, taxAmount, totalAmount, depositAmount, dueAmount };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -177,6 +183,13 @@ export default function EditInvoicePage() {
     const emptyItems = formData.items.some(item => !item.description.trim() || (item.amount || 0) <= 0);
     if (emptyItems) {
       setError('Please fill in all item details and ensure amounts are greater than zero');
+      setSaving(false);
+      return;
+    }
+
+    const totalsCheck = calculateTotals();
+    if (totalsCheck.depositAmount > totalsCheck.totalAmount) {
+      setError('Deposit amount cannot be greater than the total amount');
       setSaving(false);
       return;
     }
@@ -471,21 +484,19 @@ export default function EditInvoicePage() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
-                
                 <div>
-                  <label htmlFor="currency" className="block text-sm font-medium text-gray-700 mb-2">
-                    Currency
+                  <label htmlFor="depositAmount" className="block text-sm font-medium text-gray-700 mb-2">
+                    Deposit Amount
                   </label>
-                  <select
-                    id="currency"
-                    value={formData.currency}
-                    onChange={(e) => setFormData(prev => ({ ...prev, currency: e.target.value }))}
+                  <input
+                    type="number"
+                    id="depositAmount"
+                    min="0"
+                    step="0.01"
+                    value={formData.depositAmount}
+                    onChange={(e) => setFormData(prev => ({ ...prev, depositAmount: parseFloat(e.target.value) || 0 }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="USD">USD ($)</option>
-                    <option value="EUR">EUR (€)</option>
-                    <option value="GBP">GBP (£)</option>
-                  </select>
+                  />
                 </div>
                 
                 <div>
@@ -571,11 +582,19 @@ export default function EditInvoicePage() {
                     <span className="text-gray-600">Tax ({formData.taxRate}%):</span>
                     <span className="font-medium">{formData.currency} {totals.taxAmount.toFixed(2)}</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Deposit:</span>
+                    <span className="font-medium">{formData.currency} {totals.depositAmount.toFixed(2)}</span>
+                  </div>
                   <div className="flex justify-between pt-2 border-t border-gray-200">
                     <span className="text-lg font-semibold text-gray-900">Total:</span>
                     <span className="text-lg font-semibold text-gray-900">
                       {formData.currency} {totals.totalAmount.toFixed(2)}
                     </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Due:</span>
+                    <span className="font-medium">{formData.currency} {totals.dueAmount.toFixed(2)}</span>
                   </div>
                 </div>
               </div>

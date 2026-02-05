@@ -102,13 +102,18 @@ export async function POST(request: NextRequest) {
     let subtotal = 0;
     if (body.items && Array.isArray(body.items)) {
       body.items.forEach((item: any) => {
-        item.amount = item.quantity * item.unitPrice;
+        const quantity = Number(item.quantity) || 0;
+        const unitPrice = Number(item.unitPrice) || 0;
+        item.amount = quantity * unitPrice;
         subtotal += item.amount;
       });
     }
 
-    const taxAmount = subtotal * (body.taxRate || 0);
+    const taxRate = Number(body.taxRate) || 0;
+    const taxAmount = subtotal * (taxRate / 100);
     const totalAmount = subtotal + taxAmount;
+    const depositAmount = Math.max(0, Number(body.depositAmount) || 0);
+    const dueAmount = Math.max(0, totalAmount - depositAmount);
 
     // Create invoice
     const invoiceData = {
@@ -119,13 +124,16 @@ export async function POST(request: NextRequest) {
       clientEmail: body.clientEmail,
       items: body.items || [],
       subtotal,
-      taxRate: body.taxRate || 0,
+      taxRate,
       taxAmount,
       totalAmount,
+      depositAmount,
+      dueAmount,
       currency: body.currency || 'USD',
       dueDate: body.dueDate ? new Date(body.dueDate) : undefined,
       status: body.status || 'draft',
       notes: body.notes,
+      issuedDate: body.status === 'issued' ? new Date() : undefined,
       createdBy: 'system'
     };
 
