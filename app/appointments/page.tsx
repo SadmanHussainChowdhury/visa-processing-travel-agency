@@ -356,7 +356,7 @@ export default function AppointmentsPage() {
                     {t('appointments.type')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                    {t('appointments.status')}
+                    {t('appointments.statusLabel')}
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                     Location

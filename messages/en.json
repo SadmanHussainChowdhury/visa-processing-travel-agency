@@ -28,6 +28,10 @@
     "warning": "Warning",
     "info": "Info"
   },
+  "auth": {
+    "consultant": "Consultant",
+    "user": "User"
+  },
   "login": {
     "subtitle": "Welcome to Visa Processing Travel Agency",
     "description": "Sign in to access your travel agency dashboard",
@@ -252,7 +256,7 @@
     "patientDoctor": "Client & Consultant",
     "dateTime": "Date & Time",
     "type": "Type",
-    "status": "Status",
+    "statusLabel": "Status",
     "actions": "Actions",
     "view": "View",
     "edit": "Edit",

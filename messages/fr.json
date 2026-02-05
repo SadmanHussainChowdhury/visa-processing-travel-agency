@@ -28,6 +28,10 @@
     "warning": "Avertissement",
     "info": "Info"
   },
+  "auth": {
+    "consultant": "Consultant",
+    "user": "Utilisateur"
+  },
   "login": {
     "subtitle": "Bienvenue sur Visa Processing Travel Agency",
     "description": "Connectez-vous pour accéder à votre tableau de bord d'agence de voyage",
@@ -207,6 +211,7 @@
       "backToClients": "Retour aux Clients",
       "sections": {
         "personal": "Informations Personnelles",
+        "visa": "Informations sur le Visa",
         "medical": "Informations pour le visa",
         "emergency": "Contact d'Urgence"
       },
@@ -228,6 +233,11 @@
         "city": "Ville",
         "state": "État",
         "zipCode": "Code Postal",
+        "passportNumber": "Numéro de Passeport",
+        "passportCountry": "Pays du Passeport",
+        "visaType": "Type de Visa",
+        "visaApplicationDate": "Date de Demande de Visa",
+        "visaExpirationDate": "Date d'Expiration du Visa",
         "bloodType": "Groupe Sanguin",
         "bloodTypeOptions": {
           "select": "Sélectionner le Groupe Sanguin",
@@ -242,6 +252,8 @@
           "none": "Aucun/Inconnu"
         },
         "allergies": "Allergies",
+        "currentApplications": "Demandes Actuelles",
+        "travelHistory": "Historique de Voyage",
         "currentMedications": "Médicaments Actuels",
         "medicalHistory": "Historique des demandes de visa",
         "familyHistory": "Informations sur la famille",
@@ -251,6 +263,9 @@
       },
       "placeholders": {
         "allergies": "ex., Pénicilline, Arachides",
+        "specialRequirements": "p. ex., restrictions alimentaires, besoins de mobilité",
+        "applications": "Liste des demandes de visa actuelles et leur statut...",
+        "travelHistory": "Destinations de voyage précédentes et fréquence...",
         "medications": "Liste des médicaments actuels, dosages et fréquence",
         "medicalHistory": "Historique des demandes de visa, types de visas, résultats",
         "familyHistory": "Informations sur la famille pertinentes pour la demande de visa",
@@ -258,6 +273,7 @@
       },
       "buttons": {
         "cancel": "Annuler",
+        "saveClient": "Enregistrer le Client",
         "savePatient": "Enregistrer le Client",
         "saving": "Enregistrement..."
       },
@@ -265,9 +281,11 @@
         "requiredFields": "Veuillez remplir tous les champs obligatoires"
       },
       "success": {
+        "clientAdded": "Client ajouté avec succès !",
         "patientAdded": "Client ajouté avec succès !"
       },
       "errors": {
+        "addClientError": "Erreur lors de l'ajout du client : {error}",
         "addPatientError": "Erreur lors de l'ajout du client : {error}",
         "genericError": "Erreur lors de l'ajout du client. Veuillez réessayer."
       }
@@ -294,7 +312,7 @@
     "patientDoctor": "Client & Conseiller",
     "dateTime": "Date & Heure",
     "type": "Type",
-    "status": "Statut",
+    "statusLabel": "Statut",
     "actions": "Actions",
     "view": "Voir",
     "edit": "Éditer",
@@ -1017,7 +1035,7 @@
       "aiPredictions": "Prédictions IA",
       "optimization": "Optimisation",
       "totalPatients": "Total Patients",
-      "totalClients": "Total Clients",
+      "totalClients": "Total des clients",
       "twelvePercentIncrease": "12% d'augmentation",
       "activeAppointments": "Rendez-vous Actifs",
       "todaysSchedule": "Planning d'aujourd'hui",
@@ -1189,7 +1207,7 @@
     "theme": "Thème",
     "light": "Clair",
     "dark": "Sombre",
-    "auto": "Auto",
+    "auto": "Automatique",
     "emailNotifications": "Notifications email",
     "smsNotifications": "Notifications SMS",
     "appointmentReminders": "Rappels de rendez-vous",

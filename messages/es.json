@@ -28,6 +28,10 @@
     "warning": "Advertencia",
     "info": "Información"
   },
+  "auth": {
+    "consultant": "Consultor",
+    "user": "Usuario"
+  },
   "login": {
     "subtitle": "Bienvenido a Visa Processing Travel Agency",
     "description": "Inicia sesión para acceder a tu panel de agencia de viajes",
@@ -207,6 +211,7 @@
       "backToClients": "Volver a Clientes",
       "sections": {
         "personal": "Información Personal",
+        "visa": "Información de Visa",
         "medical": "Información para visa",
         "emergency": "Contacto de Emergencia"
       },
@@ -228,6 +233,11 @@
         "city": "Ciudad",
         "state": "Estado",
         "zipCode": "Código Postal",
+        "passportNumber": "Número de Pasaporte",
+        "passportCountry": "País de Pasaporte",
+        "visaType": "Tipo de Visa",
+        "visaApplicationDate": "Fecha de Solicitud de Visa",
+        "visaExpirationDate": "Fecha de Vencimiento de Visa",
         "bloodType": "Tipo de Sangre",
         "bloodTypeOptions": {
           "select": "Seleccionar Tipo de Sangre",
@@ -242,6 +252,8 @@
           "none": "Ninguno/Desconocido"
         },
         "allergies": "Alergias",
+        "currentApplications": "Solicitudes Actuales",
+        "travelHistory": "Historial de Viajes",
         "currentMedications": "Medicamentos Actuales",
         "medicalHistory": "Historial de solicitudes de visa",
         "familyHistory": "Información familiar",
@@ -251,6 +263,9 @@
       },
       "placeholders": {
         "allergies": "ej., Penicilina, Cacahuetes",
+        "specialRequirements": "p. ej., Restricciones dietéticas, necesidades de movilidad",
+        "applications": "Lista de solicitudes de visa actuales y estado...",
+        "travelHistory": "Destinos de viajes anteriores y frecuencia...",
         "medications": "Lista de medicamentos actuales, dosis y frecuencia",
         "medicalHistory": "Cirugías previas, condiciones crónicas, enfermedades graves",
         "familyHistory": "Condiciones médicas familiares relevantes",
@@ -258,6 +273,7 @@
       },
       "buttons": {
         "cancel": "Cancelar",
+        "saveClient": "Guardar Cliente",
         "savePatient": "Guardar Cliente",
         "saving": "Guardando..."
       },
@@ -265,9 +281,11 @@
         "requiredFields": "Por favor complete todos los campos obligatorios"
       },
       "success": {
+        "clientAdded": "¡Cliente agregado exitosamente!",
         "patientAdded": "¡Cliente agregado exitosamente!"
       },
       "errors": {
+        "addClientError": "Error al agregar cliente: {error}",
         "addPatientError": "Error al agregar cliente: {error}",
         "genericError": "Error al agregar cliente. Por favor inténtelo de nuevo."
       }
@@ -294,7 +312,7 @@
     "patientDoctor": "Cliente y Asesor",
     "dateTime": "Fecha y Hora",
     "type": "Tipo",
-    "status": "Estado",
+    "statusLabel": "Estado",
     "actions": "Acciones",
     "view": "Ver",
     "edit": "Editar",
@@ -734,7 +752,7 @@
       "priority": "PRIORIDAD",
       "score": "Puntuación",
       "bookNow": "Agendar ahora",
-      "doctor": "Doctor",
+      "doctor": "Asesor",
       "alternativeOptions": "Opciones alternativas",
       "bookAlternative": "Agendar alternativa",
       "appointmentOptimizationAnalytics": "Analítica de optimización de citas",
@@ -1159,7 +1177,7 @@
     "password": "Contraseña",
     "signIn": "Entrar",
     "welcome": "Bienvenido",
-    "doctor": "Doctor"
+    "doctor": "Asesor"
   },
   "validation": {
     "required": "Este campo es obligatorio",
