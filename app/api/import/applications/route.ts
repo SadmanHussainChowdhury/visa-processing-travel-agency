@@ -42,27 +42,47 @@ export async function POST(request: NextRequest) {
 
     for (const record of records) {
       try {
+        const clientEmail = record['Client Email'] || record.clientEmail || '';
+        const clientFirstName = record['Client First Name'] || record.clientFirstName || '';
+        const clientLastName = record['Client Last Name'] || record.clientLastName || '';
+        const clientPhone = record['Client Phone'] || record.clientPhone || '';
+        const clientDob = record['Date of Birth'] || record.dateOfBirth || '';
+        const clientGender = record['Gender'] || record.gender || '';
+        const clientPassportNumber = record['Passport Number'] || record.passportNumber || '';
+        const clientPassportCountry = record['Passport Country'] || record.passportCountry || '';
+
         // Find client by email or create a new one if needed
-        let client = await Client.findOne({ email: record['Client Email'] || record.clientEmail });
+        let client = clientEmail ? await Client.findOne({ email: clientEmail }) : null;
         
-        if (!client && record['Client Name'] && record['Client Email']) {
+        if (!client && clientEmail) {
+          if (!clientFirstName || !clientLastName || !clientPhone || !clientDob || !clientGender || !clientPassportNumber || !clientPassportCountry) {
+            throw new Error(`Client with email ${clientEmail} not found and insufficient data to create`);
+          }
           // Create client if it doesn't exist
           client = new Client({
-            name: record['Client Name'] || record.clientName,
-            email: record['Client Email'] || record.clientEmail,
-            phone: record['Client Phone'] || record.clientPhone || '',
+            firstName: clientFirstName,
+            lastName: clientLastName,
+            email: clientEmail,
+            phone: clientPhone,
+            dateOfBirth: clientDob,
+            gender: clientGender,
+            passportNumber: clientPassportNumber,
+            passportCountry: clientPassportCountry,
+            visaType: record['Visa Type'] || record.visaType || '',
+            visaApplicationDate: record['Application Date'] || record.applicationDate || new Date(),
             source: 'import'
           });
           await client.save();
         } else if (!client) {
-          throw new Error(`Client with email ${record['Client Email'] || record.clientEmail} not found and insufficient data to create`);
+          throw new Error(`Client email is required for application import`);
         }
 
         // Prepare visa case data from CSV record
+        const caseId = record['Case ID'] || record.caseId || '';
         const visaCaseData = {
-          caseId: record['Case ID'] || record.caseId || '',
+          caseId,
           clientId: client._id,
-          clientName: client.name,
+          clientName: `${client.firstName} ${client.lastName}`.trim(),
           clientEmail: client.email,
           visaType: record['Visa Type'] || record.visaType || '',
           country: record.Country || record.country || '',
@@ -85,6 +105,10 @@ export async function POST(request: NextRequest) {
           if (existingCase) {
             throw new Error(`Visa case with ID ${visaCaseData.caseId} already exists`);
           }
+        } else {
+          const year = new Date().getFullYear();
+          const randomNum = Math.floor(1000 + Math.random() * 9000);
+          visaCaseData.caseId = `VC-${year}-${randomNum}`;
         }
 
         // Create new visa case

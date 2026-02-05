@@ -42,14 +42,16 @@ export async function POST(request: NextRequest) {
     for (const record of records) {
       try {
         // Prepare document data from CSV record
+        const documentId = record['Document ID'] || record.documentId || '';
         const documentData = {
-          documentId: record['Document ID'] || record.documentId || '',
+          documentId,
           fileName: record['File Name'] || record.fileName || '',
           originalName: record['Original Name'] || record.originalName || '',
           fileType: record['File Type'] || record.fileType || '',
           fileSize: parseInt(record['File Size']) || 0,
           mimeType: record['Mime Type'] || record.mimeType || '',
           url: record.URL || record.url || '',
+          filePath: record['File Path'] || record.filePath || record.URL || record.url || '',
           clientId: record['Client ID'] || record.clientId || '',
           clientName: record['Client Name'] || record.clientName || '',
           visaCaseId: record['Visa Case ID'] || record.visaCaseId || '',
@@ -62,8 +64,14 @@ export async function POST(request: NextRequest) {
         };
 
         // Validate required fields
-        if (!documentData.fileName || !documentData.url) {
-          throw new Error(`File name and URL are required. Skipping record for ${documentData.fileName}`);
+        if (!documentData.documentId) {
+          const year = new Date().getFullYear();
+          const randomNum = Math.floor(1000 + Math.random() * 9000);
+          documentData.documentId = `DOC-${year}-${randomNum}`;
+        }
+
+        if (!documentData.fileName || !documentData.originalName || !documentData.fileType || !documentData.mimeType || !documentData.filePath || !documentData.url || !documentData.fileSize) {
+          throw new Error(`File name, original name, file type, mime type, file size, file path, and URL are required. Skipping record for ${documentData.fileName}`);
         }
 
         // Check if document already exists

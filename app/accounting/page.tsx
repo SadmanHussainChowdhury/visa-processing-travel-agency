@@ -15,10 +15,7 @@ import {
   Search,
   Calendar,
   Users,
-  CreditCard,
   PiggyBank,
-  Wallet,
-  Receipt
 } from 'lucide-react';
 import ProtectedRoute from '../protected-route';
 import SidebarLayout from '../components/sidebar-layout';
@@ -26,7 +23,7 @@ import { useTranslations } from '../hooks/useTranslations';
 
 export default function AccountingPage() {
   const { t } = useTranslations();
-  const [activeTab, setActiveTab] = useState<'overview' | 'revenue' | 'expenses' | 'reports'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'revenue' | 'expenses'>('overview');
   const [dateRange, setDateRange] = useState('this-month');
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -313,8 +310,7 @@ export default function AccountingPage() {
             {[
               { id: 'overview', label: 'Overview', icon: DollarSign },
               { id: 'revenue', label: 'Revenue', icon: TrendingUp },
-              { id: 'expenses', label: 'Expenses', icon: TrendingDown },
-              { id: 'reports', label: 'Reports', icon: FileBarChart }
+              { id: 'expenses', label: 'Expenses', icon: TrendingDown }
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -553,114 +549,6 @@ export default function AccountingPage() {
             </div>
           )}
 
-          {/* Reports Tab */}
-          {activeTab === 'reports' && (
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <FileBarChart className="h-8 w-8 text-blue-600" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">Profit Margin Report</h3>
-                      <p className="text-sm text-gray-600">Detailed profit margin analysis</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleExportReport('profit-margin')}
-                    className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Report
-                  </button>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <Calculator className="h-8 w-8 text-green-600" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">Commission Report</h3>
-                      <p className="text-sm text-gray-600">Agent commission calculations</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleExportReport('commission')}
-                    className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Report
-                  </button>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <Wallet className="h-8 w-8 text-purple-600" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">Tax Report</h3>
-                      <p className="text-sm text-gray-600">Tax calculation and reporting</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleExportReport('tax')}
-                    className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Report
-                  </button>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <BarChart3 className="h-8 w-8 text-yellow-600" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">Revenue Analysis</h3>
-                      <p className="text-sm text-gray-600">Revenue trends and analysis</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleExportReport('revenue')}
-                    className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Report
-                  </button>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <CreditCard className="h-8 w-8 text-indigo-600" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">Expense Report</h3>
-                      <p className="text-sm text-gray-600">Detailed expense breakdown</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleExportReport('expense')}
-                    className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Report
-                  </button>
-                </div>
-
-                <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-                  <div className="flex items-center">
-                    <Receipt className="h-8 w-8 text-pink-600" />
-                    <div className="ml-4">
-                      <h3 className="text-lg font-medium text-gray-900">Transaction History</h3>
-                      <p className="text-sm text-gray-600">Complete transaction records</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleExportReport('transactions')}
-                    className="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Download className="h-4 w-4 mr-2" />
-                    Export Report
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </SidebarLayout>
     </ProtectedRoute>

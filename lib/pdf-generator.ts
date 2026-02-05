@@ -32,14 +32,15 @@ export async function generateClientsPdf(format: string = 'json') {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Name</th>
+              <th>First Name</th>
+              <th>Last Name</th>
               <th>Email</th>
               <th>Phone</th>
-              <th>Country</th>
+              <th>Passport Country</th>
               <th>Passport Number</th>
               <th>Date of Birth</th>
               <th>Gender</th>
-              <th>Status</th>
+              <th>Visa Type</th>
             </tr>
           </thead>
           <tbody>
@@ -48,15 +49,16 @@ export async function generateClientsPdf(format: string = 'json') {
     clients.forEach(client => {
       htmlContent += `
         <tr>
-          <td>${client._id || ''}</td>
-          <td>${client.name || ''}</td>
+          <td>${client.clientId || client._id || ''}</td>
+          <td>${client.firstName || ''}</td>
+          <td>${client.lastName || ''}</td>
           <td>${client.email || ''}</td>
           <td>${client.phone || ''}</td>
-          <td>${client.country || ''}</td>
+          <td>${client.passportCountry || ''}</td>
           <td>${client.passportNumber || ''}</td>
           <td>${client.dateOfBirth ? new Date(client.dateOfBirth).toISOString().split('T')[0] : ''}</td>
           <td>${client.gender || ''}</td>
-          <td>${client.status || ''}</td>
+          <td>${client.visaType || ''}</td>
         </tr>
       `;
     });
@@ -151,9 +153,16 @@ export async function generateApplicationsPdf(format: string = 'json') {
   await dbConnect();
 
   // Fetch all visa cases (applications)
-  const applications = await VisaCase.find({})
-    .populate('clientId', 'name email phone')
-    .sort({ createdAt: -1 });
+  const applications = await VisaCase.find({}).sort({ createdAt: -1 });
+  const clientIds = applications
+    .map((application: any) => application.clientId)
+    .filter(Boolean);
+  const clients = clientIds.length
+    ? await Client.find({ _id: { $in: clientIds } }).select('phone')
+    : [];
+  const clientPhoneMap = new Map(
+    clients.map((client: any) => [client._id.toString(), client.phone])
+  );
 
   if (format === 'pdf') {
     // For PDF generation, we'll return HTML content that can be converted to PDF
@@ -195,7 +204,7 @@ export async function generateApplicationsPdf(format: string = 'json') {
           <td>${application.caseId || ''}</td>
           <td>${application.clientName || ''}</td>
           <td>${application.clientEmail || ''}</td>
-          <td>${application.clientId?.phone || ''}</td>
+          <td>${clientPhoneMap.get(String(application.clientId)) || ''}</td>
           <td>${application.visaType || ''}</td>
           <td>${application.country || ''}</td>
           <td>${application.status || ''}</td>

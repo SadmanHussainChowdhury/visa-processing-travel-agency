@@ -42,25 +42,69 @@ export async function POST(request: NextRequest) {
     for (const record of records) {
       try {
         // Prepare client data from CSV record
+        const fullName = record.Name || record.name || '';
+        const nameParts = String(fullName).trim().split(/\s+/);
+        const firstName = record['First Name'] || record.firstName || nameParts[0] || '';
+        const rawLastName = record['Last Name'] || record.lastName || nameParts.slice(1).join(' ');
+        const lastName = rawLastName || 'Unknown';
+        const genderRaw = String(record.Gender || record.gender || '').toLowerCase();
+        const normalizedGender = ['male', 'female', 'other', 'prefer-not-to-say'].includes(genderRaw)
+          ? genderRaw
+          : genderRaw === 'prefer not to say'
+            ? 'prefer-not-to-say'
+            : '';
+        const emergencyName = record['Emergency Contact Name'] || record.emergencyContactName || '';
+        const emergencyPhone = record['Emergency Contact Phone'] || record.emergencyContactPhone || '';
+        const emergencyRelationship = record['Emergency Contact Relationship'] || record.emergencyContactRelationship || '';
+        const specialRequirements = record['Special Requirements'] || record.specialRequirements || '';
+        const currentApplications = record['Current Applications'] || record.currentApplications || '';
+        const travelHistory = record['Travel History'] || record.travelHistory || '';
+
         const clientData = {
-          name: record.Name || record.name || '',
+          clientId: record['Client ID'] || record.clientId || undefined,
+          firstName,
+          lastName,
           email: record.Email || record.email || '',
           phone: record.Phone || record.phone || '',
-          country: record.Country || record.country || '',
-          passportNumber: record['Passport Number'] || record.passportNumber || '',
           dateOfBirth: record['Date of Birth'] || record.dateOfBirth || undefined,
-          gender: record.Gender || record.gender || '',
+          gender: normalizedGender,
           address: record.Address || record.address || '',
-          emergencyContact: record['Emergency Contact'] || record.emergencyContact || '',
-          preferredLanguage: record['Preferred Language'] || record.preferredLanguage || '',
-          source: record.Source || record.source || 'import',
-          status: record.Status || record.status || 'active',
-          notes: record.Notes || record.notes || ''
+          city: record.City || record.city || '',
+          state: record.State || record.state || '',
+          zipCode: record['Zip Code'] || record.zipCode || '',
+          passportNumber: record['Passport Number'] || record.passportNumber || '',
+          passportCountry: record['Passport Country'] || record.passportCountry || '',
+          visaType: record['Visa Type'] || record.visaType || '',
+          visaApplicationDate: record['Visa Application Date'] || record.visaApplicationDate || record['Application Date'] || record.applicationDate || undefined,
+          visaExpirationDate: record['Visa Expiration Date'] || record.visaExpirationDate || undefined,
+          specialRequirements: String(specialRequirements || '')
+            .split(';')
+            .map((item: string) => item.trim())
+            .filter(Boolean),
+          currentApplications: String(currentApplications || '')
+            .split(';')
+            .map((item: string) => item.trim())
+            .filter(Boolean),
+          travelHistory: String(travelHistory || '')
+            .split(';')
+            .map((item: string) => item.trim())
+            .filter(Boolean),
+          emergencyContact: {
+            name: emergencyName,
+            phone: emergencyPhone,
+            relationship: emergencyRelationship
+          }
         };
 
         // Validate required fields
-        if (!clientData.name || !clientData.email) {
-          throw new Error(`Client name and email are required. Skipping record for ${clientData.name}`);
+        if (!clientData.firstName || !clientData.lastName || !clientData.email || !clientData.phone) {
+          throw new Error(`First name, last name, email, and phone are required. Skipping record for ${clientData.email || 'unknown email'}`);
+        }
+        if (!clientData.dateOfBirth || !clientData.gender) {
+          throw new Error(`Date of birth and gender are required. Skipping record for ${clientData.email}`);
+        }
+        if (!clientData.passportNumber || !clientData.passportCountry || !clientData.visaType || !clientData.visaApplicationDate) {
+          throw new Error(`Passport number, passport country, visa type, and visa application date are required. Skipping record for ${clientData.email}`);
         }
 
         // Check if client already exists

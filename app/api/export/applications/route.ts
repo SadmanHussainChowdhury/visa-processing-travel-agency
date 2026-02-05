@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { dbConnect } from '@/lib/db';
 import VisaCase from '@/models/VisaCase';
+import Client from '@/models/Client';
 import { generateApplicationsPdf } from '@/lib/pdf-generator';
 
 export async function GET(request: NextRequest) {
@@ -11,9 +12,16 @@ export async function GET(request: NextRequest) {
     const format = searchParams.get('format') || 'json'; // json, csv, excel, pdf
 
     // Fetch all visa cases (applications)
-    const applications = await VisaCase.find({})
-      .populate('clientId', 'name email phone')
-      .sort({ createdAt: -1 });
+    const applications = await VisaCase.find({}).sort({ createdAt: -1 });
+    const clientIds = applications
+      .map((application: any) => application.clientId)
+      .filter(Boolean);
+    const clients = clientIds.length
+      ? await Client.find({ _id: { $in: clientIds } }).select('phone')
+      : [];
+    const clientPhoneMap = new Map(
+      clients.map((client: any) => [client._id.toString(), client.phone])
+    );
 
     if (format === 'json') {
       return NextResponse.json(applications);
@@ -41,7 +49,7 @@ export async function GET(request: NextRequest) {
           `"${application.caseId || ''}"`,
           `"${(application.clientName || '').replace(/"/g, '""')}"`,
           `"${application.clientEmail || ''}"`,
-          `"${application.clientId?.phone || ''}"`,
+          `"${clientPhoneMap.get(String(application.clientId)) || ''}"`,
           `"${application.visaType || ''}"`,
           `"${application.country || ''}"`,
           `"${application.applicationDate ? new Date(application.applicationDate).toISOString().split('T')[0] : ''}"`,

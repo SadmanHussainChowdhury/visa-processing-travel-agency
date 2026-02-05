@@ -32,6 +32,8 @@ export default function ExportImportPage() {
           apiUrl = `/api/export/clients?format=pdf`;
         } else if (dataType === 'applications') {
           apiUrl = `/api/export/applications?format=pdf`;
+        } else if (dataType === 'documents') {
+          apiUrl = `/api/export/documents?format=pdf`;
         } else {
           alert(`PDF export not implemented for ${dataType}`);
           return;
@@ -52,8 +54,11 @@ export default function ExportImportPage() {
         
         iframe.onload = () => {
           setTimeout(() => {
-            window.frames[0]?.focus();
-            window.frames[0]?.print();
+            const frameWindow = iframe.contentWindow;
+            if (frameWindow) {
+              frameWindow.focus();
+              frameWindow.print();
+            }
             document.body.removeChild(iframe);
           }, 500);
         };
@@ -65,9 +70,7 @@ export default function ExportImportPage() {
         } else if (dataType === 'applications') {
           url = `/api/export/applications?format=${format}`;
         } else if (dataType === 'documents') {
-          // Placeholder for documents export
-          alert(`Exporting ${dataType} in ${format} format`);
-          return;
+          url = `/api/export/documents?format=${format}`;
         } else if (dataType === 'reports') {
           // Placeholder for reports export
           alert(`Exporting ${dataType} in ${format} format`);
@@ -145,23 +148,23 @@ export default function ExportImportPage() {
     
     if (type === 'client') {
       csvContent = [
-        ['Name', 'Email', 'Phone', 'Country', 'Passport Number', 'Date of Birth', 'Gender', 'Address', 'Emergency Contact', 'Preferred Language', 'Source', 'Status', 'Notes'].join(','),
-        ['John Doe', 'john@example.com', '+1234567890', 'USA', 'P12345678', '1990-01-01', 'Male', '123 Main St', 'Jane Doe (+1234567891)', 'English', 'Website', 'active', 'VIP Client'],
-        ['Jane Smith', 'jane@example.com', '+0987654321', 'Canada', 'P87654321', '1985-05-15', 'Female', '456 Oak Ave', 'John Smith (+0987654322)', 'English', 'Referral', 'active', 'Regular Customer']
+        ['Client ID', 'First Name', 'Last Name', 'Email', 'Phone', 'Date of Birth', 'Gender', 'Address', 'City', 'State', 'Zip Code', 'Passport Number', 'Passport Country', 'Visa Type', 'Visa Application Date', 'Visa Expiration Date', 'Special Requirements', 'Current Applications', 'Travel History', 'Emergency Contact Name', 'Emergency Contact Phone', 'Emergency Contact Relationship'].join(','),
+        ['CLIENT-001', 'John', 'Doe', 'john@example.com', '+1234567890', '1990-01-01', 'male', '123 Main St', 'New York', 'NY', '10001', 'P12345678', 'USA', 'Tourist', '2024-01-15', '2025-01-15', 'Allergy: peanuts', 'Student program', 'US 2018; UK 2020', 'Jane Doe', '+1234567891', 'Spouse'],
+        ['CLIENT-002', 'Jane', 'Smith', 'jane@example.com', '+0987654321', '1985-05-15', 'female', '456 Oak Ave', 'Toronto', 'ON', 'M4B1B3', 'P87654321', 'Canada', 'Student', '2024-02-01', '', 'Wheelchair access', '', 'US 2019', 'John Smith', '+0987654322', 'Brother']
       ].join('\n');
       fileName = 'client_template.csv';
     } else if (type === 'application') {
       csvContent = [
-        ['Case ID', 'Client Name', 'Client Email', 'Client Phone', 'Visa Type', 'Country', 'Application Date', 'Submission Date', 'Expected Decision Date', 'Priority', 'Status', 'Notes'].join(','),
-        ['VC-2023-1001', 'John Doe', 'john@example.com', '+1234567890', 'Tourist', 'Australia', '2023-01-15', '2023-01-20', '2023-02-15', 'medium', 'in-process', 'Urgent processing required'],
-        ['VC-2023-1002', 'Jane Smith', 'jane@example.com', '+0987654321', 'Student', 'UK', '2023-02-01', '2023-02-05', '2023-03-01', 'high', 'submitted', 'Requires additional documentation']
+        ['Case ID', 'Client First Name', 'Client Last Name', 'Client Email', 'Client Phone', 'Date of Birth', 'Gender', 'Passport Number', 'Passport Country', 'Visa Type', 'Country', 'Application Date', 'Submission Date', 'Expected Decision Date', 'Priority', 'Status', 'Notes'].join(','),
+        ['VC-2024-1001', 'John', 'Doe', 'john@example.com', '+1234567890', '1990-01-01', 'male', 'P12345678', 'USA', 'Tourist', 'Australia', '2024-01-15', '2024-01-20', '2024-02-15', 'medium', 'in-process', 'Urgent processing required'],
+        ['VC-2024-1002', 'Jane', 'Smith', 'jane@example.com', '+0987654321', '1985-05-15', 'female', 'P87654321', 'Canada', 'Student', 'UK', '2024-02-01', '2024-02-05', '2024-03-01', 'high', 'submitted', 'Requires additional documentation']
       ].join('\n');
       fileName = 'application_template.csv';
     } else if (type === 'document') {
       csvContent = [
-        ['Document ID', 'File Name', 'Original Name', 'File Type', 'File Size', 'Mime Type', 'URL', 'Client ID', 'Client Name', 'Visa Case ID', 'Category', 'Status', 'Uploaded By', 'Expiry Date'].join(','),
-        ['DOC-2023-1001', 'passport.pdf', 'John_Doe_Passport.pdf', 'pdf', '1048576', 'application/pdf', 'https://example.com/files/passport.pdf', 'CLIENT-001', 'John Doe', 'VC-2023-1001', 'passport', 'approved', 'admin', '2024-12-31'],
-        ['DOC-2023-1002', 'visa.jpg', 'Jane_Smith_Visa.jpg', 'jpg', '2097152', 'image/jpeg', 'https://example.com/files/visa.jpg', 'CLIENT-002', 'Jane Smith', 'VC-2023-1002', 'visa', 'pending', 'admin', '']
+        ['Document ID', 'File Name', 'Original Name', 'File Type', 'File Size', 'Mime Type', 'File Path', 'URL', 'Client ID', 'Client Name', 'Visa Case ID', 'Category', 'Status', 'Uploaded By', 'Expiry Date'].join(','),
+        ['DOC-2024-1001', 'passport.pdf', 'John_Doe_Passport.pdf', 'pdf', '1048576', 'application/pdf', '/uploads/passport.pdf', 'https://example.com/files/passport.pdf', 'CLIENT-001', 'John Doe', 'VC-2024-1001', 'passport', 'approved', 'admin', '2025-12-31'],
+        ['DOC-2024-1002', 'visa.jpg', 'Jane_Smith_Visa.jpg', 'jpg', '2097152', 'image/jpeg', '/uploads/visa.jpg', 'https://example.com/files/visa.jpg', 'CLIENT-002', 'Jane Smith', 'VC-2024-1002', 'visa', 'pending', 'admin', '']
       ].join('\n');
       fileName = 'document_template.csv';
     }
@@ -292,6 +295,35 @@ export default function ExportImportPage() {
                   </div>
                 </div>
 
+                {/* Export Documents Card */}
+                <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
+                  <div className="flex items-start">
+                    <div className="bg-indigo-100 p-3 rounded-lg">
+                      <FileText className="h-6 w-6 text-indigo-600" />
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <h3 className="text-lg font-semibold text-gray-900">Export Documents</h3>
+                      <p className="text-gray-600 mt-1">Export document metadata to Excel or PDF format</p>
+                      <div className="mt-4 flex space-x-3">
+                        <button 
+                          onClick={() => handleExport('documents', 'excel')}
+                          className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                        >
+                          <FileSpreadsheet className="h-4 w-4" />
+                          <span>Excel</span>
+                        </button>
+                        <button 
+                          onClick={() => handleExport('documents', 'pdf')}
+                          className="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+                          title="Will open print dialog to save as PDF"
+                        >
+                          <FileText className="h-4 w-4" />
+                          <span>PDF</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
               </div>
             </div>
@@ -552,6 +584,36 @@ export default function ExportImportPage() {
                       <div>
                         <h4 className="font-medium text-gray-900">POST /api/import/applications</h4>
                         <p className="text-sm text-gray-600">Import applications from JSON payload</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">POST</span>
+                        <button className="bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm hover:bg-gray-300">
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-gray-900">GET /api/export/documents</h4>
+                        <p className="text-sm text-gray-600">Export documents in JSON format</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">GET</span>
+                        <button className="bg-gray-200 text-gray-800 px-3 py-1 rounded text-sm hover:bg-gray-300">
+                          Copy
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-gray-50 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="font-medium text-gray-900">POST /api/import/documents</h4>
+                        <p className="text-sm text-gray-600">Import documents from JSON payload</p>
                       </div>
                       <div className="flex space-x-2">
                         <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded">POST</span>
