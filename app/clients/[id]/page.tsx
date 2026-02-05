@@ -188,7 +188,7 @@ export default function ClientViewPage() {
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Clients
             </Link>
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <h1 className="text-2xl font-bold text-gray-900">{client.firstName} {client.lastName}</h1>
               <Link
                 href={`/clients/${client._id}/edit`}
@@ -201,10 +201,10 @@ export default function ClientViewPage() {
           </div>
 
           {/* Main Content with Vertical Tabs */}
-          <div className="flex gap-6">
+          <div className="flex flex-col lg:flex-row gap-6">
             {/* Vertical Tab Navigation - Left Sidebar */}
-            <div className="w-64 flex-shrink-0">
-              <div className="bg-white rounded-lg shadow sticky top-6">
+            <div className="w-full lg:w-64 flex-shrink-0 mb-4 lg:mb-0">
+              <div className="bg-white rounded-lg shadow lg:sticky lg:top-6">
                 <nav className="p-2" aria-label="Tabs">
                   {tabs.map((tab) => {
                     const Icon = tab.icon;

@@ -262,10 +262,10 @@ export default function SettingsPage() {
           )}
 
           {/* Tabs Layout */}
-          <div className="flex bg-white rounded-lg shadow overflow-hidden">
+          <div className="flex flex-col lg:flex-row bg-white rounded-lg shadow overflow-hidden">
             {/* Left Sidebar Tabs */}
-            <div className="w-80 bg-gray-50 border-r border-gray-200">
-              <div className="p-6">
+            <div className="w-full lg:w-80 bg-gray-50 border-b border-gray-200 lg:border-b-0 lg:border-r">
+              <div className="p-4 sm:p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4">Settings</h2>
                 <nav className="space-y-2">
                   <button
@@ -332,7 +332,7 @@ export default function SettingsPage() {
             </div>
 
             {/* Right Content Area */}
-            <div className="flex-1 p-6">
+            <div className="flex-1 p-4 sm:p-6">
               <form onSubmit={(e) => { e.preventDefault(); handleSave(); }}>
 
                 {/* General Settings Tab */}
@@ -758,7 +758,7 @@ export default function SettingsPage() {
               </form>
 
               {/* Action Buttons */}
-              <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
+              <div className="mt-8 pt-6 border-t border-gray-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <button
                   type="button"
                   onClick={handleReset}
