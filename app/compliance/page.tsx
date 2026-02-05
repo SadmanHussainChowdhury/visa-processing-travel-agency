@@ -27,6 +27,7 @@ interface AuditLogEntry {
 }
 
 export default function CompliancePage() {
+  const twoFactorEnforced = true;
   const [activeTab, setActiveTab] = useState('overview');
   const [complianceData, setComplianceData] = useState<ComplianceData>({
     gdprStatus: 'pending',
@@ -69,7 +70,7 @@ export default function CompliancePage() {
         gdprStatus: gdprData.gdprStatus || 'pending',
         localComplianceStatus: 'compliant', // Assuming local compliance
         encryptionStatus: securityData.encryptionStatus || 'inactive',
-        twoFactorEnabled: securityData.twoFactorEnabled || false,
+        twoFactorEnabled: twoFactorEnforced ? true : (securityData.twoFactorEnabled || false),
         backupStatus: backupData.backupStatus || 'failed',
         lastBackup: backupData.lastBackup,
         nextBackup: backupData.nextBackup,
@@ -135,7 +136,7 @@ export default function CompliancePage() {
         localComplianceStatus: 'compliant',
         encryptionStatus: 'active',
         auditLogs: sampleLogs,
-        twoFactorEnabled: true,
+        twoFactorEnabled: twoFactorEnforced ? true : true,
         backupStatus: 'up-to-date',
         lastBackup: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
         nextBackup: new Date(Date.now() + 22 * 60 * 60 * 1000).toISOString()
@@ -471,13 +472,14 @@ export default function CompliancePage() {
               <div className="mt-4">
                 <button
                   onClick={toggleTwoFactor}
+                  disabled={twoFactorEnforced}
                   className={`w-full px-4 py-2 rounded-md text-sm font-medium ${
                     complianceData.twoFactorEnabled 
-                      ? 'bg-red-100 text-red-700 hover:bg-red-200' 
-                      : 'bg-green-100 text-green-700 hover:bg-green-200'
-                  }`}
+                      ? 'bg-red-100 text-red-700' 
+                      : 'bg-green-100 text-green-700'
+                  } ${twoFactorEnforced ? 'cursor-not-allowed opacity-60' : 'hover:bg-red-200 hover:bg-green-200'}`}
                 >
-                  {complianceData.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
+                  {twoFactorEnforced ? '2FA Enforced for All Users' : (complianceData.twoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA')}
                 </button>
               </div>
             </div>

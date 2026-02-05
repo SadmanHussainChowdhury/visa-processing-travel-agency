@@ -25,6 +25,9 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [otpStep, setOtpStep] = useState(false);
+  const [otpCode, setOtpCode] = useState('');
+  const [otpHint, setOtpHint] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -72,6 +75,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setError('');
     setSuccess('');
+    setOtpHint('');
 
     // Basic validation
     if (!formData.email || !formData.password) {
@@ -87,14 +91,45 @@ export default function LoginPage() {
     }
 
     try {
+      if (!otpStep) {
+        const otpResponse = await fetch('/api/auth/otp/request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+          }),
+        });
+
+        const otpData = await otpResponse.json();
+
+        if (!otpResponse.ok) {
+          setError(otpData.error || 'Failed to send OTP');
+          return;
+        }
+
+        setOtpStep(true);
+        setOtpHint(otpData.message || 'OTP sent. Check your phone.');
+        setSuccess('OTP sent. Enter the code to continue.');
+        return;
+      }
+
+      if (!otpCode.trim()) {
+        setError('Please enter the OTP code');
+        return;
+      }
+
       const result = await signIn('credentials', {
         email: formData.email,
         password: formData.password,
+        otp: otpCode.trim(),
         redirect: false,
       });
 
       if (result?.error) {
-        setError('Invalid email or password');
+        setError('Invalid OTP or credentials');
       } else {
         setSuccess('Login successful! Redirecting to dashboard...');
         router.push('/');
@@ -186,6 +221,65 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* OTP Field */}
+            {otpStep && (
+              <div>
+                <label htmlFor="otp" className="block text-sm font-medium text-gray-700 mb-2">
+                  One-Time Password (OTP)
+                </label>
+                <input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value)}
+                  className="block w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  placeholder="Enter the 6-digit code"
+                  disabled={isLoading}
+                />
+                {otpHint && (
+                  <p className="mt-2 text-xs text-gray-500">{otpHint}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setIsLoading(true);
+                    setError('');
+                    setSuccess('');
+                    try {
+                      const otpResponse = await fetch('/api/auth/otp/request', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                          email: formData.email,
+                          password: formData.password,
+                        }),
+                      });
+                      const otpData = await otpResponse.json();
+                      if (!otpResponse.ok) {
+                        setError(otpData.error || 'Failed to resend OTP');
+                        return;
+                      }
+                      setOtpHint(otpData.message || 'OTP sent. Check your phone.');
+                      setSuccess('OTP resent successfully.');
+                    } catch (error) {
+                      setError('Failed to resend OTP');
+                    } finally {
+                      setIsLoading(false);
+                    }
+                  }}
+                  className="mt-2 text-xs text-blue-600 hover:text-blue-700"
+                  disabled={isLoading}
+                >
+                  Resend code
+                </button>
+              </div>
+            )}
+
             {/* Remember Me */}
             <div className="flex items-center">
               <input
@@ -223,10 +317,10 @@ export default function LoginPage() {
               {isLoading ? (
                 <div className="flex items-center space-x-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                  <span>{t('login.signingIn')}</span>
+                  <span>{otpStep ? 'Verifying...' : t('login.signingIn')}</span>
                 </div>
               ) : (
-                <span>{t('login.signIn')}</span>
+                <span>{otpStep ? 'Verify & Sign In' : t('login.signIn')}</span>
               )}
             </button>
           </form>

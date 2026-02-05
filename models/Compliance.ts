@@ -9,11 +9,12 @@ const complianceSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ['compliant', 'non-compliant', 'pending', 'partial']
+    enum: ['compliant', 'non-compliant', 'pending', 'partial', 'up-to-date', 'outdated', 'failed']
   },
   description: {
     type: String,
-    required: true
+    required: false,
+    default: ''
   },
   lastChecked: {
     type: Date,

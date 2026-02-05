@@ -12,7 +12,7 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { name, email } = await request.json();
+    const { name, email, phone } = await request.json();
 
     if (!name || !email) {
       return NextResponse.json({ error: 'Name and email are required' }, { status: 400 });
@@ -38,7 +38,8 @@ export async function PUT(request: NextRequest) {
           id: session.user.id,
           name,
           email,
-          role: session.user.role
+          role: session.user.role,
+          phone: phone || ''
         }
       });
     }
@@ -48,7 +49,8 @@ export async function PUT(request: NextRequest) {
       session.user.id,
       { 
         name: name.trim(),
-        email: email.toLowerCase().trim()
+        email: email.toLowerCase().trim(),
+        phone: phone ? phone.trim() : undefined
       },
       { new: true }
     );
@@ -63,7 +65,8 @@ export async function PUT(request: NextRequest) {
         id: updatedUser._id,
         name: updatedUser.name,
         email: updatedUser.email,
-        role: updatedUser.role
+        role: updatedUser.role,
+        phone: updatedUser.phone || ''
       }
     });
 

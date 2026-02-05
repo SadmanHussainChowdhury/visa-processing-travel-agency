@@ -70,7 +70,8 @@ export async function POST(request: NextRequest) {
     await dbConnect();
     
     const body = await request.json();
-    const { action, config } = body;
+    const { action } = body;
+    const config = body?.config || {};
 
     switch(action) {
       case 'run-backup':
@@ -99,9 +100,9 @@ export async function POST(request: NextRequest) {
                     verification: 'pending'
                   }
                 ],
-                backupSchedule: config.schedule || latestBackupCheck?.details?.backupSchedule || 'daily at 2:00 AM',
-                retentionPeriod: config.retentionPeriod || latestBackupCheck?.details?.retentionPeriod || '30 days',
-                storageLocation: config.storageLocation || latestBackupCheck?.details?.storageLocation || 'encrypted cloud storage'
+                backupSchedule: config?.schedule || latestBackupCheck?.details?.backupSchedule || 'daily at 2:00 AM',
+                retentionPeriod: config?.retentionPeriod || latestBackupCheck?.details?.retentionPeriod || '30 days',
+                storageLocation: config?.storageLocation || latestBackupCheck?.details?.storageLocation || 'encrypted cloud storage'
               },
               checkedBy: body.userId || 'system'
             }

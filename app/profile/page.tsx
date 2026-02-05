@@ -10,7 +10,8 @@ import {
   Save, 
   Eye, 
   EyeOff,
-  ArrowLeft
+  ArrowLeft,
+  Phone
 } from 'lucide-react';
 import ProtectedRoute from '../protected-route';
 import SidebarLayout from '../components/sidebar-layout';
@@ -30,6 +31,7 @@ export default function ProfilePage() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -40,7 +42,8 @@ export default function ProfilePage() {
       setFormData(prev => ({
         ...prev,
         name: session.user.name || '',
-        email: session.user.email || ''
+        email: session.user.email || '',
+        phone: (session.user as any)?.phone || ''
       }));
     }
   }, [session]);
@@ -67,6 +70,7 @@ export default function ProfilePage() {
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
+          phone: formData.phone,
         }),
       });
 
@@ -81,6 +85,7 @@ export default function ProfilePage() {
             ...session?.user,
             name: formData.name,
             email: formData.email,
+            phone: formData.phone,
           }
         });
       } else {
@@ -219,6 +224,26 @@ export default function ProfilePage() {
                       required
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Phone (for SMS OTP)
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="+15551234567"
+                      required
+                    />
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">This number is required for SMS login verification.</p>
                 </div>
 
                 <div className="pt-4">

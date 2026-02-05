@@ -7,6 +7,10 @@ export interface IUser {
   password?: string;
   role: 'consultant' | 'admin' | 'staff';
   image?: string;
+  phone?: string;
+  smsOtpHash?: string;
+  smsOtpExpiresAt?: Date;
+  smsOtpRequestedAt?: Date;
   emailVerified?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -37,6 +41,19 @@ const userSchema = new mongoose.Schema<IUser>(
     },
     image: {
       type: String,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    smsOtpHash: {
+      type: String,
+    },
+    smsOtpExpiresAt: {
+      type: Date,
+    },
+    smsOtpRequestedAt: {
+      type: Date,
     },
     emailVerified: {
       type: Date,
