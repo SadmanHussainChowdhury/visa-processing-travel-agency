@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import VisaApplication from '@/models/VisaApplication';
-import Transaction from '@/models/Transaction';
+import Invoice from '@/models/Invoice';
 
 interface TransactionInterface {
   id: string;
@@ -13,46 +12,44 @@ interface TransactionInterface {
   date: string;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     await dbConnect();
-    
-    // Get all applications to create transaction data from visa applications
-    const applications = await VisaApplication.find({}).populate('clientId');
-    
-    // Create transaction data from applications
-    const applicationTransactions: TransactionInterface[] = applications
-      .filter(app => (app.fee || app.applicationFee || app.serviceFee || 0) > 0)
-      .map(app => ({
-        id: app._id.toString(),
-        description: `Visa Application - ${app.visaType || 'General'}`,
-        client: app.clientId?.name || app.clientName || 'Unknown Client',
-        amount: app.fee || app.applicationFee || app.serviceFee || 0,
-        type: 'revenue',
-        category: 'Application Fees',
-        date: app.createdAt ? new Date(app.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
-      }));
-    
-    // Get additional transactions from the Transaction model
-    const additionalTransactions = await Transaction.find({});
-    
-    // Map additional transactions to the same interface
-    const additionalTransactionData: TransactionInterface[] = additionalTransactions.map(tx => ({
-      id: tx._id.toString(),
-      description: tx.description,
-      client: tx.clientName,
-      amount: tx.amount,
-      type: tx.type,
-      category: tx.category,
-      date: tx.date
+    const { searchParams } = new URL(request.url);
+    const format = searchParams.get('format') || 'json';
+
+    const invoices = await Invoice.find({}).sort({ createdAt: -1 });
+
+    const allTransactions: TransactionInterface[] = invoices.map(invoice => ({
+      id: invoice._id.toString(),
+      description: `Invoice ${invoice.invoiceNumber}`,
+      client: invoice.clientName || 'Unknown Client',
+      amount: invoice.totalAmount || 0,
+      type: 'revenue',
+      category: 'Invoices',
+      date: invoice.createdAt ? new Date(invoice.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
     }));
-    
-    // Combine both sets of transactions
-    const allTransactions = [...applicationTransactions, ...additionalTransactionData];
-    
-    // Sort by date descending
-    allTransactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    
+
+    if (format === 'csv') {
+      const csvHeader = ['Transaction ID', 'Description', 'Client', 'Amount', 'Type', 'Category', 'Date'].join(',');
+      const csvRows = allTransactions.map(tx => [
+        `"${tx.id}"`,
+        `"${(tx.description || '').replace(/"/g, '""')}"`,
+        `"${(tx.client || '').replace(/"/g, '""')}"`,
+        `"${tx.amount}"`,
+        `"${tx.type}"`,
+        `"${tx.category}"`,
+        `"${tx.date}"`
+      ].join(','));
+      const csvContent = [csvHeader, ...csvRows].join('\n');
+      const fileName = `accounting_transactions_${new Date().toISOString().slice(0, 10)}.csv`;
+
+      const response = new NextResponse(csvContent);
+      response.headers.set('Content-Type', 'text/csv');
+      response.headers.set('Content-Disposition', `attachment; filename="${fileName}"`);
+      return response;
+    }
+
     return NextResponse.json(allTransactions);
   } catch (error) {
     console.error('Error fetching transactions:', error);
@@ -64,60 +61,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    await dbConnect();
-    
-    const body = await request.json();
-    
-    // Validate required fields
-    if (!body.description || !body.amount || !body.type || !body.category || !body.date) {
-      return NextResponse.json(
-        { error: 'Missing required fields: description, amount, type, category, date' },
-        { status: 400 }
-      );
-    }
-    
-    // Validate amount is positive
-    if (body.amount <= 0) {
-      return NextResponse.json(
-        { error: 'Amount must be greater than zero' },
-        { status: 400 }
-      );
-    }
-    
-    // Validate transaction type
-    if (!['revenue', 'expense'].includes(body.type)) {
-      return NextResponse.json(
-        { error: 'Type must be either revenue or expense' },
-        { status: 400 }
-      );
-    }
-    
-    // Create new transaction
-    const newTransaction = new Transaction({
-      description: body.description,
-      clientId: body.clientId,
-      clientName: body.clientName || 'Unknown Client',
-      amount: body.amount,
-      type: body.type,
-      category: body.category,
-      date: body.date,
-      applicationId: body.applicationId,
-      userId: body.userId,
-      notes: body.notes || ''
-    });
-    
-    await newTransaction.save();
-    
-    return NextResponse.json(
-      { message: 'Transaction created successfully', transaction: newTransaction },
-      { status: 201 }
-    );
-  } catch (error) {
-    console.error('Error creating transaction:', error);
-    return NextResponse.json(
-      { error: 'Failed to create transaction' },
-      { status: 500 }
-    );
-  }
+  return NextResponse.json(
+    { error: 'Manual transaction creation is disabled. Transactions are derived from invoices.' },
+    { status: 405 }
+  );
 }

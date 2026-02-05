@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
-import VisaApplication from '@/models/VisaApplication';
+import Invoice from '@/models/Invoice';
 import Commission from '@/models/Commission';
-import Transaction from '@/models/Transaction';
 
 interface Transaction {
   id: string;
@@ -18,56 +17,25 @@ export async function GET() {
   try {
     await dbConnect();
     
-    // Get all applications to calculate revenue
-    const applications = await VisaApplication.find({}); // client info stored directly
-    
-    // Calculate revenue from applications (assuming fee field exists)
-    const applicationRevenue = applications.reduce((sum, app) => sum + (app.fee || app.applicationFee || app.serviceFee || 0), 0);
-    
-    // Get additional revenue/expense transactions
-    const additionalTransactions = await Transaction.find({});
-    
-    // Calculate additional revenue and expenses
-    const additionalRevenue = additionalTransactions
-      .filter(tx => tx.type === 'revenue')
-      .reduce((sum, tx) => sum + tx.amount, 0);
-    
-    const additionalExpenses = additionalTransactions
-      .filter(tx => tx.type === 'expense')
-      .reduce((sum, tx) => sum + tx.amount, 0);
-    
-    // Total calculations
-    const totalRevenue = applicationRevenue + additionalRevenue;
-    const totalExpenses = (applications.length * 15) + additionalExpenses; // $15 per application + additional expenses
-    
+    // Get invoices to calculate revenue
+    const invoices = await Invoice.find({});
+
+    const totalRevenue = invoices
+      .filter(invoice => invoice.status === 'issued' || invoice.status === 'paid')
+      .reduce((sum, invoice) => sum + (invoice.totalAmount || 0), 0);
+
+    const totalExpenses = 0;
     const netProfit = totalRevenue - totalExpenses;
     
-    // Create transaction data from applications
-    const applicationTransactions: Transaction[] = applications
-      .filter(app => (app.fee || app.applicationFee || app.serviceFee || 0) > 0)
-      .map(app => ({
-        id: app._id.toString(),
-        description: `Visa Application - ${app.visaType || 'General'}`,
-        client: app.clientId?.name || app.clientName || 'Unknown Client',
-        amount: app.fee || app.applicationFee || app.serviceFee || 0,
-        type: 'revenue',
-        category: 'Application Fees',
-        date: app.createdAt ? new Date(app.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
-      }));
-    
-    // Add additional transactions
-    const additionalTransactionData: Transaction[] = additionalTransactions.map(tx => ({
-      id: tx._id.toString(),
-      description: tx.description,
-      client: tx.clientName,
-      amount: tx.amount,
-      type: tx.type,
-      category: tx.category,
-      date: tx.date
+    const transactions: Transaction[] = invoices.map(invoice => ({
+      id: invoice._id.toString(),
+      description: `Invoice ${invoice.invoiceNumber}`,
+      client: invoice.clientName || 'Unknown Client',
+      amount: invoice.totalAmount || 0,
+      type: 'revenue',
+      category: 'Invoices',
+      date: invoice.createdAt ? new Date(invoice.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
     }));
-    
-    // Combine all transactions
-    const transactions = [...applicationTransactions, ...additionalTransactionData];
     
     // Get commission data
     const totalCommissionEarned = await Commission.aggregate([

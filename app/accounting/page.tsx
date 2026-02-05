@@ -6,15 +6,11 @@ import {
   DollarSign, 
   Calculator, 
   BarChart3, 
-  FileBarChart, 
   TrendingUp, 
   TrendingDown, 
   Plus, 
   Download,
-  Filter,
   Search,
-  Calendar,
-  Users,
   PiggyBank,
 } from 'lucide-react';
 import ProtectedRoute from '../protected-route';
@@ -41,10 +37,13 @@ export default function AccountingPage() {
   const [commissionData, setCommissionData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const filteredTransactions = transactions.filter(transaction => {
+  const filteredTransactions = transactions.filter((transaction) => {
+    const clientName = typeof transaction.client === 'string'
+      ? transaction.client
+      : transaction.client?.name || '';
     return transaction.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
            transaction.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           (transaction.client && transaction.client.name.toLowerCase().includes(searchTerm.toLowerCase()));
+           clientName.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   const calculateTotals = () => {
@@ -130,8 +129,8 @@ export default function AccountingPage() {
   }, [fetchData]);
 
   const handleExportReport = (reportType: string) => {
-    alert(`Exporting ${reportType} report...`);
-    // In a real implementation, this would generate and download the report
+    const url = `/api/accounting/transactions?format=csv`;
+    window.location.href = url;
   };
 
   const refreshAccountingData = async () => {
