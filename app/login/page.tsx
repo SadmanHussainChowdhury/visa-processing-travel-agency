@@ -28,6 +28,8 @@ export default function LoginPage() {
   const [otpStep, setOtpStep] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpHint, setOtpHint] = useState('');
+  const [systemTitle, setSystemTitle] = useState<string>('');
+  const [systemDescription, setSystemDescription] = useState<string>('');
   const router = useRouter();
 
   useEffect(() => {
@@ -58,6 +60,20 @@ export default function LoginPage() {
       }
     };
     checkDemoMode();
+
+    const fetchPublicSettings = async () => {
+      try {
+        const response = await fetch('/api/public-settings');
+        if (response.ok) {
+          const data = await response.json();
+          setSystemTitle(data.systemTitle || '');
+          setSystemDescription(data.systemDescription || '');
+        }
+      } catch (error) {
+        console.error('Error fetching public settings:', error);
+      }
+    };
+    fetchPublicSettings();
   }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,15 +178,20 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto h-20 w-20 bg-blue-600 rounded-full flex items-center justify-center mb-6">
+          <div className="mx-auto h-20 w-20 bg-blue-600 rounded-2xl flex items-center justify-center mb-5">
             <Plane className="h-10 w-10 text-white" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            {t('login.subtitle')}
-          </h2>
-          <p className="text-gray-600">
-            {t('login.description')}
-          </p>
+          {systemTitle ? (
+            <h1 className="text-3xl font-semibold text-gray-900">
+              {systemTitle}
+            </h1>
+          ) : null}
+          {systemDescription ? (
+            <p className="mt-3 text-base text-gray-600">
+              {systemDescription}
+            </p>
+          ) : null}
+          <div className="mt-5 h-px w-20 bg-gray-200 mx-auto" />
         </div>
 
         {/* Login Form */}
