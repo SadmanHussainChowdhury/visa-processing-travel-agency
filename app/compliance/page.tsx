@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Shield, Lock, FileText, Activity, KeyRound, DatabaseBackup, Filter, Download, Upload, Search } from 'lucide-react';
+import { Shield, Lock, KeyRound, DatabaseBackup } from 'lucide-react';
 import ProtectedRoute from '../protected-route';
 import SidebarLayout from '../components/sidebar-layout';
 
@@ -227,7 +227,7 @@ export default function CompliancePage() {
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
         <div className="flex items-center">
           <div className="p-3 rounded-full bg-purple-100 text-purple-600">
-            <FileText className="h-6 w-6" />
+            <Shield className="h-6 w-6" />
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Local Compliance</p>
@@ -261,7 +261,7 @@ export default function CompliancePage() {
       <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
         <div className="flex items-center">
           <div className="p-3 rounded-full bg-yellow-100 text-yellow-600">
-            <Activity className="h-6 w-6" />
+            <Shield className="h-6 w-6" />
           </div>
           <div className="ml-4">
             <p className="text-sm font-medium text-gray-600">Audit Logs</p>
@@ -300,111 +300,6 @@ export default function CompliancePage() {
           </div>
         </div>
       </div>
-    </div>
-  );
-
-  const renderGdprCompliance = () => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">GDPR/Local Data Compliance</h3>
-          <button className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-            <Download className="h-4 w-4 mr-1" />
-            Export Report
-          </button>
-        </div>
-      </div>
-      
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900 mb-3">Compliance Status</h4>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span>GDPR Compliance:</span>
-                  <span className={`font-medium ${
-                    complianceData.gdprStatus === 'compliant' ? 'text-green-600' : 
-                    complianceData.gdprStatus === 'non-compliant' ? 'text-red-600' : 'text-yellow-600'
-                  }`}>
-                    {complianceData.gdprStatus.charAt(0).toUpperCase() + complianceData.gdprStatus.slice(1)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Local Compliance:</span>
-                  <span className={`font-medium ${
-                    complianceData.localComplianceStatus === 'compliant' ? 'text-green-600' : 
-                    complianceData.localComplianceStatus === 'non-compliant' ? 'text-red-600' : 'text-yellow-600'
-                  }`}>
-                    {complianceData.localComplianceStatus.charAt(0).toUpperCase() + complianceData.localComplianceStatus.slice(1)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Data Encryption:</span>
-                  <span className={`font-medium ${
-                    complianceData.encryptionStatus === 'active' ? 'text-green-600' : 
-                    complianceData.encryptionStatus === 'inactive' ? 'text-red-600' : 'text-yellow-600'
-                  }`}>
-                    {complianceData.encryptionStatus.charAt(0).toUpperCase() + complianceData.encryptionStatus.slice(1)}
-                  </span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="border border-gray-200 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900 mb-3">Recent Compliance Checks</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span>Daily Check</span>
-                  <span className="text-green-600">Passed</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Weekly Audit</span>
-                  <span className="text-green-600">Passed</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Monthly Review</span>
-                  <span className="text-yellow-600">Pending</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Quarterly Assessment</span>
-                  <span className="text-green-600">Passed</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-6 border-t border-gray-200 pt-6">
-            <h4 className="font-medium text-gray-900 mb-3">Compliance Measures</h4>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-center">
-                <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Data minimization practices implemented</span>
-              </li>
-              <li className="flex items-center">
-                <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Right to erasure protocols established</span>
-              </li>
-              <li className="flex items-center">
-                <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Data breach notification procedures in place</span>
-              </li>
-              <li className="flex items-center">
-                <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Privacy by design principles followed</span>
-              </li>
-              <li className="flex items-center">
-                <div className="h-2 w-2 bg-green-500 rounded-full mr-2"></div>
-                <span>Regular compliance training conducted</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -482,79 +377,6 @@ export default function CompliancePage() {
               </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
-
-  const renderAuditLogs = () => (
-    <div className="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200">
-        <div className="flex justify-between items-center">
-          <h3 className="text-lg font-semibold text-gray-900">Audit Logs</h3>
-          <div className="flex space-x-2">
-            <button className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              <Download className="h-4 w-4 mr-1" />
-              Export
-            </button>
-            <button className="inline-flex items-center px-3 py-1 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
-              <Filter className="h-4 w-4 mr-1" />
-              Filter
-            </button>
-          </div>
-        </div>
-      </div>
-      
-      {loading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Timestamp
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Action
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Resource
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  IP Address
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {logs.map((log) => (
-                <tr key={log.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(log.timestamp).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {log.user.split('@')[0]}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                      {log.action}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {log.resource}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {log.ip}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       )}
     </div>
@@ -683,20 +505,6 @@ export default function CompliancePage() {
             
             <button
               className={`px-4 py-2 font-medium text-sm ${
-                activeTab === 'gdpr'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('gdpr')}
-            >
-              <div className="flex items-center">
-                <FileText className="h-4 w-4 mr-2" />
-                GDPR/Local Compliance
-              </div>
-            </button>
-            
-            <button
-              className={`px-4 py-2 font-medium text-sm ${
                 activeTab === 'security'
                   ? 'text-blue-600 border-b-2 border-blue-600'
                   : 'text-gray-500 hover:text-gray-700'
@@ -706,20 +514,6 @@ export default function CompliancePage() {
               <div className="flex items-center">
                 <Lock className="h-4 w-4 mr-2" />
                 Security Measures
-              </div>
-            </button>
-            
-            <button
-              className={`px-4 py-2 font-medium text-sm ${
-                activeTab === 'audit'
-                  ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-              onClick={() => setActiveTab('audit')}
-            >
-              <div className="flex items-center">
-                <Activity className="h-4 w-4 mr-2" />
-              Audit Logs
               </div>
             </button>
             
@@ -740,9 +534,7 @@ export default function CompliancePage() {
 
           {/* Tab Content */}
           {activeTab === 'overview' && renderOverview()}
-          {activeTab === 'gdpr' && renderGdprCompliance()}
           {activeTab === 'security' && renderSecurityMeasures()}
-          {activeTab === 'audit' && renderAuditLogs()}
           {activeTab === 'backup' && renderBackupRecovery()}
         </div>
       </SidebarLayout>
