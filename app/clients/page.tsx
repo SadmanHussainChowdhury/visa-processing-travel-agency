@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import type { MouseEvent } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -8,23 +9,30 @@ import {
   Plus, 
   Search, 
   Filter,
-  MoreVertical,
-  Phone,
-  Mail,
-  Calendar
+  MoreVertical
 } from 'lucide-react';
 import ProtectedRoute from '../protected-route';
 import SidebarLayout from '../components/sidebar-layout';
 import { useTranslations } from '../hooks/useTranslations';
 
+type Client = {
+  _id: string;
+  clientId?: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  createdAt?: string | Date;
+  assignedOfficer?: string;
+};
+
 export default function ClientsPage() {
   const router = useRouter();
   const { t } = useTranslations();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedClient, setSelectedClient] = useState<any>(null);
   const [showActionsMenu, setShowActionsMenu] = useState<string | null>(null);
 
-  const [clients, setClients] = useState<any[]>([]);
+  const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Show 10 clients per page
@@ -47,7 +55,7 @@ export default function ClientsPage() {
     fetchClients();
   }, []);
 
-  const filteredClients = clients.filter(client => {
+  const filteredClients = clients.filter((client) => {
     const matchesSearch = `${client.firstName} ${client.lastName}`.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          client.clientId?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -138,23 +146,21 @@ export default function ClientsPage() {
     }
   };
 
-  const handleViewClient = (client: any) => {
+  const handleViewClient = (client: Client) => {
     console.log('Viewing client:', client._id);
-    setSelectedClient(client);
     setShowActionsMenu(null);
     // Navigate to client view page
     router.push(`/clients/${client._id}`);
   };
 
-  const handleEditClient = (client: any) => {
+  const handleEditClient = (client: Client) => {
     console.log('Editing client:', client._id);
-    setSelectedClient(client);
     setShowActionsMenu(null);
     // Navigate to client edit page
     router.push(`/clients/${client._id}/edit`);
   };
 
-  const handleDeleteClient = (client: any) => {
+  const handleDeleteClient = (client: Client) => {
     console.log('Delete client clicked:', client._id);
     setShowActionsMenu(null);
     if (confirm(`${t('common.confirm')} ${t('clients.deleteClient')} ${client.firstName} ${client.lastName}?`)) {
@@ -164,7 +170,7 @@ export default function ClientsPage() {
   };
 
 
-  const toggleActionsMenu = (clientId: string, e?: React.MouseEvent) => {
+  const toggleActionsMenu = (clientId: string, e?: MouseEvent<HTMLButtonElement>) => {
     if (e) {
       e.stopPropagation();
     }
@@ -333,7 +339,7 @@ export default function ClientsPage() {
                           }}
                           className="text-blue-600 hover:text-blue-900 hover:underline"
                         >
-                          {t('common.view')}
+                          Detaills
                         </button>
                         <button 
                           onClick={(e) => {

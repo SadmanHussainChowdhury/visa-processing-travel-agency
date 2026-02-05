@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
@@ -12,28 +12,88 @@ import {
   Calendar,
   MapPin,
   Globe,
-  Flag,
   FileText,
-  Clock,
   Eye,
-  Trash2,
   Briefcase,
-  IdCard,
-  PlaneTakeoff,
-  CreditCard
+  DollarSign,
+  FolderOpen
 } from 'lucide-react';
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
 
+type Client = {
+  _id: string;
+  clientId?: string;
+  firstName: string;
+  lastName: string;
+  email?: string;
+  phone?: string;
+  dateOfBirth?: string | Date;
+  address?: string;
+  nationality?: string;
+  occupation?: string;
+  createdAt?: string | Date;
+  passportNumber?: string;
+  passportIssueDate?: string | Date;
+  passportExpiryDate?: string | Date;
+  emergencyContact?: {
+    name?: string;
+    relationship?: string;
+    phone?: string;
+  };
+};
+
+type VisaCase = {
+  _id: string;
+  caseId?: string;
+  visaType?: string;
+  country?: string;
+  status?: string;
+};
+
+type Appointment = {
+  _id: string;
+  clientId?: string;
+  appointmentDate?: string | Date;
+  appointmentTime?: string;
+  appointmentType?: string;
+  status?: string;
+};
+
+type Invoice = {
+  _id: string;
+  invoiceNumber?: string;
+  status?: string;
+  currency?: string;
+  totalAmount?: number;
+};
+
+type Document = {
+  _id: string;
+  documentId?: string;
+  fileName?: string;
+  originalName?: string;
+  category?: string;
+  status?: string;
+};
+
+type ClientTab = 'details' | 'visa-cases' | 'appointments' | 'billing' | 'documents';
+
 export default function ClientViewPage() {
-  const params = useParams();
-  const router = useRouter();
-  const [client, setClient] = useState<any>(null);
+  const params = useParams<{ id: string }>();
+  const [client, setClient] = useState<Client | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [visaApplications, setVisaApplications] = useState<any[]>([]);
-  const [loadingVisaApplications, setLoadingVisaApplications] = useState(true);
-  const [activeTab, setActiveTab] = useState<'details' | 'visa-applications' | 'travel-history' | 'financial-documents'>('details');
+  const [visaCases, setVisaCases] = useState<VisaCase[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [documents, setDocuments] = useState<Document[]>([]);
+  const [loadingVisaCases, setLoadingVisaCases] = useState(true);
+  const [loadingAppointments, setLoadingAppointments] = useState(true);
+  const [loadingInvoices, setLoadingInvoices] = useState(true);
+  const [loadingDocuments, setLoadingDocuments] = useState(true);
+  const [activeTab, setActiveTab] = useState<ClientTab>('details');
+  const [appointmentTab, setAppointmentTab] = useState<'upcoming' | 'previous'>('upcoming');
 
   useEffect(() => {
     const fetchClient = async () => {
@@ -58,49 +118,78 @@ export default function ClientViewPage() {
     }
   }, [params.id]);
 
-  // Fetch visa applications for this client
+  // Fetch related data for this client
   useEffect(() => {
-    const fetchVisaApplications = async () => {
-      if (!params.id || !client) return;
-      
+    const fetchVisaCases = async () => {
+      if (!client?._id) return;
       try {
-        setLoadingVisaApplications(true);
-        // In a real implementation, we would fetch visa applications from an API
-        // For now, using mock data
-        const mockVisaApplications = [
-          {
-            id: 'va-001',
-            caseId: 'VC-001',
-            visaType: 'Tourist',
-            destinationCountry: 'United States',
-            applicationDate: '2024-01-15',
-            status: 'approved',
-            submissionDate: '2024-01-20',
-            decisionDate: '2024-02-01',
-            notes: 'Standard tourist visa application'
-          },
-          {
-            id: 'va-002',
-            caseId: 'VC-002',
-            visaType: 'Business',
-            destinationCountry: 'Canada',
-            applicationDate: '2024-02-10',
-            status: 'in-progress',
-            submissionDate: '2024-02-15',
-            decisionDate: null,
-            notes: 'Business visitor visa'
-          }
-        ];
-        setVisaApplications(mockVisaApplications);
+        setLoadingVisaCases(true);
+        const response = await fetch(`/api/visa-cases?clientId=${client._id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setVisaCases(data || []);
+        }
       } catch (error) {
-        console.error('Error fetching visa applications:', error);
+        console.error('Error fetching visa cases:', error);
       } finally {
-        setLoadingVisaApplications(false);
+        setLoadingVisaCases(false);
+      }
+    };
+
+    const fetchAppointments = async () => {
+      if (!client?._id) return;
+      try {
+        setLoadingAppointments(true);
+        const response = await fetch('/api/appointments');
+        if (response.ok) {
+          const data = await response.json();
+          const filtered = (data || []).filter((appt: Appointment) => appt.clientId === client._id);
+          setAppointments(filtered);
+        }
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+      } finally {
+        setLoadingAppointments(false);
+      }
+    };
+
+    const fetchInvoices = async () => {
+      if (!client?._id) return;
+      try {
+        setLoadingInvoices(true);
+        const response = await fetch(`/api/billing/invoices?clientId=${client._id}&limit=50`);
+        if (response.ok) {
+          const data = await response.json();
+          setInvoices(data?.invoices || []);
+        }
+      } catch (error) {
+        console.error('Error fetching invoices:', error);
+      } finally {
+        setLoadingInvoices(false);
+      }
+    };
+
+    const fetchDocuments = async () => {
+      if (!client?._id) return;
+      try {
+        setLoadingDocuments(true);
+        const response = await fetch(`/api/documents?clientId=${client._id}`);
+        if (response.ok) {
+          const data = await response.json();
+          setDocuments(data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching documents:', error);
+      } finally {
+        setLoadingDocuments(false);
       }
     };
 
     if (params.id && client) {
-      fetchVisaApplications();
+      fetchVisaCases();
+      fetchAppointments();
+      fetchInvoices();
+      fetchDocuments();
     }
   }, [params.id, client]);
 
@@ -130,7 +219,7 @@ export default function ClientViewPage() {
             <Users className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">Client not found</h3>
             <p className="mt-1 text-sm text-gray-700">
-              The client you're looking for doesn't exist or has been removed.
+              The client you&apos;re looking for doesn&apos;t exist or has been removed.
             </p>
             <div className="mt-6">
               <Link
@@ -147,29 +236,68 @@ export default function ClientViewPage() {
     );
   }
 
-  // Get status color for visa applications
-  const getStatusColor = (status: string) => {
+  const getAppointmentDate = (appointment: Appointment) => {
+    if (!appointment?.appointmentDate) return null;
+    if (appointment.appointmentDate instanceof Date) {
+      return isNaN(appointment.appointmentDate.getTime()) ? null : appointment.appointmentDate;
+    }
+    const time = appointment.appointmentTime || '00:00';
+    const dateValue = String(appointment.appointmentDate);
+    const dateString = dateValue.includes('T')
+      ? dateValue
+      : `${dateValue}T${time}`;
+    const date = new Date(dateString);
+    return isNaN(date.getTime()) ? null : date;
+  };
+
+  const now = new Date();
+  const upcomingAppointments = appointments.filter((appt) => {
+    const date = getAppointmentDate(appt);
+    return date ? date >= now : false;
+  });
+  const previousAppointments = appointments.filter((appt) => {
+    const date = getAppointmentDate(appt);
+    return date ? date < now : false;
+  });
+
+  // Get status color for visa cases and invoices
+  const getStatusColor = (status?: string) => {
     switch (status?.toLowerCase()) {
       case 'approved':
         return 'bg-green-100 text-green-800';
       case 'rejected':
         return 'bg-red-100 text-red-800';
       case 'in-progress':
+      case 'inprogress':
+      case 'in-process':
+      case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'submitted':
         return 'bg-blue-100 text-blue-800';
-      case 'cancelled':
+      case 'paid':
+        return 'bg-green-100 text-green-800';
+      case 'issued':
+        return 'bg-blue-100 text-blue-800';
+      case 'draft':
         return 'bg-gray-100 text-gray-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
 
-  const tabs = [
+  const tabs: Array<{
+    id: ClientTab;
+    label: string;
+    icon: typeof Users;
+    count?: number;
+  }> = [
     { id: 'details', label: 'Client Details', icon: Users },
-    { id: 'visa-applications', label: 'Visa Applications', icon: IdCard, count: visaApplications.length },
-    { id: 'travel-history', label: 'Travel History', icon: PlaneTakeoff, count: 0 },
-    { id: 'financial-documents', label: 'Financial Documents', icon: CreditCard, count: 0 },
+    { id: 'visa-cases', label: 'Visa Cases', icon: FileText, count: visaCases.length },
+    { id: 'appointments', label: 'Appointments', icon: Calendar, count: appointments.length },
+    { id: 'billing', label: 'Billing', icon: DollarSign, count: invoices.length },
+    { id: 'documents', label: 'Documents', icon: FolderOpen, count: documents.length },
   ];
 
   return (
@@ -211,7 +339,7 @@ export default function ClientViewPage() {
                     return (
                       <button
                         key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
+                        onClick={() => setActiveTab(tab.id)}
                         className={`w-full py-3 px-4 mb-1 rounded-lg font-medium text-sm flex items-center justify-between transition-colors ${
                           activeTab === tab.id
                             ? 'bg-blue-50 text-blue-700 border-l-4 border-blue-600'
@@ -380,21 +508,29 @@ export default function ClientViewPage() {
                   </div>
                 )}
 
-            {/* Visa Applications Tab */}
-            {activeTab === 'visa-applications' && (
+            {/* Visa Cases Tab */}
+            {activeTab === 'visa-cases' && (
               <div className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                  <IdCard className="h-5 w-5" />
-                  <span>Visa Applications</span>
-                </h2>
-                {loadingVisaApplications ? (
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <FileText className="h-5 w-5" />
+                    <span>Visa Cases</span>
+                  </h2>
+                  <Link
+                    href="/visa-cases/new"
+                    className="inline-flex items-center space-x-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                  >
+                    <span>New Case</span>
+                  </Link>
+                </div>
+                {loadingVisaCases ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                   </div>
-                ) : visaApplications.length === 0 ? (
+                ) : visaCases.length === 0 ? (
                   <div className="text-center py-8">
-                    <IdCard className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-2 text-sm text-gray-500">No visa applications found for this client</p>
+                    <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-500">No visa cases found for this client</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -403,35 +539,25 @@ export default function ClientViewPage() {
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case ID</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Visa Type</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Destination</th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application Date</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                         </tr>
                       </thead>
                       <tbody className="bg-white divide-y divide-gray-200">
-                        {visaApplications.map((application) => (
-                          <tr key={application.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {application.caseId}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {application.visaType}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {application.destinationCountry}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {application.applicationDate ? new Date(application.applicationDate).toLocaleDateString() : 'N/A'}
-                            </td>
+                        {visaCases.map((visaCase) => (
+                          <tr key={visaCase._id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{visaCase.caseId}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{visaCase.visaType}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{visaCase.country}</td>
                             <td className="px-6 py-4 whitespace-nowrap">
-                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(application.status)}`}>
-                                {application.status || 'N/A'}
+                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(visaCase.status)}`}>
+                                {visaCase.status}
                               </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                               <Link
-                                href={`/visa-cases/${application.id}`}
+                                href={`/visa-cases/${visaCase._id}`}
                                 className="text-blue-600 hover:text-blue-900 flex items-center space-x-1"
                               >
                                 <Eye className="h-4 w-4" />
@@ -447,33 +573,176 @@ export default function ClientViewPage() {
               </div>
             )}
 
-            {/* Travel History Tab */}
-            {activeTab === 'travel-history' && (
+            {/* Appointments Tab */}
+            {activeTab === 'appointments' && (
               <div className="p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                  <PlaneTakeoff className="h-5 w-5" />
-                  <span>Travel History</span>
-                </h2>
-                <div className="text-center py-8">
-                  <PlaneTakeoff className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-500">Travel history information coming soon</p>
-                  <p className="text-xs text-gray-400 mt-1">This section will display the client's travel history</p>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
+                    <Calendar className="h-5 w-5" />
+                    <span>Appointments</span>
+                  </h2>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => setAppointmentTab('upcoming')}
+                      className={`px-3 py-2 text-sm rounded-lg ${appointmentTab === 'upcoming' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}
+                    >
+                      Upcoming
+                    </button>
+                    <button
+                      onClick={() => setAppointmentTab('previous')}
+                      className={`px-3 py-2 text-sm rounded-lg ${appointmentTab === 'previous' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}
+                    >
+                      Previous
+                    </button>
+                  </div>
                 </div>
+                {loadingAppointments ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : (appointmentTab === 'upcoming' ? upcomingAppointments : previousAppointments).length === 0 ? (
+                  <div className="text-center py-8">
+                    <Calendar className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-500">No {appointmentTab} appointments found</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {(appointmentTab === 'upcoming' ? upcomingAppointments : previousAppointments).map((appt) => (
+                          <tr key={appt._id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {appt.appointmentDate ? new Date(appt.appointmentDate).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {appt.appointmentTime || 'N/A'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {appt.appointmentType || 'Consultation'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(appt.status)}`}>
+                                {appt.status || 'scheduled'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
 
-            {/* Financial Documents Tab */}
-            {activeTab === 'financial-documents' && (
+            {/* Billing Tab */}
+            {activeTab === 'billing' && (
               <div className="p-6">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-                  <CreditCard className="h-5 w-5" />
-                  <span>Financial Documents</span>
+                  <DollarSign className="h-5 w-5" />
+                  <span>Billing</span>
                 </h2>
-                <div className="text-center py-8">
-                  <CreditCard className="mx-auto h-12 w-12 text-gray-400" />
-                  <p className="mt-2 text-sm text-gray-500">Financial documents information coming soon</p>
-                  <p className="text-xs text-gray-400 mt-1">This section will display the client's financial documents</p>
-                </div>
+                {loadingInvoices ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : invoices.length === 0 ? (
+                  <div className="text-center py-8">
+                    <DollarSign className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-500">No invoices found for this client</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {invoices.map((invoice) => (
+                          <tr key={invoice._id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{invoice.invoiceNumber}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(invoice.status)}`}>
+                                {invoice.status}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {invoice.currency} {invoice.totalAmount?.toFixed(2)}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <Link
+                                href={`/billing/${invoice._id}`}
+                                className="text-blue-600 hover:text-blue-900 flex items-center space-x-1"
+                              >
+                                <Eye className="h-4 w-4" />
+                                <span>View</span>
+                              </Link>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Documents Tab */}
+            {activeTab === 'documents' && (
+              <div className="p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+                  <FolderOpen className="h-5 w-5" />
+                  <span>Documents</span>
+                </h2>
+                {loadingDocuments ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  </div>
+                ) : documents.length === 0 ? (
+                  <div className="text-center py-8">
+                    <FolderOpen className="mx-auto h-12 w-12 text-gray-400" />
+                    <p className="mt-2 text-sm text-gray-500">No documents found for this client</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Document</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-gray-200">
+                        {documents.map((doc) => (
+                          <tr key={doc._id} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              {doc.fileName || doc.originalName || doc.documentId}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">{doc.category || 'general'}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(doc.status)}`}>
+                                {doc.status || 'pending'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
               </div>
             )}
 
