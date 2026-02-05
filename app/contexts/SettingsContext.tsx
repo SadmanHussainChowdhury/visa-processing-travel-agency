@@ -60,7 +60,7 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-  systemTitle: 'VisaPilot - Visa & Travel Agency / Student Consultancy',
+  systemTitle: 'VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform',
   systemDescription: 'Operations & CRM Platform',
   currency: 'USD',
   timezone: 'UTC',

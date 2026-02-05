@@ -151,7 +151,7 @@ export default function SidebarLayout({ children, title, description }: SidebarL
             </div>
             <div className="min-w-0 flex-1">
               <h1 className="text-lg font-bold text-gray-900 truncate sm:text-xl">
-                {settings?.systemTitle || 'VisaPilot - Visa & Travel Agency / Student Consultancy'}
+                {settings?.systemTitle || 'VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform'}
               </h1>
               <p className="text-xs text-gray-700 truncate hidden sm:block">
                 {settings?.systemDescription || 'Operations & CRM Platform'}

@@ -20,7 +20,7 @@ export async function GET() {
     if (!settings) {
       // Create default settings if none exist
       settings = new Settings({
-        systemTitle: 'VisaPilot - Visa & Travel Agency / Student Consultancy',
+        systemTitle: 'VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform',
         systemDescription: 'Operations & CRM Platform',
         currency: 'USD',
         timezone: 'UTC',

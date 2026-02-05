@@ -36,7 +36,7 @@ export class AgencyFramework {
   public getBaseConfig(agencyType: AgencyType): Omit<AgencyConfig, 'type' | 'initialized' | 'createdAt'> {
     const configs: Record<AgencyType, Omit<AgencyConfig, 'type' | 'initialized' | 'createdAt'>> = {
       visa: {
-        name: 'VisaPilot - Visa & Travel Agency / Student Consultancy',
+        name: 'VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform',
         modules: ['clients', 'appointments', 'documents', 'cases', 'billing'],
         features: ['document_verification', 'interview_preparation', 'application_tracking'],
         terminology: {

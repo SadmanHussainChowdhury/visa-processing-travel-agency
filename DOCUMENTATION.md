@@ -1,4 +1,4 @@
-# Agency Management System - Comprehensive Documentation
+# VisaPilot - Visa & Travel Agency / Student Consultancy - Operations & CRM Platform
 
 ## Table of Contents
 1. [Overview](#overview)
