@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Users, 
   Plus, 
@@ -25,6 +26,7 @@ import ProtectedRoute from '../protected-route';
 import SidebarLayout from '../components/sidebar-layout';
 
 export default function CrmPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'leads'>('leads');
   const [leads, setLeads] = useState<any[]>([]);
 
@@ -116,29 +118,22 @@ export default function CrmPage() {
     }
   };
 
-  const handleConvertToClient = async (leadId: string) => {
-    try {
-      // In a real application, this would convert the lead to a client
-      // For now, we'll update the lead status to 'converted'
-      const response = await fetch(`/api/crm/leads?id=${leadId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: 'converted' }),
-      });
-      
-      if (response.ok) {
-        // Refresh the data
-        fetchLeads();
-        alert(`Lead ${leadId} has been converted to a client and moved to the client management system.`);
-      } else {
-        alert('Failed to convert lead to client');
-      }
-    } catch (error) {
-      console.error('Error converting lead:', error);
-      alert('An error occurred while converting the lead');
+  const handleConvertToClient = async (lead: any) => {
+    const leadId = lead?._id || lead?.id;
+    if (!leadId) {
+      alert('Lead ID is missing. Please refresh and try again.');
+      return;
     }
+
+    const params = new URLSearchParams();
+    params.set('leadId', leadId);
+    if (lead?.name) params.set('name', lead.name);
+    if (lead?.email) params.set('email', lead.email);
+    if (lead?.phone) params.set('phone', lead.phone);
+    if (lead?.visaType) params.set('visaType', lead.visaType);
+    if (lead?.countryInterest) params.set('countryInterest', lead.countryInterest);
+
+    router.push(`/clients/new?${params.toString()}`);
   };
   
   const handleDeleteLead = async (leadId: string) => {
@@ -319,7 +314,7 @@ export default function CrmPage() {
                       
                       <div className="mt-4 pt-4 border-t border-gray-200 flex space-x-2">
                         <button 
-                          onClick={() => handleConvertToClient(lead._id || lead.id)}
+                          onClick={() => handleConvertToClient(lead)}
                           className="flex-1 text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
                         >
                           Convert to Client

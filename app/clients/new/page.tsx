@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { 
   Users, 
@@ -16,9 +16,13 @@ import {
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
 import { useTranslations } from '../../hooks/useTranslations';
+import { useSearchParams } from 'next/navigation';
 
 export default function NewClientPage() {
   const { t } = useTranslations();
+  const searchParams = useSearchParams();
+  const prefillAppliedRef = useRef(false);
+  const [leadId, setLeadId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     // Personal Information
     firstName: '',
@@ -49,6 +53,36 @@ export default function NewClientPage() {
   });
 
   const [activeSection, setActiveSection] = useState('personal');
+
+  useEffect(() => {
+    if (prefillAppliedRef.current) return;
+
+    const incomingLeadId = searchParams.get('leadId');
+    const name = searchParams.get('name') || '';
+    const email = searchParams.get('email') || '';
+    const phone = searchParams.get('phone') || '';
+    const visaType = searchParams.get('visaType') || '';
+
+    if (incomingLeadId) {
+      setLeadId(incomingLeadId);
+    }
+
+    if (name || email || phone || visaType) {
+      const nameParts = name.trim().split(/\s+/);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ');
+
+      setFormData((prev) => ({
+        ...prev,
+        firstName: prev.firstName || firstName,
+        lastName: prev.lastName || lastName,
+        email: prev.email || email,
+        phone: prev.phone || phone,
+        visaType: prev.visaType || visaType
+      }));
+      prefillAppliedRef.current = true;
+    }
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -122,6 +156,25 @@ export default function NewClientPage() {
 
       if (response.ok) {
         alert(t('clients.newClient.success.clientAdded'));
+
+        if (leadId) {
+          try {
+            const leadResponse = await fetch(`/api/crm/leads?id=${leadId}`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ status: 'converted' }),
+            });
+
+            if (!leadResponse.ok) {
+              console.warn('Client created, but failed to update lead status');
+            }
+          } catch (leadError) {
+            console.warn('Client created, but lead status update failed:', leadError);
+          }
+        }
+
         // Reset form
         setFormData({
           firstName: '',
@@ -183,6 +236,11 @@ export default function NewClientPage() {
         title={t('clients.newClient.title')}
         description={t('clients.newClient.description')}
       >
+        {leadId && (
+          <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            This client form was pre-filled from a lead. Complete the required fields and save to finalize conversion.
+          </div>
+        )}
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">
